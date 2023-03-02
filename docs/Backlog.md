@@ -7,8 +7,8 @@
 
 ## Terminology:
 
--   **Board**: A board that shows all the lists and tasks created by the user. 
--   **Your personal Task List Organizer** A list inside the board that should have a title showing the goal of that list, and it also contains the tasks/cards. 
+-   **Board:** A board that shows all the lists and tasks created by the user. 
+-   **List:** A list inside the board that should have a title showing the goal of that list, and it also contains the tasks/cards. 
 -   **Task/Card:** A single item in a list on a board, that can be dragged to different lists on that board. It has a title and optionally a description and subtasks
 -   **Tag:** An item you attach to tasks so that you can categorise them.
 
