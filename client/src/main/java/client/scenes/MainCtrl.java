@@ -25,24 +25,36 @@ public class MainCtrl {
     private Stage primaryStage;
 
 //    private QuoteOverviewCtrl overviewCtrl;
-    private Scene overview;
+//    private Scene overview;
 
 //    private AddQuoteCtrl addCtrl;
-    private Scene add;
+//    private Scene add;
 
     private HomeCtrl homeCtrl;
 
     private Scene home;
 
+    private ClientConnectCtrl clientConnectCtrl;
 
-    public void initialize(Stage primaryStage, Pair<HomeCtrl, Parent> home) {
+    private Scene clientConnect;
+
+
+    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect, Pair<HomeCtrl, Parent> home) {
         this.primaryStage = primaryStage;
+        this.clientConnectCtrl = clientConnect.getKey();
+        this.clientConnect = new Scene(clientConnect.getValue());
+
         this.homeCtrl = home.getKey();
         this.home = new Scene(home.getValue());
 
 //        primaryStage.setMaximized(true);
-        primaryStage.setScene(this.home);
+        primaryStage.setScene(this.clientConnect);
         primaryStage.show();
+    }
+
+    public void showHome(){
+        primaryStage.setTitle("Home");
+        primaryStage.setScene(home);
     }
 
 //
