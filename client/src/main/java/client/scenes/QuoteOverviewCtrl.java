@@ -60,7 +60,7 @@ public class QuoteOverviewCtrl implements Initializable {
     }
 
     public void addQuote() {
-        mainCtrl.showAdd();
+//        mainCtrl.showAdd();
     }
 
     public void refresh() {
