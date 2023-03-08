@@ -12,7 +12,7 @@
             <Font size="32"> </Font>
          </font>
       </Text>
-      <Text id="subheading" fill="#929394" layoutX="174.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" />
+      <Text id="subheading" fx:id="subheading" fill="#929394" layoutX="174.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" />
       <Text layoutX="53.0" layoutY="197.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Boards: ">
          <font>
             <Font size="20" />
