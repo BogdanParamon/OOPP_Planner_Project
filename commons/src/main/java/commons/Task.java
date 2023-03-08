@@ -15,5 +15,5 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "listId")
-    private Board list;
+    private TaskList list;
 }
