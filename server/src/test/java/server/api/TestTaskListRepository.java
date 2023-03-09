@@ -1,6 +1,5 @@
 package server.api;
 
-import commons.Quote;
 import commons.TaskList;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
