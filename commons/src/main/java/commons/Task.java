@@ -7,19 +7,19 @@ import java.util.Objects;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long taskId;
-    private String title;
+    public long taskId;
+    public String title;
 
     @ManyToOne
     @JoinColumn(name = "listId")
-    private TaskList list;
+    public TaskList list;
 
     public Task(String title, TaskList list) {
         this.title = title;
         this.list = list;
     }
 
-    public Task() {
+    private Task() {
     }
 
     @Override
@@ -33,29 +33,5 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(taskId, title, list);
-    }
-
-    public long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public TaskList getList() {
-        return list;
-    }
-
-    public void setList(TaskList list) {
-        this.list = list;
     }
 }

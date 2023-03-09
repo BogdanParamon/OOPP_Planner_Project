@@ -9,15 +9,15 @@ import java.util.Set;
 public class TaskList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long listId;
-    private String title;
+    public long listId;
+    public String title;
 
     @ManyToOne
     @JoinColumn(name = "boardId")
-    private Board board;
+    public Board board;
 
     @OneToMany(mappedBy = "list")
-    private Set<Task> tasks;
+    public Set<Task> tasks;
 
     public TaskList(String title, Board board) {
         this.title = title;
@@ -25,7 +25,7 @@ public class TaskList {
         tasks = new HashSet<Task>();
     }
 
-    public TaskList() {
+    private TaskList() {
     }
 
     @Override
@@ -39,38 +39,6 @@ public class TaskList {
     @Override
     public int hashCode() {
         return Objects.hash(listId, title, board, tasks);
-    }
-
-    public long getListId() {
-        return listId;
-    }
-
-    public void setListId(long listId) {
-        this.listId = listId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public Set<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(Set<Task> tasks) {
-        this.tasks = tasks;
     }
 
     public void addTask(Task task){
