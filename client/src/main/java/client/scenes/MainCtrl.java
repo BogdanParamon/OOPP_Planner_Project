@@ -23,39 +23,40 @@ import javafx.util.Pair;
 public class MainCtrl {
 
     private Stage primaryStage;
-
-//    private QuoteOverviewCtrl overviewCtrl;
-//    private Scene overview;
-
-//    private AddQuoteCtrl addCtrl;
-//    private Scene add;
-
     private HomeCtrl homeCtrl;
-
     private Scene home;
-
     private ClientConnectCtrl clientConnectCtrl;
-
     private Scene clientConnect;
+    private BoardCtrl boardCtrl;
+    private Scene board;
 
 
-    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect, Pair<HomeCtrl, Parent> home) {
+    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect, Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board) {
         this.primaryStage = primaryStage;
+
         this.clientConnectCtrl = clientConnect.getKey();
         this.clientConnect = new Scene(clientConnect.getValue());
 
         this.homeCtrl = home.getKey();
         this.home = new Scene(home.getValue());
 
-//        primaryStage.setMaximized(true);
+        this.boardCtrl = board.getKey();
+        this.board = new Scene(board.getValue());
+
         primaryStage.setScene(this.clientConnect);
         primaryStage.show();
     }
 
-    public void showHome(){
+    public void showHome() {
         primaryStage.setTitle("Home");
         primaryStage.setScene(home);
     }
+
+    public void showBoard() {
+        primaryStage.setTitle("Board");
+        primaryStage.setScene(board);
+    }
+
 
 //
 //    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
