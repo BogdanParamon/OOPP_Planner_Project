@@ -1,6 +1,7 @@
 package commons;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -17,6 +18,15 @@ public class TaskList {
 
     @OneToMany(mappedBy = "list")
     private Set<Task> tasks;
+
+    public TaskList(String title, Board board) {
+        this.title = title;
+        this.board = board;
+        tasks = new HashSet<Task>();
+    }
+
+    public TaskList() {
+    }
 
     @Override
     public boolean equals(Object o) {

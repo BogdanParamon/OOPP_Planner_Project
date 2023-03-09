@@ -14,6 +14,14 @@ public class Task {
     @JoinColumn(name = "listId")
     private TaskList list;
 
+    public Task(String title, TaskList list) {
+        this.title = title;
+        this.list = list;
+    }
+
+    public Task() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
