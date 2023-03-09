@@ -1,6 +1,7 @@
 package commons;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -8,11 +9,19 @@ import java.util.Set;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long boardId;
-    private String title;
+    public long boardId;
+    public String title;
 
     @OneToMany(mappedBy = "board")
-    private Set<TaskList> lists;
+    public Set<TaskList> lists;
+
+    public Board(String title) {
+        this.title = title;
+        lists = new HashSet<TaskList>();
+    }
+
+    private Board() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -27,27 +36,7 @@ public class Board {
         return Objects.hash(boardId, title, lists);
     }
 
-    public long getBoardId() {
-        return boardId;
-    }
-
-    public void setBoardId(long boardId) {
-        this.boardId = boardId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Set<TaskList> getLists() {
-        return lists;
-    }
-
-    public void setLists(Set<TaskList> lists) {
-        this.lists = lists;
+    public void addList(TaskList list){
+        lists.add(list);
     }
 }
