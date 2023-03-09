@@ -1,7 +1,11 @@
 package commons;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.Objects;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Task {
@@ -33,5 +37,10 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(taskId, title, list);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 }
