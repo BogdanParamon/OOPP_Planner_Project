@@ -1,6 +1,7 @@
 package commons;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Task {
@@ -12,4 +13,41 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "listId")
     private TaskList list;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return taskId == task.taskId && Objects.equals(title, task.title) && Objects.equals(list, task.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(taskId, title, list);
+    }
+
+    public long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public TaskList getList() {
+        return list;
+    }
+
+    public void setList(TaskList list) {
+        this.list = list;
+    }
 }
