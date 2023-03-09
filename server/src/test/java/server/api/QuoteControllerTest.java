@@ -15,17 +15,16 @@
  */
 package server.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
-import java.util.Random;
-
+import commons.Person;
+import commons.Quote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import commons.Person;
-import commons.Quote;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class QuoteControllerTest {
 
@@ -62,7 +61,7 @@ public class QuoteControllerTest {
     @Test
     public void databaseIsUsed() {
         sut.add(getQuote("q1"));
-        repo.calledMethods.contains("save");
+        assertTrue(repo.calledMethods.contains("save"));
     }
 
     private static Quote getQuote(String q) {
