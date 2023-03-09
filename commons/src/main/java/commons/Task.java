@@ -10,10 +10,6 @@ public class Task {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "boardId")
-    private Board board;
-
-    @ManyToOne
     @JoinColumn(name = "listId")
     private TaskList list;
 }

@@ -12,7 +12,4 @@ public class Board {
 
     @OneToMany(mappedBy = "board")
     private Set<TaskList> lists;
-
-    @OneToMany(mappedBy = "board")
-    private Set<Task> tasks;
 }
