@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="client.scenes.BoardCtrl"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
+   <children>
+      <Pane id="board" layoutX="127.0" layoutY="72.0" prefHeight="313.0" prefWidth="458.0" style="-fx-background-color: grey;">
+         <children>
+            <Pane layoutX="47.0" layoutY="46.0" prefHeight="26.0" prefWidth="125.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+               <children>
+                  <MFXButton layoutX="91.0" layoutY="1.0" style="-fx-background-color: transparent;" text="X">
+                     <font>
+                        <Font size="13" />
+                     </font>
+                  </MFXButton>
+                  <TextField layoutX="10.0" layoutY="1.0" prefHeight="24.0" prefWidth="69.0" style="-fx-background-color: transparent;" text="TODO">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Pane>
+            <Pane layoutX="195.0" layoutY="46.0" prefHeight="26.0" prefWidth="125.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+               <children>
+                  <MFXButton layoutX="91.0" layoutY="1.0" style="-fx-background-color: transparent;" text="X">
+                     <font>
+                        <Font size="13" />
+                     </font>
+                  </MFXButton>
+                  <TextField layoutX="10.0" layoutY="1.0" prefHeight="24.0" prefWidth="69.0" style="-fx-background-color: transparent;" text="DONE">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Pane>
+            <Pane layoutX="47.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px;">
+               <children>
+                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+               </children>
+            </Pane>
+            <Pane layoutX="195.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px;">
+               <children>
+                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+               </children>
+            </Pane>
+         </children></Pane>
+   </children>
 </AnchorPane>
