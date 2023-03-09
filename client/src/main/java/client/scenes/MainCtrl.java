@@ -43,7 +43,7 @@ public class MainCtrl {
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
 
-        primaryStage.setScene(this.clientConnect);
+        primaryStage.setScene(this.board);
         primaryStage.show();
     }
 

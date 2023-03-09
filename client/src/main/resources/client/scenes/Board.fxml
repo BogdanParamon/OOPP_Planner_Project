@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -13,22 +13,63 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
-        <Pane layoutX="11.0" layoutY="276.0" prefHeight="52.0" prefWidth="105.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
+      <Pane id="board" layoutX="127.0" layoutY="72.0" prefHeight="313.0" prefWidth="458.0" style="-fx-background-color: ddd;">
+         <children>
+            <Pane layoutX="47.0" layoutY="46.0" prefHeight="26.0" prefWidth="125.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+               <children>
+                  <MFXButton layoutX="91.0" layoutY="1.0" style="-fx-background-color: transparent;" text="X">
+                     <font>
+                        <Font size="13" />
+                     </font>
+                  </MFXButton>
+                  <TextField layoutX="10.0" layoutY="1.0" prefHeight="24.0" prefWidth="69.0" style="-fx-background-color: transparent;" text="TODO">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Pane>
+            <Pane layoutX="195.0" layoutY="46.0" prefHeight="26.0" prefWidth="125.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+               <children>
+                  <MFXButton layoutX="91.0" layoutY="1.0" style="-fx-background-color: transparent;" text="X">
+                     <font>
+                        <Font size="13" />
+                     </font>
+                  </MFXButton>
+                  <TextField layoutX="10.0" layoutY="1.0" prefHeight="24.0" prefWidth="69.0" style="-fx-background-color: transparent;" text="DONE">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Pane>
+            <Pane layoutX="47.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
+                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+            </Pane>
+            <Pane layoutX="195.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
+                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+            </Pane>
+         </children>
+      </Pane>
+
+      <Pane layoutX="11.0" layoutY="276.0" prefHeight="52.0" prefWidth="105.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
          <children>
             <MFXButton layoutX="31.0" layoutY="4.0" prefHeight="44.0" prefWidth="70.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true" />
             <ImageView fitHeight="24.0" fitWidth="22.0" layoutX="12.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../../../../Downloads/overview_boards.png" />
+<!--                     <Image url="@../../../../../../../Downloads/overview_boards.png" />-->
                </image>
             </ImageView>
-         </children></Pane>
+         </children>
+      </Pane>
       <TextField layoutX="383.0" layoutY="20.0" prefHeight="34.0" prefWidth="192.0" promptText="Search" style="-fx-background-color: ddd;">
          <font>
             <Font size="15.0" />
-         </font></TextField>
-      <Text layoutX="127.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board_1">
+         </font>
+      </TextField>
+      <Text layoutX="127.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board_1">
          <font>
-            <Font name="Roboto" size="24.0" />
+            <Font name="Roboto" size="20.0" />
          </font>
       </Text>
       <Text layoutX="29.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio">
@@ -43,7 +84,7 @@
                   <MFXButton layoutX="22.0" layoutY="24.0" prefHeight="24.0" prefWidth="66.0" style="-fx-background-color: ddd;" text="Add List" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="7.0" layoutY="25.0">
                      <image>
-                        <Image url="@../../../../../../../Downloads/add_list.png" />
+<!--                        <Image url="@../../../../../../../Downloads/add_list.png" />-->
                      </image>
                   </ImageView>
                </children>
@@ -54,7 +95,7 @@
                   <MFXButton layoutX="16.0" layoutY="14.0" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ddd;" text="Add Task" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="5.0" layoutY="16.0">
                      <image>
-                        <Image url="@../../../../../../../Downloads/add_task.png" />
+<!--                        <Image url="@../../../../../../../Downloads/add_task.png" />-->
                      </image>
                   </ImageView>
                </children>
@@ -65,7 +106,7 @@
                   <MFXButton layoutX="15.0" layoutY="15.0" prefHeight="24.0" prefWidth="80.0" style="-fx-background-color: ddd;" text="Add Board" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutY="17.0">
                      <image>
-                        <Image url="@../../../../../../../Downloads/add_board.png" />
+<!--                        <Image url="@../../../../../../../Downloads/add_board.png" />-->
                      </image>
                   </ImageView>
                </children>
@@ -78,7 +119,7 @@
       <MFXButton layoutX="544.0" layoutY="21.0" prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" " />
       <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="544.0" layoutY="27.0">
          <image>
-            <Image url="@../../../../../../../Downloads/search.png" />
+<!--            <Image url="@../../../../../../../Downloads/search.png" />-->
          </image>
       </ImageView>
     </children>
