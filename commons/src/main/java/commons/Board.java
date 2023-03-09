@@ -59,4 +59,8 @@ public class Board {
     public void setLists(Set<TaskList> lists) {
         this.lists = lists;
     }
+
+    public void addList(TaskList list){
+        lists.add(list);
+    }
 }
