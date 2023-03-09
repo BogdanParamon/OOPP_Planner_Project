@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -8,27 +8,27 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.ClientConnectCtrl">
    <children>
-      <Text layoutX="267.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio">
+      <Text layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="600.0">
          <font>
-            <Font size="32.0" />
+            <Font name="Roboto" size="32.0" />
          </font>
       </Text>
-      <Text fill="#929394" layoutX="142.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to your personal task list organiser, Talio!">
+      <Text fill="#929394" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="600.0">
          <font>
-            <Font size="15.0" />
+            <Font name="Roboto" size="15.0" />
          </font>
       </Text>
-      <Text layoutX="157.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!">
+      <Text layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!" textAlignment="CENTER" wrappingWidth="600.0">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <Button layoutX="402.0" layoutY="228.0" mnemonicParsing="false" onAction="#switchSceneToHome" prefHeight="26.0" prefWidth="76.0" text="Connect" />
-      <Text fill="#929394" layoutX="222.0" layoutY="352.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for chosing Talio!">
+      <MFXButton layoutX="404.0" layoutY="226.0" mnemonicParsing="false" onAction="#switchSceneToHome" prefHeight="26.0" prefWidth="76.0" text="Connect" />
+      <Text fill="#929394" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for chosing Talio!" textAlignment="CENTER" wrappingWidth="600.0">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <TextField layoutX="119.0" layoutY="228.0" prefHeight="26.0" prefWidth="260.0" />
+      <TextField layoutX="121.0" layoutY="226.0" prefHeight="26.0" prefWidth="260.0" />
    </children>
 </AnchorPane>
