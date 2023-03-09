@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 @import "home.css";
 @import "clientConnect.css";
 
 * {
-    -fx-font-family: 'Roboto Mono', monospace;
+    -fx-font-family: 'Roboto', monospace;
 }
