@@ -18,11 +18,25 @@ import server.database.TaskRepository;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
+    /**
+     * The repository object that provides database access for Task objects.
+     */
     private final TaskRepository taskRepository;
+
+    /**
+     * Constructor for TaskController.
+     * @param taskRepository The TaskRepository object to be used for database access.
+     */
 
     public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
+
+    /**
+     * Endpoint for adding a new task.
+     * @param task The Task object to be added to the database.
+     * @return ResponseEntity with the status code whether it's success or failure.
+     */
 
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Task> add(@RequestBody Task task) {
@@ -32,10 +46,22 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    /**
+     * Endpoint for retrieving all tasks.
+     * @return List of Task objects retrieved from the database.
+     */
+
+
     @GetMapping(path = { "", "/" })
     public List<Task> getAll() {
         return taskRepository.findAll();
     }
+
+    /**
+     * Endpoint for deleting a task by ID.
+     * @param id The ID of the Task to be deleted.
+     * @return ResponseEntity with the status code whether it's success or failure.
+     */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Task> delete(@PathVariable("id") long id) {
