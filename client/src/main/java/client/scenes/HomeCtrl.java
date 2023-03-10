@@ -47,9 +47,9 @@ public class HomeCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         ObservableList<MFXButton> items = FXCollections.observableArrayList();
-        for (var i : new String[]{"Board 1", "Board 2"}) {
+        for (var i : new String[]{"Board_1", "Board_2"}) {
             MFXButton button = new MFXButton(i);
-            button.setOnAction(event -> switchSceneToBoard());
+            button.setOnAction(event -> switchSceneToBoard(i));
             items.add(button);
         }
         
@@ -77,10 +77,12 @@ public class HomeCtrl implements Initializable {
     }
 
     /**
-     * switch scene to board view
+     * switch scene to board view and provides name for scene
+     * @param name for the specific scene
      */
-    public void switchSceneToBoard() {
+    public void switchSceneToBoard(String name) {
         mainCtrl.showBoard();
+        mainCtrl.getBoard().setBoardName(name);
     }
 
 }
