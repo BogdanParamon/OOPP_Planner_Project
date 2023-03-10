@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class TaskControllerTest {
-    private TaskRepositoryTest trt;
+    private TestTaskRepository trt;
     private TaskController sut;
 
     @BeforeEach
     public void setup(){
-        trt = new TaskRepositoryTest();
+        trt = new TestTaskRepository();
         sut = new TaskController(trt);
     }
 
