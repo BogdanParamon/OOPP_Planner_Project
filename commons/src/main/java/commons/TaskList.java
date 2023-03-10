@@ -1,9 +1,13 @@
 package commons;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class TaskList {
@@ -33,15 +37,20 @@ public class TaskList {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskList taskList = (TaskList) o;
-        return listId == taskList.listId && Objects.equals(title, taskList.title) && Objects.equals(board, taskList.board) && Objects.equals(tasks, taskList.tasks);
+        return listId == taskList.listId && Objects.equals(title, taskList.title) && Objects.equals(board.boardId, taskList.board.boardId) && Objects.equals(tasks, taskList.tasks);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(listId, title, board, tasks);
+        return Objects.hash(listId, title, board.boardId, tasks);
     }
 
     public void addTask(Task task){
         tasks.add(task);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 }

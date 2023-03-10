@@ -1,9 +1,13 @@
 package commons;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Board {
@@ -34,6 +38,11 @@ public class Board {
     @Override
     public int hashCode() {
         return Objects.hash(boardId, title, lists);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
     public void addList(TaskList list){
