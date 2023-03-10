@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.HomeCtrl">
+   <children>
+      <Text layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="600">
+         <font>
+            <Font size="32"> </Font>
+         </font>
+      </Text>
+      <Text id="subheading" fx:id="subheading" fill="#929394" layoutX="174.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" />
+      <Text layoutX="53.0" layoutY="197.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Boards: ">
+         <font>
+            <Font size="20" />
+         </font>
+      </Text>
+      <MFXListView fx:id="boards" layoutX="53.0" layoutY="215.0" prefHeight="138.0" prefWidth="134.0" />
+   </children>
+</AnchorPane>

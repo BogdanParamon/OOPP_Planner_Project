@@ -23,35 +23,78 @@ import javafx.util.Pair;
 public class MainCtrl {
 
     private Stage primaryStage;
+    private HomeCtrl homeCtrl;
+    private Scene home;
+    private ClientConnectCtrl clientConnectCtrl;
+    private Scene clientConnect;
+    private BoardCtrl boardCtrl;
+    private Scene board;
 
-    private QuoteOverviewCtrl overviewCtrl;
-    private Scene overview;
 
-    private AddQuoteCtrl addCtrl;
-    private Scene add;
-
-    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-            Pair<AddQuoteCtrl, Parent> add) {
+    /**
+     * Initialize all controllers and scenes
+     * @param primaryStage main stage for application
+     * @param clientConnect first scene for connecting to a server
+     * @param home home scene for a server
+     * @param board board scene with the lists and tasks
+     */
+    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect,
+                           Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board) {
         this.primaryStage = primaryStage;
-        this.overviewCtrl = overview.getKey();
-        this.overview = new Scene(overview.getValue());
 
-        this.addCtrl = add.getKey();
-        this.add = new Scene(add.getValue());
+        this.clientConnectCtrl = clientConnect.getKey();
+        this.clientConnect = new Scene(clientConnect.getValue());
 
-        showOverview();
+        this.homeCtrl = home.getKey();
+        this.home = new Scene(home.getValue());
+
+        this.boardCtrl = board.getKey();
+        this.board = new Scene(board.getValue());
+
+        primaryStage.setScene(this.clientConnect);
         primaryStage.show();
     }
 
-    public void showOverview() {
-        primaryStage.setTitle("Quotes: Overview");
-        primaryStage.setScene(overview);
-        overviewCtrl.refresh();
+    /**
+     * Change scene to home
+     */
+    public void showHome() {
+        primaryStage.setTitle("Home");
+        primaryStage.setScene(home);
     }
 
-    public void showAdd() {
-        primaryStage.setTitle("Quotes: Adding Quote");
-        primaryStage.setScene(add);
-        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
+    /**
+     * Change scene to board
+     */
+    public void showBoard() {
+        primaryStage.setTitle("Board");
+        primaryStage.setScene(board);
     }
+
+
+//
+//    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
+//            Pair<AddQuoteCtrl, Parent> add) {
+//        this.primaryStage = primaryStage;
+//        this.overviewCtrl = overview.getKey();
+//        this.overview = new Scene(overview.getValue());
+//
+//        this.addCtrl = add.getKey();
+//        this.add = new Scene(add.getValue());
+//
+//        showOverview();
+//        primaryStage.show();
+//    }
+//
+//    public void showOverview() {
+//        primaryStage.setTitle("Quotes: Overview");
+//        primaryStage.setScene(overview);
+//        overviewCtrl.refresh();
+//    }
+//
+//    public void showAdd() {
+//        primaryStage.setTitle("Quotes: Adding Quote");
+//        primaryStage.setScene(add);
+//        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
+//    }
 }
