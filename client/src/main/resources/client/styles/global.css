@@ -13,3 +13,7 @@ MFXButton {
     -fx-font-family: 'Roboto', monospace;
     -fx-text-fill: black;
 }
+
+TextField {
+    -fx-font-family: 'Roboto', monospace;
+}
