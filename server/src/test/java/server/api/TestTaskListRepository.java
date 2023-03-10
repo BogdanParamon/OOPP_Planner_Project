@@ -21,6 +21,7 @@ public class TestTaskListRepository implements TaskListRepository {
     private void call(String name) {
         calledMethods.add(name);
     }
+
     @Override
     public List<TaskList> findAll() {
         calledMethods.add("findAll");

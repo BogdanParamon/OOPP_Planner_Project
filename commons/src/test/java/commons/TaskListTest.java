@@ -41,7 +41,7 @@ public class TaskListTest {
     }
 
     @Test
-    public void checkAddTask(){
+    public void checkAddTask() {
         var board = new Board("a");
         var list = new TaskList("b", board);
         var task = new Task("c", list);

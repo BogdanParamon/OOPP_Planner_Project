@@ -18,7 +18,7 @@ public class TestBoardRepository implements BoardRepository {
 
     public final List<String> calledMethods = new ArrayList<>();
 
-    private void call(String name){
+    private void call(String name) {
         calledMethods.add(name);
     }
 
