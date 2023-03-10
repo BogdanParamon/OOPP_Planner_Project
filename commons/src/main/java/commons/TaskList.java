@@ -37,12 +37,12 @@ public class TaskList {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskList taskList = (TaskList) o;
-        return listId == taskList.listId && Objects.equals(title, taskList.title) && Objects.equals(board, taskList.board) && Objects.equals(tasks, taskList.tasks);
+        return listId == taskList.listId && Objects.equals(title, taskList.title) && Objects.equals(board.boardId, taskList.board.boardId) && Objects.equals(tasks, taskList.tasks);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(listId, title, board, tasks);
+        return Objects.hash(listId, title, board.boardId, tasks);
     }
 
     public void addTask(Task task){

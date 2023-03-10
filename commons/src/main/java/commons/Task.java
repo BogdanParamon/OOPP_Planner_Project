@@ -31,12 +31,12 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(title, task.title) && Objects.equals(list, task.list);
+        return taskId == task.taskId && Objects.equals(title, task.title) && Objects.equals(list.listId, task.list.listId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title, list);
+        return Objects.hash(taskId, title, list.listId);
     }
 
     @Override
