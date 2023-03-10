@@ -211,7 +211,8 @@
 //    }
 //
 //    @Override
-//    public <S extends Quote, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+//    public <S extends Quote, R> R findBy(Example<S> example,
+//    Function<FetchableFluentQuery<S>, R> queryFunction) {
 //        // TODO Auto-generated method stub
 //        return null;
 //    }
