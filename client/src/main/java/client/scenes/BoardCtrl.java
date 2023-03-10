@@ -53,7 +53,7 @@ public class BoardCtrl implements Initializable {
      * Sets the right board name to each board
      * @param name the name of the specific board
      */
-    public void setBoardName(String name){
+    public void setBoardName(String name) {
         boardName.setText(name);
     }
 }

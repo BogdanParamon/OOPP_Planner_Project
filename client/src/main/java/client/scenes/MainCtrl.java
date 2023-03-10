@@ -75,7 +75,7 @@ public class MainCtrl {
      * Getter for the board
      * @return boardCtrl
      */
-    public BoardCtrl getBoard(){
+    public BoardCtrl getBoard() {
         return boardCtrl;
     }
 
