@@ -71,6 +71,14 @@ public class MainCtrl {
         primaryStage.setScene(board);
     }
 
+    /**
+     * Getter for the board
+     * @return boardCtrl
+     */
+    public BoardCtrl getBoard(){
+        return boardCtrl;
+    }
+
 
 //
 //    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
