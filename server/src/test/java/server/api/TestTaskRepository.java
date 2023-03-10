@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class TaskRepositoryTest implements TaskRepository {
+public class TestTaskRepository implements TaskRepository {
 
     public final List<Task> quotes = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
