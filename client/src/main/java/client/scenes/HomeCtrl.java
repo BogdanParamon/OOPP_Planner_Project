@@ -77,7 +77,8 @@ public class HomeCtrl implements Initializable {
     }
 
     /**
-     * switch scene to board view
+     * switch scene to board view and provides name for scene
+     * @param name for the specific scene
      */
     public void switchSceneToBoard(String name) {
         mainCtrl.showBoard();
