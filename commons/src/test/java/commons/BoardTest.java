@@ -38,7 +38,7 @@ public class BoardTest {
     }
 
     @Test
-    public void checkAddList(){
+    public void checkAddList() {
         var board = new Board("a");
         var list = new TaskList("b", board);
         board.addList(list);
