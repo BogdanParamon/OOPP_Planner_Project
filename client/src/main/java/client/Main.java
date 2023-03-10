@@ -36,15 +36,30 @@ public class Main extends Application {
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+    /**
+     * Main method
+     * @param args arguments
+     * @throws URISyntaxException error
+     * @throws IOException IO exception
+     */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
     }
 
+    /**
+     * start the application
+     * @param primaryStage the primary stage for this application, onto which
+     *                     the application scene can be set.
+     *                     Applications may create other stages, if needed, but they will not be
+     *                     primary stages.
+     * @throws IOException error
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
 
         var home = FXML.load(HomeCtrl.class, "client", "scenes", "Home.fxml");
-        var clientConnect = FXML.load(ClientConnectCtrl.class, "client", "scenes","ClientConnect.fxml");
+        var clientConnect =
+                FXML.load(ClientConnectCtrl.class, "client", "scenes","ClientConnect.fxml");
         var board = FXML.load(BoardCtrl.class, "client", "scenes", "Board.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);

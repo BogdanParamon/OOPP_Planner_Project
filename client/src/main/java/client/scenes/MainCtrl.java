@@ -31,7 +31,15 @@ public class MainCtrl {
     private Scene board;
 
 
-    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect, Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board) {
+    /**
+     * Initialize all controllers and scenes
+     * @param primaryStage main stage for application
+     * @param clientConnect first scene for connecting to a server
+     * @param home home scene for a server
+     * @param board board scene with the lists and tasks
+     */
+    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect,
+                           Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board) {
         this.primaryStage = primaryStage;
 
         this.clientConnectCtrl = clientConnect.getKey();
@@ -43,15 +51,21 @@ public class MainCtrl {
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
 
-        primaryStage.setScene(this.board);
+        primaryStage.setScene(this.clientConnect);
         primaryStage.show();
     }
 
+    /**
+     * Change scene to home
+     */
     public void showHome() {
         primaryStage.setTitle("Home");
         primaryStage.setScene(home);
     }
 
+    /**
+     * Change scene to board
+     */
     public void showBoard() {
         primaryStage.setTitle("Board");
         primaryStage.setScene(board);
