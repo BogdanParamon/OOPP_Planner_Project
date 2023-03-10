@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import io.github.palexdev.materialfx.controls.MFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -11,6 +10,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+
+<?import client.scenes.Card?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
@@ -45,10 +46,14 @@
                </children>
             </Pane>
             <Pane layoutX="47.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
-                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+               <children>
+                  <VBox fx:id="list1" layoutX="5.0" layoutY="11.0" prefHeight="182.0" prefWidth="115.0"/>
+               </children>
             </Pane>
             <Pane layoutX="195.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
-                  <MFXListView depthLevel="LEVEL0" layoutX="10.0" layoutY="14.0" prefHeight="179.0" prefWidth="106.0" />
+               <children>
+                  <VBox layoutX="5.0" layoutY="14.0" prefHeight="182.0" prefWidth="115.0" />
+               </children>
             </Pane>
          </children>
       </Pane>
