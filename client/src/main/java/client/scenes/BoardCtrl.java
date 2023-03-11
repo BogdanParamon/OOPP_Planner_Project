@@ -39,7 +39,7 @@ public class BoardCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
-        list1.getChildren().add(new Card());
+        list1.getChildren().add(new Task());
     }
 
     /**
