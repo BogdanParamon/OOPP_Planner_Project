@@ -30,7 +30,7 @@ public class ClientConnectCtrl {
      * connects to entered server
      */
     public void connect() {
-        server.setSERVER(serverPath.getText());
+        ServerUtils.setSERVER(serverPath.getText());
         switchSceneToHome();
     }
 

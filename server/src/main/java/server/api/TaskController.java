@@ -1,19 +1,11 @@
 package server.api;
 
-import java.util.List;
-
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-
 import commons.Task;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import server.database.TaskRepository;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -40,10 +32,13 @@ public class TaskController {
 
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Task> add(@RequestBody Task task) {
+        System.out.println(task);
         if (task == null || task.title == null || task.list == null || task.title.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(task);
+        System.out.println(task);
+        Task saved = taskRepository.save(task);
+        return ResponseEntity.ok(saved);
     }
 
     /**

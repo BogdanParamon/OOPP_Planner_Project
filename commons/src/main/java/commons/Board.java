@@ -14,6 +14,7 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
+
     public String title;
 
     @OneToMany(mappedBy = "board")

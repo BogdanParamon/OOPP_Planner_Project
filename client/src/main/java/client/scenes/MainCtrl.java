@@ -79,6 +79,11 @@ public class MainCtrl {
         primaryStage.setScene(board);
     }
 
+    public void showAddTask() {
+        primaryStage.setTitle("Add Task");
+        primaryStage.setScene(addTask);
+    }
+
 
 //
 //    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,

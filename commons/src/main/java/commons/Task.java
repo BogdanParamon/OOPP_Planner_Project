@@ -15,7 +15,7 @@ public class Task {
     public String title;
 
     @ManyToOne
-    @JoinColumn(name = "listId")
+    @JoinColumn(name = "LIST_ID")
     public TaskList list;
 
     /**

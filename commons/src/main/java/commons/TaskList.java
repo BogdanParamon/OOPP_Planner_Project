@@ -17,7 +17,7 @@ public class TaskList {
     public String title;
 
     @ManyToOne
-    @JoinColumn(name = "boardId")
+    @JoinColumn(name = "BOARD_ID")
     public Board board;
 
     @OneToMany(mappedBy = "list")

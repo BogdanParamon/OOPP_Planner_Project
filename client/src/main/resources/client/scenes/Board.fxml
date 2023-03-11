@@ -11,9 +11,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import client.scenes.Task?>
+<!--<?import client.scenes.Task?>-->
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
       <Pane id="board" layoutX="127.0" layoutY="72.0" prefHeight="313.0" prefWidth="458.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
          <children>
@@ -47,7 +47,7 @@
             </Pane>
             <Pane layoutX="47.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
                <children>
-                  <VBox fx:id="list1" layoutX="5.0" layoutY="11.0" prefHeight="182.0" prefWidth="115.0"/>
+                  <VBox fx:id="list1" layoutX="5.0" layoutY="11.0" prefHeight="182.0" prefWidth="115.0" />
                </children>
             </Pane>
             <Pane layoutX="195.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
@@ -63,7 +63,7 @@
             <MFXButton layoutX="31.0" layoutY="4.0" prefHeight="44.0" prefWidth="70.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true" />
             <ImageView fitHeight="24.0" fitWidth="22.0" layoutX="12.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                     <Image url="@../images/overview_boards.png" />
+                     <Image url="@/client/images/overview_boards.png" />
                </image>
             </ImageView>
          </children>
@@ -90,7 +90,7 @@
                   <MFXButton layoutX="22.0" layoutY="24.0" prefHeight="24.0" prefWidth="66.0" style="-fx-background-color: ddd;" text="Add List" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="7.0" layoutY="25.0">
                      <image>
-                        <Image url="@../images/add_list.png" />
+                        <Image url="@/client/images/add_list.png" />
                      </image>
                   </ImageView>
                </children>
@@ -98,10 +98,10 @@
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="_____" textAlignment="CENTER" wrappingWidth="85.0" />
             <Pane prefHeight="42.0" prefWidth="85.0">
                <children>
-                  <MFXButton layoutX="16.0" layoutY="14.0" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ddd;" text="Add Task" />
+                  <MFXButton layoutX="16.0" layoutY="14.0" onAction="#switchToAddTask" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ddd;" text="Add Task" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="5.0" layoutY="16.0">
                      <image>
-                        <Image url="@../images/add_task.png" />
+                        <Image url="@/client/images/add_task.png" />
                      </image>
                   </ImageView>
                </children>
@@ -112,7 +112,7 @@
                   <MFXButton layoutX="15.0" layoutY="15.0" prefHeight="24.0" prefWidth="80.0" style="-fx-background-color: ddd;" text="Add Board" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutY="17.0">
                      <image>
-                        <Image url="@../images/add_board.png" />
+                        <Image url="@/client/images/add_board.png" />
                      </image>
                   </ImageView>
                </children>

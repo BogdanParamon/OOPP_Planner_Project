@@ -16,6 +16,7 @@
 package client.utils;
 
 import commons.Quote;
+import commons.Task;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -33,8 +34,13 @@ public class ServerUtils {
 
     private static String SERVER;
 
+    public static void setSERVER(String SERVER) {
+        ServerUtils.SERVER = SERVER;
+    }
+
     /**
      * get quotes
+     *
      * @throws IOException exception
      */
     public void getQuotesTheHardWay() throws IOException {
@@ -55,7 +61,8 @@ public class ServerUtils {
                 .target(SERVER).path("api/quotes") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Quote>>() { });
+                .get(new GenericType<List<Quote>>() {
+                });
     }
 
     /**
@@ -70,7 +77,11 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
-    public static void setSERVER(String SERVER) {
-        ServerUtils.SERVER = SERVER;
+    public Task addTask(Task task) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(task, APPLICATION_JSON), Task.class);
     }
 }
