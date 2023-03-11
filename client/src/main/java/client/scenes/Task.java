@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
-public class Card extends Pane {
+public class Task extends Pane {
     @FXML private Text title;
 
     private String text = "";
@@ -15,10 +15,10 @@ public class Card extends Pane {
     /**
      * New component Card
      */
-    public Card() {
+    public Task() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
         loader.setRoot(this);
-        loader.setController(Card.this);
+        loader.setController(Task.this);
 
         try {
             loader.load();

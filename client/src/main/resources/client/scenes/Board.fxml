@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import client.scenes.Card?>
+<?import client.scenes.Task?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
@@ -125,7 +125,7 @@
       <MFXButton layoutX="544.0" layoutY="21.0" prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" " />
       <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="544.0" layoutY="27.0">
          <image>
-            <Image url="@../images/search.png" />
+            <Image url="@/client/images/search.png" />
          </image>
       </ImageView>
     </children>
