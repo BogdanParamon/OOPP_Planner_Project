@@ -47,7 +47,7 @@
             </Pane>
             <Pane layoutX="47.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
                <children>
-                  <VBox fx:id="list1" layoutX="5.0" layoutY="11.0" prefHeight="182.0" prefWidth="115.0"/>
+                  <VBox fx:id="list1" layoutX="5.0" layoutY="11.0" prefHeight="182.0" prefWidth="115.0" />
                </children>
             </Pane>
             <Pane layoutX="195.0" layoutY="88.0" prefHeight="197.0" prefWidth="125.0" style="-fx-background-radius: 10px; -fx-background-color: white">
@@ -60,7 +60,7 @@
 
       <Pane layoutX="11.0" layoutY="276.0" prefHeight="52.0" prefWidth="105.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
          <children>
-            <MFXButton layoutX="31.0" layoutY="4.0" prefHeight="44.0" prefWidth="70.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true" />
+            <MFXButton layoutX="31.0" layoutY="4.0" onAction="#switchToHomeScene" prefHeight="44.0" prefWidth="70.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true" />
             <ImageView fitHeight="24.0" fitWidth="22.0" layoutX="12.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
                <image>
                      <Image url="@../images/overview_boards.png" />
@@ -73,7 +73,7 @@
             <Font size="15.0" />
          </font>
       </TextField>
-      <Text layoutX="127.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board_1">
+      <Text layoutX="127.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" fx:id="boardName">
          <font>
             <Font name="Roboto" size="20.0" />
          </font>
