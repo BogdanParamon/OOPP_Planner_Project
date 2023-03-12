@@ -56,4 +56,11 @@ public class BoardCtrl implements Initializable {
     public void setBoardName(String name) {
         boardName.setText(name);
     }
+
+    /**
+     * Uses showDetailedTask method to switch scenes to Detailed Task scene
+     */
+    public void showDetailedTask() {
+        mainCtrl.showDetailedTask();
+    }
 }
