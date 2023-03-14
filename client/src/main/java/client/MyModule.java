@@ -33,5 +33,7 @@ public class MyModule implements Module {
         binder.bind(ClientConnectCtrl.class).in(Scopes.SINGLETON);
         binder.bind(HomeCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(AddTaskCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(DetailedTaskCtrl.class).in(Scopes.SINGLETON);
     }
 }

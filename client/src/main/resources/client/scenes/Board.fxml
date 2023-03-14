@@ -73,7 +73,7 @@
             <Font size="15.0" />
          </font>
       </TextField>
-      <Text layoutX="127.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" fx:id="boardName">
+      <Text fx:id="boardName" layoutX="127.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0">
          <font>
             <Font name="Roboto" size="20.0" />
          </font>
@@ -98,7 +98,7 @@
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="_____" textAlignment="CENTER" wrappingWidth="85.0" />
             <Pane prefHeight="42.0" prefWidth="85.0">
                <children>
-                  <MFXButton layoutX="16.0" layoutY="14.0" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ddd;" text="Add Task" />
+                  <MFXButton layoutX="16.0" layoutY="14.0" onAction="#showDetailedTask" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ddd;" text="Add Task" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="5.0" layoutY="16.0">
                      <image>
                         <Image url="@../images/add_task.png" />

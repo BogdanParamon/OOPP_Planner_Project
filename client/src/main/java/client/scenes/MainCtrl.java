@@ -32,6 +32,9 @@ public class MainCtrl {
     private AddTaskCtrl addTaskCtrl;
     private Scene addTask;
 
+    private DetailedTaskCtrl detailedTaskCtrl;
+    private Scene detailedTask;
+
 
     /**
      * Initialize all controllers and scenes
@@ -41,10 +44,14 @@ public class MainCtrl {
      * @param home          home scene for a server
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
+     * @param detailedTask  allows user to see details of a task
      */
-    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect,
-                           Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board,
-                           Pair<AddTaskCtrl, Parent> addTask) {
+    public void initialize(Stage primaryStage,
+                           Pair<ClientConnectCtrl, Parent> clientConnect,
+                           Pair<HomeCtrl, Parent> home,
+                           Pair<BoardCtrl, Parent> board,
+                           Pair<AddTaskCtrl, Parent> addTask,
+                           Pair<DetailedTaskCtrl, Parent> detailedTask) {
         this.primaryStage = primaryStage;
 
         this.clientConnectCtrl = clientConnect.getKey();
@@ -58,6 +65,9 @@ public class MainCtrl {
 
         this.addTaskCtrl = addTask.getKey();
         this.addTask = new Scene(addTask.getValue());
+
+        this.detailedTaskCtrl = detailedTask.getKey();
+        this.detailedTask = new Scene(detailedTask.getValue());
 
         primaryStage.setScene(this.clientConnect);
         primaryStage.show();
@@ -85,6 +95,11 @@ public class MainCtrl {
      */
     public BoardCtrl getBoard() {
         return boardCtrl;
+    }
+
+    public void showDetailedTask() {
+        primaryStage.setTitle("Task Details");
+        primaryStage.setScene(detailedTask);
     }
 
 
