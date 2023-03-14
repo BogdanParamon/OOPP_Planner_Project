@@ -30,8 +30,8 @@ public class MyModule implements Module {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
 //        binder.bind(AddQuoteCtrl.class).in(Scopes.SINGLETON);
 //        binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(ClientConnectCtrl.class).in(Scopes.SINGLETON);
         binder.bind(HomeCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(BoardOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AddTaskCtrl.class).in(Scopes.SINGLETON);
         binder.bind(DetailedTaskCtrl.class).in(Scopes.SINGLETON);

@@ -23,10 +23,10 @@ import javafx.util.Pair;
 public class MainCtrl {
 
     private Stage primaryStage;
+    private BoardOverviewCtrl boardOverviewCtrl;
+    private Scene boardOverview;
     private HomeCtrl homeCtrl;
     private Scene home;
-    private ClientConnectCtrl clientConnectCtrl;
-    private Scene clientConnect;
     private BoardCtrl boardCtrl;
     private Scene board;
     private AddTaskCtrl addTaskCtrl;
@@ -47,18 +47,18 @@ public class MainCtrl {
      * @param detailedTask  allows user to see details of a task
      */
     public void initialize(Stage primaryStage,
-                           Pair<ClientConnectCtrl, Parent> clientConnect,
-                           Pair<HomeCtrl, Parent> home,
+                           Pair<HomeCtrl, Parent> clientConnect,
+                           Pair<BoardOverviewCtrl, Parent> home,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
                            Pair<DetailedTaskCtrl, Parent> detailedTask) {
         this.primaryStage = primaryStage;
 
-        this.clientConnectCtrl = clientConnect.getKey();
-        this.clientConnect = new Scene(clientConnect.getValue());
+        this.homeCtrl = clientConnect.getKey();
+        this.home = new Scene(clientConnect.getValue());
 
-        this.homeCtrl = home.getKey();
-        this.home = new Scene(home.getValue());
+        this.boardOverviewCtrl = home.getKey();
+        this.boardOverview = new Scene(home.getValue());
 
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
@@ -69,7 +69,7 @@ public class MainCtrl {
         this.detailedTaskCtrl = detailedTask.getKey();
         this.detailedTask = new Scene(detailedTask.getValue());
 
-        primaryStage.setScene(this.clientConnect);
+        primaryStage.setScene(this.board);
         primaryStage.show();
     }
 
@@ -78,7 +78,7 @@ public class MainCtrl {
      */
     public void showHome() {
         primaryStage.setTitle("Home");
-        primaryStage.setScene(home);
+        primaryStage.setScene(boardOverview);
     }
 
     /**
