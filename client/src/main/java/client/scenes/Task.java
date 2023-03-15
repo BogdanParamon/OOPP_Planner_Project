@@ -16,7 +16,7 @@ public class Task extends Pane {
      * New component Card
      */
     public Task() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Components/Task.fxml"));
         loader.setRoot(this);
         loader.setController(Task.this);
 
