@@ -4,14 +4,13 @@
 @import "clientConnect.css";
 @import "board.css";
 
-* {
-    -fx-font-family: 'Roboto', monospace;
-    /*-fx-background-color: white;*/
-}
 
 MFXButton {
-    -fx-font-family: 'Roboto', monospace;
     -fx-text-fill: black;
+}
+
+Text{
+    -fx-font-family: 'Roboto', monospace;
 }
 
 TextField {

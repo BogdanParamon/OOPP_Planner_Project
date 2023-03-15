@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -21,6 +22,8 @@ public class BoardCtrl implements Initializable {
 
     @FXML private VBox list1;
 
+    @FXML private MFXButton button;
+
     /**
      * Setup server and main controller
      * @param server server to connect to
@@ -39,7 +42,6 @@ public class BoardCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
-        list1.getChildren().add(new Task());
     }
 
     /**

@@ -2,13 +2,14 @@ package client.scenes;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.text.Text;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 
 public class Task extends Pane {
-    @FXML private Text title;
+    @FXML
+    private Text title;
 
     private String text = "";
 
@@ -16,7 +17,8 @@ public class Task extends Pane {
      * New component Card
      */
     public Task() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+        FXMLLoader loader =
+                new FXMLLoader(getClass().getResource("/client/scenes/Components/Task.fxml"));
         loader.setRoot(this);
         loader.setController(Task.this);
 
