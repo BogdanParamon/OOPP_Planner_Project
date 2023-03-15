@@ -75,7 +75,10 @@ public class TestTaskListRepository implements TaskListRepository {
 
     @Override
     public <S extends TaskList> S save(S entity) {
-        return null;
+        call("save");
+        entity.listId = (long) taskLists.size();
+        taskLists.add(entity);
+        return entity;
     }
 
     @Override

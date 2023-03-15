@@ -17,8 +17,8 @@ public class Board {
 
     public String title;
 
-    @OneToMany(mappedBy = "board")
-    public Set<TaskList> lists;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    public Set<TaskList> lists = new HashSet<>();
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
@@ -27,7 +27,6 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
-        lists = new HashSet<>();
     }
 
     @SuppressWarnings("unused")

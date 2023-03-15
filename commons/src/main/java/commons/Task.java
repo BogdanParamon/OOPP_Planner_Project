@@ -12,6 +12,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long taskId;
+
     public String title;
 
     @ManyToOne
@@ -22,7 +23,7 @@ public class Task {
      * Creates a new Task object with the given title and list.
      *
      * @param title The title to be given to the Task
-     * @param list The TaskList in which this Task will be
+     * @param list  The TaskList in which this Task will be
      */
     public Task(String title, TaskList list) {
         this.title = title;

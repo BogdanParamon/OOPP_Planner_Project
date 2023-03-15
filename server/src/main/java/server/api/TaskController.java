@@ -17,6 +17,7 @@ public class TaskController {
 
     /**
      * Constructor for TaskController.
+     *
      * @param taskRepository The TaskRepository object to be used for database access.
      */
 
@@ -26,13 +27,13 @@ public class TaskController {
 
     /**
      * Endpoint for adding a new task.
+     *
      * @param task The Task object to be added to the database.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
 
-    @PostMapping(path = { "", "/" })
+    @PostMapping(path = {"", "/"})
     public ResponseEntity<Task> add(@RequestBody Task task) {
-        System.out.println(task);
         if (task == null || task.title == null || task.list == null || task.title.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
@@ -43,17 +44,19 @@ public class TaskController {
 
     /**
      * Endpoint for retrieving all tasks.
+     *
      * @return List of Task objects retrieved from the database.
      */
 
 
-    @GetMapping(path = { "", "/" })
+    @GetMapping(path = {"", "/"})
     public List<Task> getAll() {
         return taskRepository.findAll();
     }
 
     /**
      * Endpoint for deleting a task by ID.
+     *
      * @param id The ID of the Task to be deleted.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
