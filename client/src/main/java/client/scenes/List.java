@@ -1,7 +1,6 @@
 package client.scenes;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -20,7 +19,8 @@ public class List extends Pane {
 
 
     public List() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
+        FXMLLoader loader =
+                new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
         loader.setRoot(this);
         loader.setController(this);
 
