@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.Board;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -28,6 +29,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private MFXListView<MFXButton> boards;
 
+    @FXML
+    private MFXTextField boardTitle;
     @FXML
     private Text subheading;
 
@@ -107,7 +110,11 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public Board getBoard() {
-        return new Board("test");
+        return new Board(boardTitle.getText());
+    }
+
+    public void switchSceneToHome() {
+        mainCtrl.showHome();
     }
 
 }
