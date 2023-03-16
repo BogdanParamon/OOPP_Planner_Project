@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -14,14 +15,16 @@ public class TaskList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long listId;
+
     public String title;
 
-    @ManyToOne
-    @JoinColumn(name = "boardId")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "BOARD_ID")
     public Board board;
 
-    @OneToMany(mappedBy = "list")
-    public Set<Task> tasks;
+    @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+    @JsonIgnore
+    public Set<Task> tasks = new HashSet<>();
 
     /**
      * Creates a new TaskList object with the given title, board and an empty set of Tasks.
@@ -32,12 +35,20 @@ public class TaskList {
     public TaskList(String title, Board board) {
         this.title = title;
         this.board = board;
-        tasks = new HashSet<>();
     }
 
     @SuppressWarnings("unused")
     private TaskList() {
         // For object mapper
+    }
+
+    /**
+     * Adds a Task to the set of all Tasks in this TaskList.
+     *
+     * @param task The Task to be added to this TaskList
+     */
+    public void addTask(Task task) {
+        tasks.add(task);
     }
 
     /**
@@ -67,15 +78,6 @@ public class TaskList {
     @Override
     public int hashCode() {
         return Objects.hash(listId, title, board.boardId, tasks);
-    }
-
-    /**
-     * Adds a Task to the set of all Tasks in this TaskList.
-     *
-     * @param task The Task to be added to this TaskList
-     */
-    public void addTask(Task task) {
-        tasks.add(task);
     }
 
     /**

@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -14,10 +15,12 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
+
     public String title;
 
-    @OneToMany(mappedBy = "board")
-    public Set<TaskList> lists;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @JsonIgnore
+    public Set<TaskList> lists = new HashSet<>();
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
@@ -26,7 +29,6 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
-        lists = new HashSet<>();
     }
 
     @SuppressWarnings("unused")

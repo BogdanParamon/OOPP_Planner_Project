@@ -47,7 +47,7 @@ public class HomeCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         ObservableList<MFXButton> items = FXCollections.observableArrayList();
-        for (var i : new String[]{"Board 1", "Board 2"}) {
+        for (var i : new String[]{"Board 1"}) {
             MFXButton button = new MFXButton(i);
             button.setOnAction(event -> switchSceneToBoard());
             items.add(button);

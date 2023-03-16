@@ -7,25 +7,27 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
-public class Card extends Pane {
+public class Task extends Pane {
+
     @FXML private Text title;
 
     private String text = "";
 
     /**
+     * @param title title of the task
      * New component Card
      */
-    public Card() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+    public Task(String title) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
         loader.setRoot(this);
-        loader.setController(Card.this);
-
+        loader.setController(Task.this);
         try {
             loader.load();
         } catch (IOException e) {
             System.out.println("Error");
             throw new RuntimeException(e);
         }
+        this.title.setText(title);
     }
 
 

@@ -15,12 +15,8 @@
 // */
 //package client.scenes;
 //
-//import java.net.URL;
-//import java.util.ResourceBundle;
-//
-//import com.google.inject.Inject;
-//
 //import client.utils.ServerUtils;
+//import com.google.inject.Inject;
 //import commons.Quote;
 //import javafx.beans.property.SimpleStringProperty;
 //import javafx.collections.FXCollections;
@@ -29,6 +25,9 @@
 //import javafx.fxml.Initializable;
 //import javafx.scene.control.TableColumn;
 //import javafx.scene.control.TableView;
+//
+//import java.net.URL;
+//import java.util.ResourceBundle;
 //
 //public class QuoteOverviewCtrl implements Initializable {
 //
@@ -54,11 +53,12 @@
 //
 //    @Override
 //    public void initialize(URL location, ResourceBundle resources) {
-//        colFirstName.
-//        (q -> new SimpleStringProperty(q.getValue().person.firstName));
-//        colLastName.setCellValueFactory
-//        (q -> new SimpleStringProperty(q.getValue().person.lastName));
-//        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+//        colFirstName
+//               .setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
+//        colLastName
+//                .setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
+//        colQuote
+//                .setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
 //    }
 //
 //    public void addQuote() {
