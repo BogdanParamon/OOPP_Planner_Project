@@ -40,7 +40,7 @@ public class BoardTest {
     @Test
     public void checkAddList() {
         var board = new Board("a");
-        var list = new TaskList("b", board);
+        var list = new TaskList("b");
         board.addList(list);
         assertTrue(board.lists.contains(list));
     }

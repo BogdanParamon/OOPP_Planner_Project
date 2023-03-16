@@ -35,8 +35,6 @@ public class TaskControllerTest {
     }
 
     private static Task getUntitledTask() {
-        Board board = new Board("sd");
-        TaskList list = new TaskList("sddd");
         return new Task("");
     }
 

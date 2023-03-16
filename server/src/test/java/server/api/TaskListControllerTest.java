@@ -32,7 +32,7 @@ class TaskListControllerTest {
 //    }
 
     private static TaskList getTaskList(String s) {
-        return new TaskList(s, new Board(s));
+        return new TaskList(s);
     }
 
 }
