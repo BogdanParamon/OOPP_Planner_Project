@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TaskListTest {
-    //private static final Board SOME_BOARD = new Board("BoardTitle");
 
     @Test
     public void checkConstructor() {
