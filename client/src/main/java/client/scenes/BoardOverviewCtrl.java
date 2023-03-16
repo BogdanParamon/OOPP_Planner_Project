@@ -56,9 +56,15 @@ public class BoardOverviewCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
+    }
+
+
+    public void load() {
         ObservableList<MFXButton> items = FXCollections.observableArrayList();
-        for (var i : new String[]{"Board 1"}) {
-            MFXButton button = new MFXButton(i);
+        var boardEntities = server.getBoards();
+
+        for (var i : boardEntities) {
+            MFXButton button = new MFXButton(i.title);
             button.setOnAction(event -> switchSceneToBoard(i));
             items.add(button);
         }
@@ -66,6 +72,7 @@ public class BoardOverviewCtrl implements Initializable {
         boards.setItems(items);
         subheadingAnimation();
     }
+
 
     /**
      * A typing animation for the tagline
@@ -86,14 +93,10 @@ public class BoardOverviewCtrl implements Initializable {
         timeline.play();
     }
 
-    /**
-     * switch scene to board view and provides name for scene
-     *
-     * @param name for the specific scene
-     */
-    public void switchSceneToBoard(String name) {
+
+    public void switchSceneToBoard(Board board) {
         mainCtrl.showBoard();
-        mainCtrl.getBoard().setBoardName(name);
+        mainCtrl.getBoard().setBoard(board);
     }
 
     public void addBoard() {
@@ -106,7 +109,7 @@ public class BoardOverviewCtrl implements Initializable {
             alert.showAndWait();
             return;
         }
-        switchSceneToBoard(getBoard().title);
+        switchSceneToBoard(getBoard());
     }
 
     public Board getBoard() {

@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
@@ -16,6 +17,8 @@ public class BoardCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private Board board;
 
 
     /**
@@ -50,13 +53,9 @@ public class BoardCtrl implements Initializable {
         mainCtrl.showBoardOverview();
     }
 
-    /**
-     * Sets the right board name to each board
-     *
-     * @param name the name of the specific board
-     */
-    public void setBoardName(String name) {
-        boardName.setText(name);
+    public void setBoard(Board board) {
+        this.board = board;
+        boardName.setText(board.title);
     }
 
     /**

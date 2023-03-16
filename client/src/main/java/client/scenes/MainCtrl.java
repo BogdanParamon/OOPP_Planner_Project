@@ -73,7 +73,8 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    /**board
+    /**
+     * board
      * Change scene to home
      */
     public void showHome() {
@@ -87,6 +88,7 @@ public class MainCtrl {
     public void showBoardOverview() {
         primaryStage.setTitle("Board Overview");
         primaryStage.setScene(boardOverview);
+        boardOverviewCtrl.load();
     }
 
     /**
@@ -104,6 +106,7 @@ public class MainCtrl {
 
     /**
      * Getter for the board
+     *
      * @return boardCtrl
      */
     public BoardCtrl getBoard() {
@@ -114,31 +117,4 @@ public class MainCtrl {
         primaryStage.setTitle("Task Details");
         primaryStage.setScene(detailedTask);
     }
-
-
-//
-//    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-//            Pair<AddQuoteCtrl, Parent> add) {
-//        this.primaryStage = primaryStage;
-//        this.overviewCtrl = overview.getKey();
-//        this.overview = new Scene(overview.getValue());
-//
-//        this.addCtrl = add.getKey();
-//        this.add = new Scene(add.getValue());
-//
-//        showOverview();
-//        primaryStage.show();
-//    }
-//
-//    public void showOverview() {
-//        primaryStage.setTitle("Quotes: Overview");
-//        primaryStage.setScene(overview);
-//        overviewCtrl.refresh();
-//    }
-//
-//    public void showAdd() {
-//        primaryStage.setTitle("Quotes: Adding Quote");
-//        primaryStage.setScene(add);
-//        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
-//    }
 }
