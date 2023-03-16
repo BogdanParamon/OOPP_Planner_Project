@@ -2,16 +2,20 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+
+import static javafx.util.Duration.millis;
 
 public class HomeCtrl {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
-    @FXML
-    private TextField serverPath;
+    @FXML private MFXTextField serverPath;
+    @FXML private Text errorMsg;
 
 
     /**
@@ -24,6 +28,7 @@ public class HomeCtrl {
     public HomeCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
     }
 
     /**
@@ -31,8 +36,25 @@ public class HomeCtrl {
      */
     public void connect() {
         ServerUtils.setSERVER(serverPath.getText());
-        switchSceneToBoardOverview();
+        if (server.validServer()) {
+            switchSceneToBoardOverview();
+            mainCtrl.home.getStylesheets().remove("/client/styles/inputerror.css");
+            errorMsg.setVisible(false);
+        }
+        else {
+            mainCtrl.home.getStylesheets().add("/client/styles/inputerror.css");
+            errorMsg.setVisible(true);
 
+            Timeline timeline = new Timeline(
+                    new KeyFrame(millis(0), new KeyValue(serverPath.translateXProperty(), 0)),
+                    new KeyFrame(millis(50), new KeyValue(serverPath.translateXProperty(), -10)),
+                    new KeyFrame(millis(100), new KeyValue(serverPath.translateXProperty(), 10)),
+                    new KeyFrame(millis(150), new KeyValue(serverPath.translateXProperty(), -10)),
+                    new KeyFrame(millis(200), new KeyValue(serverPath.translateXProperty(), 0))
+            );
+            timeline.setCycleCount(1);
+            timeline.play();
+        }
     }
 
     /**

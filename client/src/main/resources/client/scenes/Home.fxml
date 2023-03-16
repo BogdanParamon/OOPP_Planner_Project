@@ -1,34 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import javafx.scene.control.TextField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.HomeCtrl">
-   <children>
-      <Text layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="600.0">
-         <font>
-            <Font name="Roboto" size="32.0" />
-         </font>
-      </Text>
-      <Text fill="#929394" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="600.0">
-         <font>
-            <Font name="Roboto" size="15.0" />
-         </font>
-      </Text>
-      <Text layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!" textAlignment="CENTER" wrappingWidth="600.0">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Text>
-      <MFXButton layoutX="404.0" layoutY="226.0" mnemonicParsing="false" onAction="#connect" prefHeight="26.0" prefWidth="76.0" text="Connect" />
-      <Text fill="#929394" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for chosing Talio!" textAlignment="CENTER" wrappingWidth="600.0">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Text>
-      <TextField fx:id="serverPath" layoutX="121.0" layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="http://localhost:8080"/>
-   </children>
+<?import javafx.scene.text.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css"
+            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.scenes.HomeCtrl">
+    <children>
+        <Text layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER"
+              wrappingWidth="600.0">
+            <font>
+                <Font size="32.0"/>
+            </font>
+        </Text>
+        <Text fill="#929394" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="600.0">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!"
+              textAlignment="CENTER" wrappingWidth="600.0">
+            <font>
+                <Font size="20.0"/>
+            </font>
+        </Text>
+        <MFXButton layoutX="404.0" layoutY="226.0" mnemonicParsing="false" onAction="#connect" prefHeight="26.0"
+                   prefWidth="76.0" text="Connect"/>
+        <Text fill="#929394" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for chosing Talio!"
+              textAlignment="CENTER" wrappingWidth="600.0">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <MFXTextField fx:id="serverPath" floatMode="BORDER" floatingText="Server address" layoutX="121.0"
+                      layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="http://localhost:8080"/>
+        <Text fx:id="errorMsg" layoutY="280" layoutX="125" text="Invalid server address" visible="false" fill="red"/>
+    </children>
 </AnchorPane>

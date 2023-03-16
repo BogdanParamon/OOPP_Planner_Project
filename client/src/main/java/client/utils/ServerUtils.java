@@ -36,47 +36,20 @@ public class ServerUtils {
         ServerUtils.SERVER = SERVER;
     }
 
-    //
-//    /**
-//     * get quotes
-//     *
-//     * @throws IOException exception
-//     */
-//    public void getQuotesTheHardWay() throws IOException {
-//        var url = new URL("http://localhost:8080/api/quotes");
-//        var is = url.openConnection().getInputStream();
-//        var br = new BufferedReader(new InputStreamReader(is));
-//        String line;
-//        while ((line = br.readLine()) != null) {
-//            System.out.println(line);
-//        }
-//    }
-//
-//    /**
-//     * @return List of quotes from server
-//     */
-//    public List<Quote> getQuotes() {
-//        return ClientBuilder.newClient(new ClientConfig()) //
-//                .target(SERVER).path("api/quotes") //
-//                .request(APPLICATION_JSON) //
-//                .accept(APPLICATION_JSON) //
-//                .get(new GenericType<List<Quote>>() {
-//                });
-//    }
-//
-//    /**
-//     * @param quote quote to be added
-//     * @return quote which is added
-//     */
-//    public Quote addQuote(Quote quote) {
-//        return ClientBuilder.newClient(new ClientConfig()) //
-//                .target(SERVER).path("api/quotes") //
-//                .request(APPLICATION_JSON) //
-//                .accept(APPLICATION_JSON) //
-//                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
-//    }
-//
-//
+    public boolean validServer() {
+        try {
+            var x = ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     public Task addTask(Task task) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks")

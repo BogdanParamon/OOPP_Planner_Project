@@ -22,18 +22,18 @@ import javafx.util.Pair;
 
 public class MainCtrl {
 
-    private Stage primaryStage;
-    private BoardOverviewCtrl boardOverviewCtrl;
-    private Scene boardOverview;
-    private HomeCtrl homeCtrl;
-    private Scene home;
-    private BoardCtrl boardCtrl;
-    private Scene board;
-    private AddTaskCtrl addTaskCtrl;
-    private Scene addTask;
+    protected Stage primaryStage;
+    protected BoardOverviewCtrl boardOverviewCtrl;
+    protected Scene boardOverview;
+    protected HomeCtrl homeCtrl;
+    protected Scene home;
+    protected BoardCtrl boardCtrl;
+    protected Scene board;
+    protected AddTaskCtrl addTaskCtrl;
+    protected Scene addTask;
 
-    private DetailedTaskCtrl detailedTaskCtrl;
-    private Scene detailedTask;
+    protected DetailedTaskCtrl detailedTaskCtrl;
+    protected Scene detailedTask;
 
 
     /**
@@ -111,6 +111,10 @@ public class MainCtrl {
      */
     public BoardCtrl getBoard() {
         return boardCtrl;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     public void showDetailedTask() {

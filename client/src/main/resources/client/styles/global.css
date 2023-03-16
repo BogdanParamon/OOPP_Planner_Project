@@ -4,6 +4,9 @@
 @import "clientConnect.css";
 @import "board.css";
 
+AnchorPane {
+    -fx-background-color: white;
+}
 
 MFXButton {
     -fx-text-fill: black;
