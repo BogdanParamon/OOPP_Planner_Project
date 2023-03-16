@@ -13,6 +13,8 @@
     <children>
         <Pane id="board" layoutX="183.0" layoutY="95.0" prefHeight="470.0" prefWidth="690" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <List layoutX="50" layoutY="50"/>
+
+            <List layoutX="250" layoutY="50"/>
         </Pane>
 
 
