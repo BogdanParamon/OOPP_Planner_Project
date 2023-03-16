@@ -32,6 +32,7 @@ public class HomeCtrl {
     public void connect() {
         server.setSERVER(serverPath.getText());
         switchSceneToBoardOverview();
+
     }
 
     /**

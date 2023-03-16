@@ -29,6 +29,6 @@
             <Font size="15.0" />
          </font>
       </Text>
-      <TextField fx:id="serverPath" layoutX="121.0" layoutY="226.0" prefHeight="26.0" prefWidth="260.0" />
+      <TextField fx:id="serverPath" layoutX="121.0" layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="http://localhost:8080"/>
    </children>
 </AnchorPane>
