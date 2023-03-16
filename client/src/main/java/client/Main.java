@@ -52,14 +52,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        var home = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
-        var clientConnect =
+        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var home =
                 FXML.load(HomeCtrl.class, "client", "scenes","Home.fxml");
         var board = FXML.load(BoardCtrl.class, "client", "scenes", "Board.fxml");
         var addTask = FXML.load(AddTaskCtrl.class,"client","scenes","AddTask.fxml");
         var detailedTask = FXML.load(DetailedTaskCtrl.class,"client","scenes","DetailedTask.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, clientConnect, home, board, addTask, detailedTask);
+        mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask, detailedTask);
     }
 }

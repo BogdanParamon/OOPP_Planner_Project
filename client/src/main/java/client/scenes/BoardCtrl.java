@@ -47,8 +47,8 @@ public class BoardCtrl implements Initializable {
     /**
      * Uses showHome method to switch scenes to Home scene
      */
-    public void switchToHomeScene() {
-        mainCtrl.showHome();
+    public void switchToBoardOverviewScene() {
+        mainCtrl.showBoardOverview();
     }
 
     /**

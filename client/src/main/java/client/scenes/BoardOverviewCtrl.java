@@ -85,4 +85,8 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.getBoard().setBoardName(name);
     }
 
+    public void switchSceneToHome() {
+        mainCtrl.showHome();
+    }
+
 }
