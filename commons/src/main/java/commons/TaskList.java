@@ -17,7 +17,7 @@ public class TaskList {
 
     public String title;
 
-    @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ListID")
     public Set<Task> tasks = new HashSet<>();
 

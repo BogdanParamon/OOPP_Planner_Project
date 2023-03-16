@@ -17,10 +17,14 @@ package client.utils;
 
 //import commons.Quote;
 
+import commons.Board;
 import commons.Task;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
 import org.glassfish.jersey.client.ClientConfig;
+
+import java.util.List;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -79,5 +83,22 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
+    }
+
+    public List<Board> getBoards() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Board>>() {
+                });
+    }
+
+    public Board addBoard(Board board) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 }

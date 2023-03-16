@@ -85,7 +85,7 @@
         <Pane layoutX="21.0" layoutY="473.0" prefHeight="57.0" prefWidth="150.0"
               style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
-                <MFXButton layoutX="35.0" onAction="#switchToHomeScene" layoutY="2.0" style="-fx-background-color: ddd;"
+                <MFXButton layoutX="35.0" onAction="#switchToBoardOverviewScene" layoutY="2.0" style="-fx-background-color: ddd;"
                            prefWidth="100.0" text="Overview Boards" wrapText="true">
                     <font>
                         <Font name="Roboto" size="16.0"/>

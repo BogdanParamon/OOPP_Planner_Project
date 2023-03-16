@@ -31,14 +31,15 @@ public class HomeCtrl {
      */
     public void connect() {
         server.setSERVER(serverPath.getText());
-        switchSceneToHome();
+        switchSceneToBoardOverview();
+
     }
 
     /**
      * Uses showHome method to switch scenes to Home scene
      */
-    public void switchSceneToHome() {
-        mainCtrl.showHome();
+    public void switchSceneToBoardOverview() {
+        mainCtrl.showBoardOverview();
     }
 
 }

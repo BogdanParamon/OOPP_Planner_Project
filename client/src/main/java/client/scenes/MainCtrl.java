@@ -40,25 +40,25 @@ public class MainCtrl {
      * Initialize all controllers and scenes
      *
      * @param primaryStage  main stage for application
-     * @param clientConnect first scene for connecting to a server
-     * @param home          home scene for a server
+     * @param home          first scene for connecting to a server
+     * @param boardOverview home scene for a server
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param detailedTask  allows user to see details of a task
      */
     public void initialize(Stage primaryStage,
-                           Pair<HomeCtrl, Parent> clientConnect,
-                           Pair<BoardOverviewCtrl, Parent> home,
+                           Pair<HomeCtrl, Parent> home,
+                           Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
                            Pair<DetailedTaskCtrl, Parent> detailedTask) {
         this.primaryStage = primaryStage;
 
-        this.homeCtrl = clientConnect.getKey();
-        this.home = new Scene(clientConnect.getValue());
+        this.homeCtrl = home.getKey();
+        this.home = new Scene(home.getValue());
 
-        this.boardOverviewCtrl = home.getKey();
-        this.boardOverview = new Scene(home.getValue());
+        this.boardOverviewCtrl = boardOverview.getKey();
+        this.boardOverview = new Scene(boardOverview.getValue());
 
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
@@ -73,12 +73,22 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    /**board
+    /**
+     * board
      * Change scene to home
      */
     public void showHome() {
         primaryStage.setTitle("Home");
+        primaryStage.setScene(home);
+    }
+
+    /**
+     * Change scene to board overview
+     */
+    public void showBoardOverview() {
+        primaryStage.setTitle("Board Overview");
         primaryStage.setScene(boardOverview);
+        boardOverviewCtrl.load();
     }
 
     /**
@@ -96,6 +106,7 @@ public class MainCtrl {
 
     /**
      * Getter for the board
+     *
      * @return boardCtrl
      */
     public BoardCtrl getBoard() {
@@ -106,31 +117,4 @@ public class MainCtrl {
         primaryStage.setTitle("Task Details");
         primaryStage.setScene(detailedTask);
     }
-
-
-//
-//    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-//            Pair<AddQuoteCtrl, Parent> add) {
-//        this.primaryStage = primaryStage;
-//        this.overviewCtrl = overview.getKey();
-//        this.overview = new Scene(overview.getValue());
-//
-//        this.addCtrl = add.getKey();
-//        this.add = new Scene(add.getValue());
-//
-//        showOverview();
-//        primaryStage.show();
-//    }
-//
-//    public void showOverview() {
-//        primaryStage.setTitle("Quotes: Overview");
-//        primaryStage.setScene(overview);
-//        overviewCtrl.refresh();
-//    }
-//
-//    public void showAdd() {
-//        primaryStage.setTitle("Quotes: Adding Quote");
-//        primaryStage.setScene(add);
-//        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
-//    }
 }
