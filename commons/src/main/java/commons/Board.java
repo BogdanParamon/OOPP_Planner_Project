@@ -17,7 +17,7 @@ public class Board {
 
     public String title;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public Set<TaskList> lists = new HashSet<>();
 

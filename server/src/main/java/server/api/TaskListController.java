@@ -53,7 +53,7 @@ public class TaskListController {
      */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<TaskList> add(@RequestBody TaskList list) {
-        if (list.title == null || list.board == null || list.tasks == null) {
+        if (list.title == null || list.tasks == null) {
             return ResponseEntity.badRequest().build();
         }
         TaskList saved = repository.save(list);

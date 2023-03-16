@@ -2,9 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Board;
 import commons.Task;
-import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
@@ -42,9 +40,7 @@ public class AddTaskCtrl {
     private Task getTask() {
         String title = this.title.getText();
         System.out.println(title);
-        Board board = new Board("TestBoard");
-        TaskList list = new TaskList("TEEEEESSTTTTTTT", board);
-        return new Task(title, list);
+        return new Task(title);
     }
 
     public void switchToBoard() {
