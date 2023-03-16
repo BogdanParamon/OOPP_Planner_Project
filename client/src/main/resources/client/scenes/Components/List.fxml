@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--    -->
-<!--<fx:root id="root" vbarPolicy="NEVER" prefHeight="250" prefWidth="150" stylesheets="@/client/styles/list.css"-->
-<!--         type="MFXScrollPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">-->
-<!--</fx:root>-->
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
@@ -15,10 +11,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
+
 <fx:root id="root" prefHeight="350" prefWidth="160" stylesheets="@/client/styles/list.css" type="Pane"
          xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <MFXTextField floatMode="DISABLED" promptText="Title" fx:id="title" id="title" prefWidth="150" layoutX="5"
-                  alignment="CENTER" >
+                  alignment="CENTER">
         <font>
             <Font name="Roboto" size="16"/>
         </font>

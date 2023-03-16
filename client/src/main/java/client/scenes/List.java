@@ -4,6 +4,8 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -31,20 +33,47 @@ public class List extends Pane {
             throw new RuntimeException(e);
         }
 
-        addButton.setOnAction(event -> addTask());
+        addButton.setOnAction(event -> addTask(null, null));
         addButton.setText("");
+
+        setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            event.consume();
+        });
+
+        setOnDragDropped(event -> {
+            System.out.println("Drag dropped");
+            Dragboard db = event.getDragboard();
+
+            int sceneY =  (int) event.getSceneY() - 190;
+
+            int length = list.getChildren().size();
+
+            System.out.println(sceneY);
+
+            addTask(db.getString(), (sceneY / 75) % length) ;
+
+            event.setDropCompleted(true);
+            event.consume();
+        });
+
     }
 
-    public void addTask() {
+    public void addTask(String title, Integer index) {
         int len = list.getChildren().size();
-        Task task = new Task();
-        list.getChildren().add(len - 1, task);
-        VBox.setMargin(task, new Insets(5, 0,5, 5));
+
+        Card card = new Card();
+        if (title == null ) card.setText("Title " + len);
+
+        else card.setText(title);
+        list.getChildren().add(index == null ? len - 1 : index, card);
+
+        VBox.setMargin(card, new Insets(5, 0,5, 5));
 
     }
 
-    public void deleteCard(Task task) {
-        list.getChildren().remove(task);
+    public void deleteCard(Card card) {
+        list.getChildren().remove(card);
     }
 
 }
