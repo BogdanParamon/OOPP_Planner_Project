@@ -1,6 +1,5 @@
 package commons;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -19,7 +18,7 @@ public class Board {
     public String title;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JoinColumn(name = "BoardID")
     public Set<TaskList> lists = new HashSet<>();
 
     /**

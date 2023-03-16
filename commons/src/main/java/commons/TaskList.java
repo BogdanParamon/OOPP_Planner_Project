@@ -1,6 +1,5 @@
 package commons;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -18,23 +17,17 @@ public class TaskList {
 
     public String title;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "BOARD_ID")
-    public Board board;
-
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JoinColumn(name = "ListID")
     public Set<Task> tasks = new HashSet<>();
 
     /**
      * Creates a new TaskList object with the given title, board and an empty set of Tasks.
      *
      * @param title The title to be given to the TaskList
-     * @param board The Board on which this TaskList will be
      */
-    public TaskList(String title, Board board) {
+    public TaskList(String title) {
         this.title = title;
-        this.board = board;
     }
 
     @SuppressWarnings("unused")
@@ -65,7 +58,6 @@ public class TaskList {
         if (o == null || getClass() != o.getClass()) return false;
         TaskList taskList = (TaskList) o;
         return listId == taskList.listId && Objects.equals(title, taskList.title)
-                && Objects.equals(board.boardId, taskList.board.boardId)
                 && Objects.equals(tasks, taskList.tasks);
     }
 
@@ -77,7 +69,7 @@ public class TaskList {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(listId, title, board.boardId, tasks);
+        return Objects.hash(listId, title, tasks);
     }
 
     /**

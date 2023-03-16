@@ -47,7 +47,7 @@
                         </MFXButton>
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                             <image>
-                                <Image url="@../images/add_list.png"/>
+                                <Image url="@/client/images/add_list.png"/>
                             </image>
                         </ImageView>
                         <Line endX="100.0" layoutX="25.0" layoutY="55.0"/>
@@ -64,7 +64,7 @@
                         </MFXButton>
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                             <image>
-                                <Image url="@../images/add_task.png"/>
+                                <Image url="@/client/images/add_task.png"/>
                             </image>
                         </ImageView>
                     </children>
@@ -93,7 +93,7 @@
                 </MFXButton>
                 <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                     <image>
-                        <Image url="@../images/overview_boards.png"/>
+                        <Image url="@/client/images/overview_boards.png"/>
                     </image>
                 </ImageView>
             </children>

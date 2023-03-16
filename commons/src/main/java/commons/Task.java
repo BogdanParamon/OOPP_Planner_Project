@@ -15,19 +15,14 @@ public class Task {
 
     public String title;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "LIST_ID")
-    public TaskList list;
 
     /**
      * Creates a new Task object with the given title and list.
      *
      * @param title The title to be given to the Task
-     * @param list  The TaskList in which this Task will be
      */
-    public Task(String title, TaskList list) {
+    public Task(String title) {
         this.title = title;
-        this.list = list;
     }
 
     @SuppressWarnings("unused")
@@ -47,8 +42,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(title, task.title)
-                && Objects.equals(list.listId, task.list.listId);
+        return taskId == task.taskId && Objects.equals(title, task.title);
     }
 
     /**
@@ -59,7 +53,7 @@ public class Task {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title, list.listId);
+        return Objects.hash(taskId, title);
     }
 
     /**
