@@ -1,9 +1,9 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,19 +11,20 @@ import java.util.Set;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
-public class TaskList implements Serializable {
+public class TaskList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long listId;
 
     public String title;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "BOARD_ID")
     public Board board;
 
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
-    public Set<Task> tasks =  new HashSet<>();
+    @JsonIgnore
+    public Set<Task> tasks = new HashSet<>();
 
     /**
      * Creates a new TaskList object with the given title, board and an empty set of Tasks.

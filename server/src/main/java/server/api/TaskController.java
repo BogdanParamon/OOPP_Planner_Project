@@ -34,7 +34,7 @@ public class TaskController {
 
     @PostMapping(path = {"", "/"})
     public ResponseEntity<Task> add(@RequestBody Task task) {
-        if (task == null || task.title == null || task.list == null || task.title.isEmpty()) {
+        if (task == null || task.title == null /*|| task.list == null*/ || task.title.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         System.out.println(task);

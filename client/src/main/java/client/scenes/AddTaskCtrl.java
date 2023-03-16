@@ -42,8 +42,8 @@ public class AddTaskCtrl {
     private Task getTask() {
         String title = this.title.getText();
         System.out.println(title);
-        Board board = new Board("Board 1");
-        TaskList list = new TaskList("TO DO", board);
+        Board board = new Board("TestBoard");
+        TaskList list = new TaskList("TEEEEESSTTTTTTT", board);
         Task task = new Task(title, list);
         return task;
     }

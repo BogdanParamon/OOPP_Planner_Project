@@ -15,7 +15,7 @@ public class Task {
 
     public String title;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "LIST_ID")
     public TaskList list;
 
