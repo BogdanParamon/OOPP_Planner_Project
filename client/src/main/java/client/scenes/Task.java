@@ -14,11 +14,7 @@ public class Task extends Pane {
 
     private String text = "";
 
-    /**
-     * @param title title of the task
-     * New component Card
-     */
-    public Task(String title) {
+    public Task() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
         loader.setRoot(this);
         loader.setController(Task.this);
@@ -28,7 +24,6 @@ public class Task extends Pane {
             System.out.println("Error");
             throw new RuntimeException(e);
         }
-        this.title.setText(title);
     }
 
 

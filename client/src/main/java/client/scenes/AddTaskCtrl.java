@@ -44,8 +44,7 @@ public class AddTaskCtrl {
         System.out.println(title);
         Board board = new Board("TestBoard");
         TaskList list = new TaskList("TEEEEESSTTTTTTT", board);
-        Task task = new Task(title, list);
-        return task;
+        return new Task(title, list);
     }
 
     public void switchToBoard() {

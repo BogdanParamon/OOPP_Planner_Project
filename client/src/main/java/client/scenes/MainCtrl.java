@@ -69,11 +69,11 @@ public class MainCtrl {
         this.detailedTaskCtrl = detailedTask.getKey();
         this.detailedTask = new Scene(detailedTask.getValue());
 
-        primaryStage.setScene(this.board);
+        primaryStage.setScene(this.home);
         primaryStage.show();
     }
 
-    /**
+    /**board
      * Change scene to home
      */
     public void showHome() {
