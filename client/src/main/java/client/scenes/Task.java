@@ -2,14 +2,15 @@ package client.scenes;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.text.Text;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 
 public class Task extends Pane {
 
-    @FXML private Text title;
+    @FXML
+    private Text title;
 
     private String text = "";
 

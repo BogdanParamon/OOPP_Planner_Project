@@ -23,14 +23,17 @@ import javafx.util.Pair;
 public class MainCtrl {
 
     private Stage primaryStage;
+    private BoardOverviewCtrl boardOverviewCtrl;
+    private Scene boardOverview;
     private HomeCtrl homeCtrl;
     private Scene home;
-    private ClientConnectCtrl clientConnectCtrl;
-    private Scene clientConnect;
     private BoardCtrl boardCtrl;
     private Scene board;
     private AddTaskCtrl addTaskCtrl;
     private Scene addTask;
+
+    private DetailedTaskCtrl detailedTaskCtrl;
+    private Scene detailedTask;
 
 
     /**
@@ -41,17 +44,21 @@ public class MainCtrl {
      * @param home          home scene for a server
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
+     * @param detailedTask  allows user to see details of a task
      */
-    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect,
-                           Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board,
-                           Pair<AddTaskCtrl, Parent> addTask) {
+    public void initialize(Stage primaryStage,
+                           Pair<HomeCtrl, Parent> clientConnect,
+                           Pair<BoardOverviewCtrl, Parent> home,
+                           Pair<BoardCtrl, Parent> board,
+                           Pair<AddTaskCtrl, Parent> addTask,
+                           Pair<DetailedTaskCtrl, Parent> detailedTask) {
         this.primaryStage = primaryStage;
 
-        this.clientConnectCtrl = clientConnect.getKey();
-        this.clientConnect = new Scene(clientConnect.getValue());
+        this.homeCtrl = clientConnect.getKey();
+        this.home = new Scene(clientConnect.getValue());
 
-        this.homeCtrl = home.getKey();
-        this.home = new Scene(home.getValue());
+        this.boardOverviewCtrl = home.getKey();
+        this.boardOverview = new Scene(home.getValue());
 
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
@@ -59,7 +66,10 @@ public class MainCtrl {
         this.addTaskCtrl = addTask.getKey();
         this.addTask = new Scene(addTask.getValue());
 
-        primaryStage.setScene(this.clientConnect);
+        this.detailedTaskCtrl = detailedTask.getKey();
+        this.detailedTask = new Scene(detailedTask.getValue());
+
+        primaryStage.setScene(this.board);
         primaryStage.show();
     }
 
@@ -68,7 +78,7 @@ public class MainCtrl {
      */
     public void showHome() {
         primaryStage.setTitle("Home");
-        primaryStage.setScene(home);
+        primaryStage.setScene(boardOverview);
     }
 
     /**
@@ -82,6 +92,19 @@ public class MainCtrl {
     public void showAddTask() {
         primaryStage.setTitle("Add Task");
         primaryStage.setScene(addTask);
+    }
+
+    /**
+     * Getter for the board
+     * @return boardCtrl
+     */
+    public BoardCtrl getBoard() {
+        return boardCtrl;
+    }
+
+    public void showDetailedTask() {
+        primaryStage.setTitle("Task Details");
+        primaryStage.setScene(detailedTask);
     }
 
 

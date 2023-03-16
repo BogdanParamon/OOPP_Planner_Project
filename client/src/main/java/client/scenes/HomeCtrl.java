@@ -1,86 +1,44 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXListView;
 import com.google.inject.Inject;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
+import javafx.scene.control.TextField;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class HomeCtrl implements Initializable {
+public class HomeCtrl {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    @FXML private MFXListView<MFXButton> boards;
 
-    @FXML private Text subheading;
+    @FXML
+    private TextField serverPath;
 
-    private int index = 0;
 
     /**
      * Setup server and main controller
-     * @param server server to connect with
-     * @param mainCtrl main controller to change scenes
+     *
+     * @param server   server to connect to
+     * @param mainCtrl the main controller - for switching scenes
      */
     @Inject
     public HomeCtrl(ServerUtils server, MainCtrl mainCtrl) {
-        this.server = server;
         this.mainCtrl = mainCtrl;
-    }
-
-
-    /**
-     * @param url    The location used to resolve relative paths for the root object, or
-     *               {@code null} if the location is not known.
-     * @param bundle The resources used to localize the root object, or {@code null} if
-     *               the root object was not localized.
-     */
-    public void initialize(URL url, ResourceBundle bundle) {
-        ObservableList<MFXButton> items = FXCollections.observableArrayList();
-        for (var i : new String[]{"Board 1"}) {
-            MFXButton button = new MFXButton(i);
-            button.setOnAction(event -> switchSceneToBoard());
-            items.add(button);
-        }
-        
-        boards.setItems(items);
-        subheadingAnimation();
+        this.server = server;
     }
 
     /**
-     * A typing animation for the tagline
+     * connects to entered server
      */
-    private void subheadingAnimation() {
-        Timeline timeline = new Timeline();
-        String text = "Your Personal Task List Organiser";
-        subheading.setText("");
-
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.1), event -> {
-            if (index == text.length()) timeline.stop();
-            else {
-                subheading.setText(text.substring(0,++index));
-            }
-        });
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+    public void connect() {
+        server.setSERVER(serverPath.getText());
+        switchSceneToHome();
     }
 
     /**
-     * switch scene to board view
+     * Uses showHome method to switch scenes to Home scene
      */
-    public void switchSceneToBoard() {
-        mainCtrl.showBoard();
+    public void switchSceneToHome() {
+        mainCtrl.showHome();
     }
 
 }

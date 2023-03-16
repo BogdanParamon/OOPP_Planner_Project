@@ -2,29 +2,36 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import javafx.fxml.FXML;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BoardCtrl implements Initializable {
 
+    @FXML
+    private Text boardName;
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    @FXML
-    private VBox list1;
+
+    @FXML private VBox list1;
+
+    @FXML private MFXButton button;
 
     /**
-     * @param server
-     * @param mainCtrl
+     * Setup server and main controller
+     * @param server server to connect to
+     * @param mainCtrl the main controller - for switching scenes
      */
     @Inject
     public BoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
-        this.server = server;
         this.mainCtrl = mainCtrl;
+        this.server = server;
     }
 
     /**
@@ -39,5 +46,27 @@ public class BoardCtrl implements Initializable {
 
     public void switchToAddTask() {
         mainCtrl.showAddTask();
+    }
+
+    /**
+     * Uses showHome method to switch scenes to Home scene
+     */
+    public void switchToHomeScene() {
+        mainCtrl.showHome();
+    }
+
+    /**
+     * Sets the right board name to each board
+     * @param name the name of the specific board
+     */
+    public void setBoardName(String name) {
+        boardName.setText(name);
+    }
+
+    /**
+     * Uses showDetailedTask method to switch scenes to Detailed Task scene
+     */
+    public void showDetailedTask() {
+        mainCtrl.showDetailedTask();
     }
 }

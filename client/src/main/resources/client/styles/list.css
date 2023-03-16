@@ -1,0 +1,14 @@
+#ScrollList {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+}
+
+#root {
+    -fx-background-color: transparent;
+}
+
+#title {
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-color: transparent;
+}
