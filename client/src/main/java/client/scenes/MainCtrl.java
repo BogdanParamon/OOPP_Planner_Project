@@ -132,8 +132,8 @@ public class MainCtrl {
         HBox header = new HBox();
         header.setPrefSize(root.getPrefWidth(), 25);
         header.setSpacing(15);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(5, 0, 0, 10));
+        header.setAlignment(Pos.CENTER_RIGHT);
+        header.setPadding(new Insets(5, 10, 0, 0));
 
         MFXFontIcon closeIcon = new MFXFontIcon();
         closeIcon.setDescription("mfx-circle");
@@ -147,8 +147,9 @@ public class MainCtrl {
 
 
 
-        header.getChildren().add(closeIcon);
         header.getChildren().add(minimizeIcon);
+        header.getChildren().add(closeIcon);
+
 
 
         root.getChildren().add(0, header);
