@@ -4,7 +4,10 @@
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css"
+<?import javafx.scene.layout.HBox?>
+<?import io.github.palexdev.materialfx.font.MFXFontIcon?>
+<?import javafx.geometry.Insets?>
+<AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.scenes.HomeCtrl">
     <children>

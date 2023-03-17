@@ -19,6 +19,7 @@ import client.scenes.*;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -33,9 +34,10 @@ public class Main extends Application {
 
     /**
      * Main method
+     *
      * @param args arguments
      * @throws URISyntaxException error
-     * @throws IOException IO exception
+     * @throws IOException        IO exception
      */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
@@ -43,6 +45,7 @@ public class Main extends Application {
 
     /**
      * start the application
+     *
      * @param primaryStage the primary stage for this application, onto which
      *                     the application scene can be set.
      *                     Applications may create other stages, if needed, but they will not be
@@ -52,14 +55,19 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var boardOverview =
+                FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
         var home =
-                FXML.load(HomeCtrl.class, "client", "scenes","Home.fxml");
+                FXML.load(HomeCtrl.class, "client", "scenes", "Home.fxml");
         var board = FXML.load(BoardCtrl.class, "client", "scenes", "Board.fxml");
-        var addTask = FXML.load(AddTaskCtrl.class,"client","scenes","AddTask.fxml");
-        var detailedTask = FXML.load(DetailedTaskCtrl.class,"client","scenes","DetailedTask.fxml");
+        var addTask = FXML.load(AddTaskCtrl.class, "client", "scenes", "AddTask.fxml");
+        var detailedTask =
+                FXML.load(DetailedTaskCtrl.class, "client", "scenes", "DetailedTask.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask, detailedTask);
     }
 }
