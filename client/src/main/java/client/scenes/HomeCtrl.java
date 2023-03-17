@@ -3,15 +3,12 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.font.MFXFontIcon;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -29,7 +26,8 @@ public class HomeCtrl implements Initializable {
     @FXML
     private Text errorMsg;
 
-    @FXML private AnchorPane root;
+    @FXML
+    private AnchorPane root;
 
 
     /**
