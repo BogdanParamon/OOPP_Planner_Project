@@ -19,3 +19,21 @@ Text{
 TextField {
     -fx-font-family: 'Roboto', monospace;
 }
+
+#closeIcon {
+    -mfx-color: red;
+    -fx-opacity: 0.5;
+}
+
+#closeIcon:hover {
+    -fx-opacity: 1;
+}
+
+#minimizeIcon {
+    -mfx-color: #ffbf37;
+    -fx-opacity: 0.5;
+}
+
+#minimizeIcon:hover {
+    -fx-opacity: 1;
+}

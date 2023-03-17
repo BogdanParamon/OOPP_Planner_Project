@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.Board;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -14,6 +15,8 @@ public class BoardCtrl implements Initializable {
 
     @FXML
     private Text boardName;
+
+    @FXML private AnchorPane root;
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -40,6 +43,7 @@ public class BoardCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
+        mainCtrl.initHeader(root);
     }
 
     public void switchToAddTask() {

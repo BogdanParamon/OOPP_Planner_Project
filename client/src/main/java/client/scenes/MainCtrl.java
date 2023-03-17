@@ -15,8 +15,14 @@
  */
 package client.scenes;
 
+import io.github.palexdev.materialfx.font.MFXFontIcon;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -113,12 +119,50 @@ public class MainCtrl {
         return boardCtrl;
     }
 
-    public Stage getPrimaryStage() {
-        return primaryStage;
-    }
 
     public void showDetailedTask() {
         primaryStage.setTitle("Task Details");
         primaryStage.setScene(detailedTask);
+    }
+
+    private double xOffset, yOffset;
+
+    public void initHeader(AnchorPane root) {
+
+        HBox header = new HBox();
+        header.setPrefSize(root.getPrefWidth(), 25);
+        header.setSpacing(15);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(5, 0, 0, 10));
+
+        MFXFontIcon closeIcon = new MFXFontIcon();
+        closeIcon.setDescription("mfx-circle");
+        closeIcon.setSize(15);
+        closeIcon.setId("closeIcon");
+
+        MFXFontIcon minimizeIcon = new MFXFontIcon();
+        minimizeIcon.setDescription("mfx-circle");
+        minimizeIcon.setSize(15);
+        minimizeIcon.setId("minimizeIcon");
+
+
+
+        header.getChildren().add(closeIcon);
+        header.getChildren().add(minimizeIcon);
+
+
+        root.getChildren().add(0, header);
+
+        closeIcon.setOnMouseClicked(event -> Platform.exit());
+        minimizeIcon.setOnMouseClicked(event -> primaryStage.setIconified(true));
+
+        header.setOnMousePressed(event -> {
+            xOffset = primaryStage.getX() - event.getScreenX();
+            yOffset = primaryStage.getY() - event.getScreenY();
+        });
+        header.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() + xOffset);
+            primaryStage.setY(event.getScreenY() + yOffset);
+        });
     }
 }

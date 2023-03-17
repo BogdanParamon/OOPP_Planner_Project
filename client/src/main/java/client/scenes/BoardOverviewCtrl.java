@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
@@ -33,6 +34,8 @@ public class BoardOverviewCtrl implements Initializable {
     private MFXTextField boardTitle;
     @FXML
     private Text subheading;
+
+    @FXML private AnchorPane root;
 
     private int index = 0;
 
@@ -56,6 +59,7 @@ public class BoardOverviewCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
+        mainCtrl.initHeader(root);
     }
 
 

@@ -19,6 +19,7 @@ import client.scenes.*;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -60,6 +61,9 @@ public class Main extends Application {
         var detailedTask = FXML.load(DetailedTaskCtrl.class,"client","scenes","DetailedTask.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask, detailedTask);
     }
 }
