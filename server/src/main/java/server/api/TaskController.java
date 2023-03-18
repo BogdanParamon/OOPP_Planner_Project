@@ -1,11 +1,13 @@
 package server.api;
 
 import commons.Task;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.TaskRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -42,16 +44,41 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
-    /**
-     * Endpoint for retrieving all tasks.
-     *
-     * @return List of Task objects retrieved from the database.
-     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        Optional<Task> task = taskRepository.findById(id);
+        return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 
     @GetMapping(path = {"", "/"})
-    public List<Task> getAll() {
-        return taskRepository.findAll();
+    public ResponseEntity<List<Task>> getAll() {
+        return ResponseEntity.ok(taskRepository.findAll());
+    }
+
+    @GetMapping(value = "/sorted")
+    public ResponseEntity<List<Task>> getAllTasks(
+            @RequestParam(value = "sortBy", required = false) String sortBy) {
+        List<Task> tasks;
+
+        if (sortBy != null) {
+            tasks = taskRepository.findAll(Sort.by(Sort.Direction.ASC, sortBy));
+        } else {
+            tasks = taskRepository.findAll();
+        }
+
+        return ResponseEntity.ok(tasks);
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
+        return taskRepository.findById(id)
+                .map(existingTask -> {
+                    task.setId(id);
+                    return ResponseEntity.ok(taskRepository.save(task));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

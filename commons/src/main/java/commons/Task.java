@@ -14,6 +14,7 @@ public class Task {
     public long taskId;
 
     public String title;
+    private Long id;
 
 
     /**
@@ -64,5 +65,13 @@ public class Task {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
