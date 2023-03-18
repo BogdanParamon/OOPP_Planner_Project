@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -13,14 +14,12 @@ import java.util.ResourceBundle;
 
 public class BoardCtrl implements Initializable {
 
-    @FXML
-    private Text boardName;
-
-    @FXML private AnchorPane root;
-
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
+    @FXML
+    private Text boardName;
+    @FXML
+    private AnchorPane root;
     private Board board;
 
 
@@ -67,5 +66,10 @@ public class BoardCtrl implements Initializable {
      */
     public void showDetailedTask() {
         mainCtrl.showDetailedTask();
+    }
+
+    public void addList() {
+        TaskList list = new TaskList("testList2");
+        server.addList(list, board.boardId);
     }
 }
