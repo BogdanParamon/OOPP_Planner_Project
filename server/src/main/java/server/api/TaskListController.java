@@ -1,8 +1,10 @@
 package server.api;
 
+import commons.Board;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.database.BoardRepository;
 import server.database.TaskListRepository;
 
 import java.util.List;
@@ -11,14 +13,17 @@ import java.util.List;
 @RequestMapping("/api/taskList")
 public class TaskListController {
     private final TaskListRepository repository;
+    private final BoardRepository boardRepository;
 
     /**
      * Constructor for class TaskListController
      *
-     * @param repository - the repository containing all task lists
+     * @param repository      - the repository containing all task lists
+     * @param boardRepository - the repository containing all boards
      */
-    public TaskListController(TaskListRepository repository) {
+    public TaskListController(TaskListRepository repository, BoardRepository boardRepository) {
         this.repository = repository;
+        this.boardRepository = boardRepository;
     }
 
     /**
@@ -26,7 +31,7 @@ public class TaskListController {
      *
      * @return a list containing all task lists
      */
-    @GetMapping(path = { "", "/" })
+    @GetMapping(path = {"", "/"})
     public List<TaskList> getAll() {
         return repository.findAll();
     }
@@ -47,16 +52,20 @@ public class TaskListController {
 
     /**
      * Adds a task list to the repository
-     *
+     * 
+     * @param boardId the ID of the board the list will be added to
      * @param list - list to be added
      * @return a response entity object of type TaskList
      */
-    @PostMapping(path = { "", "/" })
-    public ResponseEntity<TaskList> add(@RequestBody TaskList list) {
+    @PostMapping(path = {"", "/"})
+    public ResponseEntity<TaskList> add(@RequestBody TaskList list, @RequestParam long boardId) {
         if (list.title == null || list.tasks == null) {
             return ResponseEntity.badRequest().build();
         }
         TaskList saved = repository.save(list);
+        Board parentBoard = boardRepository.findById(boardId).get();
+        parentBoard.lists.add(list);
+        boardRepository.save(parentBoard);
         return ResponseEntity.ok(saved);
     }
 

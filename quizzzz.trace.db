@@ -1,0 +1,33 @@
+2023-03-18 15:34:47 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:35:17 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:36:37 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:38:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:46:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:48:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:48:35 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:49:18 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:49:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:49:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]
+2023-03-18 15:49:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "TestBoard"; SQL statement:
+select lists0_.boardid as boardid3_4_0_, lists0_.list_id as list_id1_4_0_, lists0_.list_id as list_id1_4_1_, lists0_.title as title2_4_1_ from task_list lists0_ where lists0_.boardid=? [22018-200]

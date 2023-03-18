@@ -19,6 +19,7 @@ package client.utils;
 
 import commons.Board;
 import commons.Task;
+import commons.TaskList;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -73,5 +74,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
+    public TaskList addList(TaskList list, long boardId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskList")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(list,APPLICATION_JSON),TaskList.class);
     }
 }

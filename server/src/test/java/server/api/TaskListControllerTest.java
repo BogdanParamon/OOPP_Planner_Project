@@ -10,17 +10,18 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 class TaskListControllerTest {
 
     private TestTaskListRepository repository;
+    private TestBoardRepository boardRepository;
     private TaskListController taskListController;
 
     @BeforeEach
     public void setup() {
         repository = new TestTaskListRepository();
-        taskListController = new TaskListController(repository);
+        taskListController = new TaskListController(repository, boardRepository);
     }
 
     @Test
     public void cannotAddUntitledTaskList() {
-        var actual = taskListController.add(getTaskList(null));
+        var actual = taskListController.add(getTaskList(null), 0);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 

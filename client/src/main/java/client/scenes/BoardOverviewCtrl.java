@@ -105,19 +105,15 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void addBoard() {
         try {
-            server.addBoard(getBoard());
+            Board board = new Board(boardTitle.getText());
+            board = server.addBoard(board);
+            switchSceneToBoard(board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-            return;
         }
-        switchSceneToBoard(getBoard());
-    }
-
-    public Board getBoard() {
-        return new Board(boardTitle.getText());
     }
 
     public void switchSceneToHome() {

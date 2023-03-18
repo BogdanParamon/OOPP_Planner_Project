@@ -14,8 +14,6 @@ public class Task {
     public long taskId;
 
     public String title;
-    private Long id;
-
 
     /**
      * Creates a new Task object with the given title and list.
@@ -68,10 +66,10 @@ public class Task {
     }
 
     public void setId(Long id) {
-        this.id = id;
+        taskId = id;
     }
 
     public Long getId() {
-        return id;
+        return taskId;
     }
 }
