@@ -1,72 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import client.scenes.List?>
+
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id = "root" xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css"
-            xmlns="http://javafx.com/javafx/19" fx:controller="client.scenes.BoardCtrl">
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
-        <Pane id="board" layoutX="183.0" layoutY="95.0" prefHeight="470.0" prefWidth="690"
-              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
-            <List layoutX="50" layoutY="50"/>
-
-            <List layoutX="250" layoutY="50"/>
-        </Pane>
 
 
-        <TextField layoutX="612.0" layoutY="37.0" prefHeight="45.0" prefWidth="260.0" promptText="Search"
-                   style="-fx-background-color: ddd;">
+        <TextField layoutX="612.0" layoutY="37.0" prefHeight="45.0" prefWidth="260.0" promptText="Search" style="-fx-background-color: ddd;">
             <font>
-                <Font size="22.0"/>
+                <Font size="22.0" />
             </font>
         </TextField>
-        <Text fx:id="boardName" layoutX="183.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              wrappingWidth="260.17819993769444">
+      <ScrollPane id="board" hbarPolicy="ALWAYS" layoutX="183.0" layoutY="95.0" prefHeight="470.0" prefWidth="690.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;" vbarPolicy="NEVER">
+         <content>
+            <HBox spacing="15" fx:id="board_hbox" alignment="CENTER_LEFT" fillHeight="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="450.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding></HBox>
+         </content>
+      </ScrollPane>
+        <Text fx:id="boardName" layoutX="183.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="260.17819993769444">
             <font>
-                <Font name="Roboto" size="30.0"/>
+                <Font name="Roboto" size="30.0" />
             </font>
         </Text>
         <Text layoutX="24.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio">
             <font>
-                <Font size="45.0"/>
+                <Font size="45.0" />
             </font>
         </Text>
-        <VBox layoutX="14.0" layoutY="95.0" prefHeight="112.0" prefWidth="150.0"
-              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
+        <VBox layoutX="14.0" layoutY="95.0" prefHeight="112.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
                 <Pane prefHeight="57.0" prefWidth="150.0">
                     <children>
-                        <MFXButton layoutX="27.0" layoutY="3.0" style="-fx-background-color: ddd;" text="Add List" onAction="#addList">
+                        <MFXButton layoutX="27.0" layoutY="3.0" onAction="#addList" style="-fx-background-color: ddd;" text="Add List">
                             <font>
-                                <Font name="Roboto" size="20.0"/>
+                                <Font name="Roboto" size="20.0" />
                             </font>
                         </MFXButton>
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                             <image>
-                                <Image url="@/client/images/add_list.png"/>
+                                <Image url="@/client/images/add_list.png" />
                             </image>
                         </ImageView>
-                        <Line endX="100.0" layoutX="25.0" layoutY="55.0"/>
+                        <Line endX="100.0" layoutX="25.0" layoutY="55.0" />
 
                     </children>
                 </Pane>
                 <Pane prefHeight="42.0" prefWidth="85.0">
                     <children>
-                        <MFXButton layoutX="27.0" layoutY="2.0" onAction="#switchToAddTask"
-                                   style="-fx-background-color: ddd;" text="Add Task">
+                        <MFXButton layoutX="27.0" layoutY="2.0" onAction="#switchToAddTask" style="-fx-background-color: ddd;" text="Add Task">
                             <font>
-                                <Font name="Roboto" size="20.0"/>
+                                <Font name="Roboto" size="20.0" />
                             </font>
                         </MFXButton>
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                             <image>
-                                <Image url="@/client/images/add_task.png"/>
+                                <Image url="@/client/images/add_task.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -75,27 +79,25 @@
         </VBox>
         <Pane layoutX="832.0" layoutY="43.0">
             <children>
-                <MFXButton prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" "/>
+                <MFXButton prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" " />
                 <ImageView fitHeight="24.0" fitWidth="24.0" layoutY="6.0">
                     <image>
-                        <Image url="@/client/images/search.png"/>
+                        <Image url="@/client/images/search.png" />
                     </image>
                 </ImageView>
             </children>
         </Pane>
 
-        <Pane layoutX="21.0" layoutY="473.0" prefHeight="57.0" prefWidth="150.0"
-              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
+        <Pane layoutX="21.0" layoutY="473.0" prefHeight="57.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
-                <MFXButton layoutX="35.0" onAction="#switchToBoardOverviewScene" layoutY="2.0" style="-fx-background-color: ddd;"
-                           prefWidth="100.0" text="Overview Boards" wrapText="true">
+                <MFXButton layoutX="35.0" layoutY="2.0" onAction="#switchToBoardOverviewScene" prefWidth="100.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="16.0"/>
+                        <Font name="Roboto" size="16.0" />
                     </font>
                 </MFXButton>
                 <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                     <image>
-                        <Image url="@/client/images/overview_boards.png"/>
+                        <Image url="@/client/images/overview_boards.png" />
                     </image>
                 </ImageView>
             </children>
