@@ -36,7 +36,7 @@ public class TaskController {
 
     @PostMapping(path = {"", "/"})
     public ResponseEntity<Task> add(@RequestBody Task task) {
-        if (task == null || task.title == null /*|| task.list == null*/ || task.title.isEmpty()) {
+        if (task == null || task.title == null || task.title.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         System.out.println(task);
@@ -44,17 +44,33 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
+    /**
+     * Endpoint for getting a task by its ID.
+     * @param id The ID of the Task to be retrieved.
+     * @return ResponseEntity with the Task object if found or a not found status code.
+     */
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Optional<Task> task = taskRepository.findById(id);
         return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Endpoint for getting all tasks.
+     * @return ResponseEntity with a list of all Task objects.
+     */
 
     @GetMapping(path = {"", "/"})
     public ResponseEntity<List<Task>> getAll() {
         return ResponseEntity.ok(taskRepository.findAll());
     }
+
+    /**
+     * Endpoint for getting all tasks sorted by the specified attribute.
+     * @param sortBy The attribute to sort the tasks by (optional).
+     * @return ResponseEntity with a list of Task objects sorted by the specified attribute.
+     */
 
     @GetMapping(value = "/sorted")
     public ResponseEntity<List<Task>> getAllTasks(
@@ -70,6 +86,12 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    /**
+     * Endpoint for updating a task by its ID.
+     * @param id The ID of the Task to be updated.
+     * @param task The Task object containing the updated information.
+     * @return ResponseEntity with the updated Task object or a not found status code.
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {

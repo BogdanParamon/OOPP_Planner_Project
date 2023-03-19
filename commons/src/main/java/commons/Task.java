@@ -25,7 +25,7 @@ public class Task {
     }
 
     @SuppressWarnings("unused")
-    private Task() {
+    public Task() {
         // For object mapper
     }
 
@@ -72,4 +72,14 @@ public class Task {
     public Long getId() {
         return taskId;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+
 }

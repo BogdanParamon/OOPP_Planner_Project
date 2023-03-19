@@ -76,6 +76,31 @@ public class ServerUtils {
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
     }
 
+    public List<Task> getAll() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Task>>() {});
+    }
+
+    public List<Task> getAllTasks(String sortBy) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/sorted")
+                .queryParam("sortBy", sortBy)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Task>>() {});
+    }
+
+    public Task updateTask(Long id, Task task) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/" + id)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.json(task), Task.class);
+    }
+
     public List<Board> getBoards() {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/boards")
