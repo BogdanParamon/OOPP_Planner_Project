@@ -55,6 +55,9 @@ public class HomeCtrl implements Initializable {
 
         ServerUtils.setSERVER(serverPath.getText());
         if (server.validServer()) {
+            ServerUtils.setSession(server.connectWebsocket());
+            mainCtrl.boardOverviewCtrl.registerForBoardUpdates();
+
             switchSceneToBoardOverview();
             mainCtrl.home.getStylesheets().remove("/client/styles/inputerror.css");
             errorMsg.setVisible(false);
