@@ -38,7 +38,7 @@
             </font>
         </Text>
         <MFXTextField fx:id="serverPath" floatMode="BORDER" floatingText="Server address" layoutX="121.0"
-                      layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="http://localhost:8080"/>
+                      layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="localhost:8080"/>
         <Text fx:id="errorMsg" layoutY="280" layoutX="125" text="Invalid server address" visible="false" fill="red"/>
     </children>
 </AnchorPane>

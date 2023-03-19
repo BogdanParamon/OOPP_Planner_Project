@@ -10,6 +10,7 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,6 +28,8 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private ObservableList<MFXButton> items;
     @FXML
     private MFXListView<MFXButton> boards;
 
@@ -62,9 +65,19 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.initHeader(root);
     }
 
+    public void registerForBoardUpdates() {
+        server.registerForMessages("/topic/boards", Board.class, board -> {
+            Platform.runLater(() -> {
+                MFXButton button = new MFXButton(board.title);
+                button.setOnAction(event -> switchSceneToBoard(board));
+                items.add(button);
+                boardTitle.clear();
+            });
+        });
+    }
 
     public void load() {
-        ObservableList<MFXButton> items = FXCollections.observableArrayList();
+        items = FXCollections.observableArrayList();
         var boardEntities = server.getBoards();
 
         for (var i : boardEntities) {
@@ -106,8 +119,9 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            board = server.addBoard(board);
-            switchSceneToBoard(board);
+            server.send("/app/boards", board);
+            //board = server.addBoard(board);
+            //switchSceneToBoard(board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

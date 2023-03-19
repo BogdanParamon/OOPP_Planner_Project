@@ -28,6 +28,8 @@ dependencies {
 	
 	implementation 'com.google.inject:guice:5.0.1'
 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket:2.6.3'
+
 	implementation 'io.github.palexdev:materialfx:11.13.9'
 
 	implementation 'org.openjfx:javafx-controls:17.0.2'

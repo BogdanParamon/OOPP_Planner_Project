@@ -1,7 +1,10 @@
 package server.api;
 
 import commons.Board;
+import commons.Quote;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
@@ -60,5 +63,12 @@ public class BoardController {
 
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
+    }
+
+    @MessageMapping("/boards")
+    @SendTo("/topic/boards")
+    public Board addMessage(Board board) {
+        add(board);
+        return board;
     }
 }
