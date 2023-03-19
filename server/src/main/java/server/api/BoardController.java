@@ -1,7 +1,7 @@
 package server.api;
 
 import commons.Board;
-import commons.Quote;
+import commons.TaskList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -29,7 +29,7 @@ public class BoardController {
      *
      * @return A list containing all boards in the repository
      */
-    @GetMapping(path = { "", "/" })
+    @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
         return repo.findAll();
     }
@@ -47,6 +47,20 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(repo.findById(id).get());
+    }
+
+    /**
+     * Gets the list of TaskLists from the specified board
+     *
+     * @param boardId the ID of the board which the lists will be retrieved from
+     * @return a List conatining the list of TaskLists in the board
+     */
+    @GetMapping("/{boardId}/taskLists")
+    public ResponseEntity<List<TaskList>> getListsByBoardId(@PathVariable("boardId") long boardId) {
+        if (boardId < 0 || !repo.existsById(boardId))
+            return ResponseEntity.badRequest().build();
+        Board parentBoard = repo.findById(boardId).get();
+        return ResponseEntity.ok(parentBoard.lists);
     }
 
     /**

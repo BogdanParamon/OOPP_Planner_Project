@@ -79,7 +79,8 @@ public class ServerUtils {
                 .target(SERVER).path("api/tasks")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .get(new GenericType<List<Task>>() {});
+                .get(new GenericType<List<Task>>() {
+                });
     }
 
     public List<Task> getAllTasks(String sortBy) {
@@ -88,7 +89,8 @@ public class ServerUtils {
                 .queryParam("sortBy", sortBy)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .get(new GenericType<List<Task>>() {});
+                .get(new GenericType<List<Task>>() {
+                });
     }
 
     public Task updateTask(Long id, Task task) {
@@ -122,7 +124,7 @@ public class ServerUtils {
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(list,APPLICATION_JSON),TaskList.class);
+                .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
     }
 
     public TaskList updateList(long id, TaskList taskList) {
@@ -130,7 +132,17 @@ public class ServerUtils {
                 .target(SERVER).path("api/taskList/" + id)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(taskList,APPLICATION_JSON), TaskList.class);
+                .put(Entity.entity(taskList, APPLICATION_JSON), TaskList.class);
+    }
+
+    public List<TaskList> getListsByBoardId(long boardId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/{boardId}/taskLists")
+                .resolveTemplate("boardId",boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<TaskList>>() {
+                });
     }
 
     public StompSession connectWebsocket() {
@@ -138,7 +150,8 @@ public class ServerUtils {
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
         try {
-            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() { }).get();
+            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() {
+            }).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {

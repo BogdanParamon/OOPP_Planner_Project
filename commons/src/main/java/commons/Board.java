@@ -3,9 +3,9 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -19,7 +19,7 @@ public class Board {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
-    public Set<TaskList> lists = new HashSet<>();
+    public List<TaskList> lists = new ArrayList<>();
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
