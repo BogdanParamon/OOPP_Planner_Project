@@ -15,8 +15,6 @@
  */
 package client.utils;
 
-//import commons.Quote;
-
 import commons.Board;
 import commons.Task;
 import commons.TaskList;
@@ -125,6 +123,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list,APPLICATION_JSON),TaskList.class);
+    }
+
+    public TaskList updateList(long id, TaskList taskList) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskList/" + id)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(taskList,APPLICATION_JSON), TaskList.class);
     }
 
     public StompSession connectWebsocket() {
