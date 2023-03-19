@@ -4,10 +4,14 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +24,8 @@ public class BoardCtrl implements Initializable {
     private Text boardName;
     @FXML
     private AnchorPane root;
+    @FXML
+    private HBox board_hbox;
     private Board board;
 
 
@@ -69,7 +75,10 @@ public class BoardCtrl implements Initializable {
     }
 
     public void addList() {
-        TaskList list = new TaskList("testList2");
+        TaskList list = new TaskList("New List");
         server.addList(list, board.boardId);
+        List listUI = new List();
+        board_hbox.getChildren().add(listUI);
     }
+
 }
