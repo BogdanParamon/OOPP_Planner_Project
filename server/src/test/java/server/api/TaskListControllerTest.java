@@ -21,15 +21,34 @@ class TaskListControllerTest {
 
     @Test
     public void cannotAddUntitledTaskList() {
+        var actual = taskListController.add(getTaskList(""), 0);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddNullTaskList() {
         var actual = taskListController.add(getTaskList(null), 0);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
-//    @Test
-//    public void getByIdTest() {
-//        var actual = taskListController.add(getTaskList(null));
-//        assertEquals(actual, repository.getById(actual.getBody().listId));
-//    }
+    @Test
+    public void cannotDeleteListWithNegativeId() {
+        var actual = taskListController.delete(-1);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateListWithNegativeID() {
+        var actual = taskListController.updateList(-1, new TaskList("a"));
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateListWithNullTitle() {
+        var actual = taskListController.updateList(0, null);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
 
     private static TaskList getTaskList(String s) {
         return new TaskList(s);
