@@ -104,8 +104,7 @@ public class ServerUtils {
 
     public Board getBoardById(long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards")
-                .queryParam("id", boardId)
+                .target(SERVER).path("api/boards/" + boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Board.class);

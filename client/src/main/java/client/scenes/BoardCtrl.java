@@ -26,7 +26,7 @@ public class BoardCtrl implements Initializable {
     private AnchorPane root;
     @FXML
     private HBox board_hbox;
-    private Board board;
+    public Board board;
 
 
     /**
@@ -51,7 +51,10 @@ public class BoardCtrl implements Initializable {
         mainCtrl.initHeader(root);
     }
 
+
+
     public void switchToAddTask() {
+
         mainCtrl.showAddTask();
     }
 
@@ -65,13 +68,12 @@ public class BoardCtrl implements Initializable {
     public void setBoard(Board board) {
         this.board = board;
         boardName.setText(board.title);
-    }
-
-    /**
-     * Uses showDetailedTask method to switch scenes to Detailed Task scene
-     */
-    public void showDetailedTask() {
-        mainCtrl.showDetailedTask();
+        board_hbox.getChildren().clear();
+        for (var taskList : board.lists) {
+            List list = new List();
+            list.setTaskList(taskList);
+            board_hbox.getChildren().add(list);
+        }
     }
 
     public void addList() {
@@ -79,7 +81,7 @@ public class BoardCtrl implements Initializable {
         server.addList(list, board.boardId);
         List listUI = new List();
         board_hbox.getChildren().add(listUI);
-
     }
+
 
 }
