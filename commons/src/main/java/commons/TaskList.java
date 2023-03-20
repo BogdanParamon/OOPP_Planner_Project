@@ -17,6 +17,7 @@ public class TaskList {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "listID")
+    @OrderColumn
     public List<Task> tasks = new ArrayList<>();
 
     /**

@@ -120,7 +120,7 @@ public class ServerUtils {
 
     public TaskList addList(TaskList list, long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskList")
+                .target(SERVER).path("api/taskLists")
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
@@ -129,7 +129,7 @@ public class ServerUtils {
 
     public TaskList updateList(long id, TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskList/" + id)
+                .target(SERVER).path("api/taskLists/" + id)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .put(Entity.entity(taskList, APPLICATION_JSON), TaskList.class);

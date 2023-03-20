@@ -13,15 +13,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
-    private final BoardRepository repo;
+    private final BoardRepository boardRepository;
 
     /**
      * Constructor for the BoardController class
      *
-     * @param repo The repository containing Board instances
+     * @param boardRepository The repository containing Board instances
      */
-    public BoardController(BoardRepository repo) {
-        this.repo = repo;
+    public BoardController(BoardRepository boardRepository) {
+        this.boardRepository = boardRepository;
     }
 
     /**
@@ -31,7 +31,7 @@ public class BoardController {
      */
     @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
-        return repo.findAll();
+        return boardRepository.findAll();
     }
 
     /**
@@ -43,10 +43,10 @@ public class BoardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        if (id < 0 || !boardRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(boardRepository.getById(id));
     }
 
     /**
@@ -57,9 +57,9 @@ public class BoardController {
      */
     @GetMapping("/{boardId}/taskLists")
     public ResponseEntity<List<TaskList>> getListsByBoardId(@PathVariable("boardId") long boardId) {
-        if (boardId < 0 || !repo.existsById(boardId))
+        if (boardId < 0 || !boardRepository.existsById(boardId))
             return ResponseEntity.badRequest().build();
-        Board parentBoard = repo.findById(boardId).get();
+        Board parentBoard = boardRepository.getById(boardId);
         return ResponseEntity.ok(parentBoard.lists);
     }
 
@@ -70,13 +70,41 @@ public class BoardController {
      * @return A ResponseEntity object that can handle all outcomes of
      * attempted addition to the board repository
      */
-    @PostMapping(path = {"", "/"})
+    @PostMapping(path = "/add")
     public ResponseEntity<Board> add(@RequestBody Board board) {
         if (board == null || board.title == null || board.title.isEmpty())
             return ResponseEntity.badRequest().build();
 
-        Board saved = repo.save(board);
+        Board saved = boardRepository.save(board);
         return ResponseEntity.ok(saved);
+    }
+
+    /**
+     * Deletes a board from the database
+     * @param boardId id of board to be deleted
+     * @return successful if board exists
+     */
+    @DeleteMapping(path =  "/delete")
+    public ResponseEntity<Board> delete(@RequestParam long boardId) {
+        if (!boardRepository.existsById(boardId))
+            return ResponseEntity.badRequest().build();
+
+        boardRepository.deleteById(boardId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Update a board
+     * @param board board to be updated
+     * @return updated board
+     */
+    @PostMapping("/update")
+    public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
+        if (board == null || !boardRepository.existsById(board.boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Board updatedBoard = boardRepository.save(board);
+        return ResponseEntity.ok(updatedBoard);
     }
 
     @MessageMapping("/boards")

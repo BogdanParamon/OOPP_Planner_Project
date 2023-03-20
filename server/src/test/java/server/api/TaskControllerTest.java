@@ -17,7 +17,7 @@ public class TaskControllerTest {
     @BeforeEach
     public void setup() {
         trt = new TestTaskRepository();
-        sut = new TaskController(trt);
+        sut = new TaskController(trt, taskListRepository);
     }
 
     @Test
