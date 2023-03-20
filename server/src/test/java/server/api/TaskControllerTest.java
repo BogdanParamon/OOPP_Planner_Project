@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class TaskControllerTest {
@@ -61,17 +58,17 @@ public class TaskControllerTest {
 
     //@Test
     //public void canUpdateTask() {
-        //Task task = new Task();
-        //task.setId(1L);
-        //task.setTitle("Test Task");
-        //trt.save(task);
+    //Task task = new Task();
+    //task.setId(1L);
+    //task.setTitle("Test Task");
+    //trt.save(task);
 
-        //Task updatedTask = new Task();
-        //updatedTask.setTitle("Updated Test Task");
+    //Task updatedTask = new Task();
+    //updatedTask.setTitle("Updated Test Task");
 
-        //ResponseEntity<Task> actual = sut.updateTask(1L, updatedTask);
-        //assertEquals(HttpStatus.OK, actual.getStatusCode());
-        //assertEquals("Updated Test Task", actual.getBody().getTitle());
+    //ResponseEntity<Task> actual = sut.updateTask(1L, updatedTask);
+    //assertEquals(HttpStatus.OK, actual.getStatusCode());
+    //assertEquals("Updated Test Task", actual.getBody().getTitle());
     //}
 
     private static Task getUntitledTask() {
