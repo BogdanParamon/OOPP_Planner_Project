@@ -52,14 +52,14 @@ public class TaskListController {
 
     /**
      * Adds a task list to the repository
-     * 
+     *
      * @param boardId the ID of the board the list will be added to
-     * @param list - list to be added
+     * @param list    - list to be added
      * @return a response entity object of type TaskList
      */
     @PostMapping(path = {"", "/"})
     public ResponseEntity<TaskList> add(@RequestBody TaskList list, @RequestParam long boardId) {
-        if (list.title == null || list.tasks == null  || list.title.isEmpty()) {
+        if (list.title == null || list.tasks == null || list.title.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         TaskList saved = repository.save(list);
@@ -89,13 +89,14 @@ public class TaskListController {
     /**
      * Updates a task list
      *
-     * @param id - id of the list to be updated
+     * @param id       - id of the list to be updated
      * @param taskList - the new updated list
      * @return a response entity object of type TaskList that confirms to the client that
      * the operation was successful
      */
     @PutMapping("/{id}")
-    public ResponseEntity<TaskList> updateList(@RequestBody long id, @RequestBody TaskList taskList) {
+    public ResponseEntity<TaskList> updateList(@RequestBody long id,
+                                               @RequestBody TaskList taskList) {
         if (id < 0 || !repository.existsById(id) || taskList == null) {
             return ResponseEntity.badRequest().build();
         }
