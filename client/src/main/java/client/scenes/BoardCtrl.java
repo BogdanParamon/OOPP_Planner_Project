@@ -79,6 +79,7 @@ public class BoardCtrl implements Initializable {
         server.addList(list, board.boardId);
         List listUI = new List();
         board_hbox.getChildren().add(listUI);
+
     }
 
 }
