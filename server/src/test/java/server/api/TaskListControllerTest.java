@@ -39,13 +39,13 @@ class TaskListControllerTest {
 
     @Test
     public void cannotUpdateListWithNegativeID() {
-        var actual = taskListController.updateList(-1, new TaskList("a"));
+        var actual = taskListController.updateList( new TaskList("a"));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateListWithNullTitle() {
-        var actual = taskListController.updateList(0, null);
+        var actual = taskListController.updateList(null);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 

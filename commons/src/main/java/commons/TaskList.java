@@ -17,6 +17,7 @@ public class TaskList {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "listID")
+    @OrderColumn
     public List<Task> tasks = new ArrayList<>();
 
     /**
@@ -78,5 +79,13 @@ public class TaskList {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setListId(long listId) {
+        this.listId = listId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
