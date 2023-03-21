@@ -46,7 +46,7 @@ public class TaskController {
                 || !taskListRepository.existsById(taskListId)) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList list = taskListRepository.getById(taskListId);
+        TaskList list = taskListRepository.findById(taskListId).get();
         list.addTask(task);
         taskListRepository.save(list);
         Task saved = taskRepository.save(task);
@@ -94,13 +94,12 @@ public class TaskController {
 
     /**
      * Endpoint for updating a task by its ID.
-     * @param id The ID of the Task to be updated.
      * @param task The Task object containing the updated information.
      * @return ResponseEntity with the updated Task object or a not found status code.
      */
 
     @PostMapping(path = "/update")
-    public ResponseEntity<Task> updateTask(@RequestParam Long id, @RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@RequestBody Task task) {
         if (task == null || !taskRepository.existsById(task.taskId)) {
             return ResponseEntity.badRequest().build();
         }
@@ -117,7 +116,7 @@ public class TaskController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Task> delete(@RequestParam long taskId) {
-        if (taskId < 0 || !taskRepository.existsById(taskId)) {
+        if (!taskRepository.existsById(taskId) || taskId < 0) {
             return ResponseEntity.badRequest().build();
         }
         taskRepository.deleteById(taskId);

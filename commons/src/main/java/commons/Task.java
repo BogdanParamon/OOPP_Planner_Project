@@ -69,17 +69,8 @@ public class Task {
         taskId = id;
     }
 
-    public Long getId() {
-        return taskId;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
 
 }
