@@ -110,7 +110,7 @@ public class BoardController {
 
     @PostMapping(path = "/deleteAll")
     public ResponseEntity<String> deleteAll() {
-        repo.deleteAll();
+        boardRepository.deleteAll();
         return ResponseEntity.ok("Successful");
     }
 
