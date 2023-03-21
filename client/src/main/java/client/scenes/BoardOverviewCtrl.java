@@ -62,8 +62,6 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void registerForBoardUpdates() {
-
-
         server.registerForMessages("/topic/boards", Board.class, board -> {
             Platform.runLater(() -> {
                 MFXButton button = new MFXButton(board.title);
