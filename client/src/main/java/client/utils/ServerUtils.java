@@ -178,4 +178,12 @@ public class ServerUtils {
     public void send(String dest, Object o) {
         session.send(dest, o);
     }
+
+    public void deleteAllBoards() {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/deleteAll")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity("", APPLICATION_JSON), String.class);
+    }
 }

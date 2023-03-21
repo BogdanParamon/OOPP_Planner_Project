@@ -107,6 +107,13 @@ public class BoardController {
         return ResponseEntity.ok(updatedBoard);
     }
 
+
+    @PostMapping(path = "/deleteAll")
+    public ResponseEntity<String> deleteAll() {
+        repo.deleteAll();
+        return ResponseEntity.ok("Successful");
+    }
+
     @MessageMapping("/boards")
     @SendTo("/topic/boards")
     public Board addMessage(Board board) {
