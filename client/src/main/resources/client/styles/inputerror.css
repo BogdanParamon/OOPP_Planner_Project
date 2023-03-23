@@ -1,0 +1,7 @@
+MFXTextField {
+    -fx-border-color: red;
+}
+
+MFXTextField .floating-text {
+    -fx-text-fill: red;
+}

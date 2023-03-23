@@ -3,9 +3,7 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -14,30 +12,35 @@ public class TaskList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long listId;
+
     public String title;
 
-    @ManyToOne
-    @JoinColumn(name = "boardId")
-    public Board board;
-
-    @OneToMany(mappedBy = "list")
-    public Set<Task> tasks;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "listID")
+    @OrderColumn
+    public List<Task> tasks = new ArrayList<>();
 
     /**
      * Creates a new TaskList object with the given title, board and an empty set of Tasks.
      *
      * @param title The title to be given to the TaskList
-     * @param board The Board on which this TaskList will be
      */
-    public TaskList(String title, Board board) {
+    public TaskList(String title) {
         this.title = title;
-        this.board = board;
-        tasks = new HashSet<>();
     }
 
     @SuppressWarnings("unused")
     private TaskList() {
         // For object mapper
+    }
+
+    /**
+     * Adds a Task to the set of all Tasks in this TaskList.
+     *
+     * @param task The Task to be added to this TaskList
+     */
+    public void addTask(Task task) {
+        tasks.add(task);
     }
 
     /**
@@ -54,7 +57,6 @@ public class TaskList {
         if (o == null || getClass() != o.getClass()) return false;
         TaskList taskList = (TaskList) o;
         return listId == taskList.listId && Objects.equals(title, taskList.title)
-                && Objects.equals(board.boardId, taskList.board.boardId)
                 && Objects.equals(tasks, taskList.tasks);
     }
 
@@ -66,16 +68,7 @@ public class TaskList {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(listId, title, board.boardId, tasks);
-    }
-
-    /**
-     * Adds a Task to the set of all Tasks in this TaskList.
-     *
-     * @param task The Task to be added to this TaskList
-     */
-    public void addTask(Task task) {
-        tasks.add(task);
+        return Objects.hash(listId, title, tasks);
     }
 
     /**
@@ -86,5 +79,13 @@ public class TaskList {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setListId(long listId) {
+        this.listId = listId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

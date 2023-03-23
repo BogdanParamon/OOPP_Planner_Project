@@ -12,25 +12,20 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long taskId;
-    public String title;
 
-    @ManyToOne
-    @JoinColumn(name = "listId")
-    public TaskList list;
+    public String title;
 
     /**
      * Creates a new Task object with the given title and list.
      *
      * @param title The title to be given to the Task
-     * @param list The TaskList in which this Task will be
      */
-    public Task(String title, TaskList list) {
+    public Task(String title) {
         this.title = title;
-        this.list = list;
     }
 
     @SuppressWarnings("unused")
-    private Task() {
+    public Task() {
         // For object mapper
     }
 
@@ -46,8 +41,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(title, task.title)
-                && Objects.equals(list.listId, task.list.listId);
+        return taskId == task.taskId && Objects.equals(title, task.title);
     }
 
     /**
@@ -58,7 +52,7 @@ public class Task {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title, list.listId);
+        return Objects.hash(taskId, title);
     }
 
     /**
@@ -70,4 +64,13 @@ public class Task {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
+
+    public void setId(Long id) {
+        taskId = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id = "root" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: fff;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+   <children>
+      <Text layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="600">
+         <font>
+            <Font size="32"> </Font>
+         </font>
+      </Text>
+      <Text id="subheading" fx:id="subheading" fill="#929394" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" textAlignment="CENTER" wrappingWidth="600.0" />
+      <MFXListView fx:id="boards" layoutX="81.0" layoutY="166.0" prefHeight="138.0" prefWidth="134.0" />
+      <MFXButton buttonType="RAISED" layoutX="261.0" layoutY="336.0" onAction="#switchSceneToHome" text="Change server" />
+      <Text layoutX="68.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you already have a board?" />
+      <Text fill="#727272" layoutX="116.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chose One!" />
+      <Text layoutX="326.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you want to create a new board?" />
+      <Text fill="#727272" layoutX="385.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add one now!" />
+      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatMode="BORDER" floatingText="Board Name" layoutX="313.0" layoutY="177.0" prefHeight="39.0" prefWidth="218.0" />
+      <MFXPasswordField borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="314.0" layoutY="232.0" prefHeight="39.0" prefWidth="218.0" style="-fx-wrap-text: black" />
+      <MFXButton buttonType="RAISED" layoutX="433.0" layoutY="288.0" text="Create Board" onAction="#addBoard">
+              <font>
+
+              </font>
+      </MFXButton>
+      <MFXButton buttonType="RAISED" layoutX="300.0" layoutY="288.0" text="Delete all boards" onAction="#deleteAll"/>
+   </children>
+</AnchorPane>

@@ -75,7 +75,10 @@ public class TestTaskListRepository implements TaskListRepository {
 
     @Override
     public <S extends TaskList> S save(S entity) {
-        return null;
+        call("save");
+        entity.listId = (long) taskLists.size() + 1;
+        taskLists.add(entity);
+        return entity;
     }
 
     @Override
@@ -85,11 +88,17 @@ public class TestTaskListRepository implements TaskListRepository {
 
     @Override
     public Optional<TaskList> findById(Long aLong) {
+        for (TaskList list : taskLists)
+            if (list.listId == aLong)
+                return Optional.of(list);
         return Optional.empty();
     }
 
     @Override
     public boolean existsById(Long aLong) {
+        for (TaskList list : taskLists)
+            if (list.listId == aLong)
+                return true;
         return false;
     }
 
@@ -165,7 +174,8 @@ public class TestTaskListRepository implements TaskListRepository {
 
     @Override
     public <S extends TaskList, R> R findBy(Example<S> example,
-                                Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+                                            Function<FluentQuery.FetchableFluentQuery<S>,
+                                                    R> queryFunction) {
         return null;
     }
 }

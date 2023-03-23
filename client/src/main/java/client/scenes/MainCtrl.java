@@ -15,52 +15,86 @@
  */
 package client.scenes;
 
+import io.github.palexdev.materialfx.font.MFXFontIcon;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
 public class MainCtrl {
 
-    private Stage primaryStage;
-    private HomeCtrl homeCtrl;
-    private Scene home;
-    private ClientConnectCtrl clientConnectCtrl;
-    private Scene clientConnect;
-    private BoardCtrl boardCtrl;
-    private Scene board;
+    protected Stage primaryStage;
+    protected BoardOverviewCtrl boardOverviewCtrl;
+    protected Scene boardOverview;
+    protected HomeCtrl homeCtrl;
+    protected Scene home;
+    protected BoardCtrl boardCtrl;
+    protected Scene board;
+    protected AddTaskCtrl addTaskCtrl;
+    protected Scene addTask;
+
+    protected DetailedTaskCtrl detailedTaskCtrl;
+    protected Scene detailedTask;
 
 
     /**
      * Initialize all controllers and scenes
-     * @param primaryStage main stage for application
-     * @param clientConnect first scene for connecting to a server
-     * @param home home scene for a server
-     * @param board board scene with the lists and tasks
+     *
+     * @param primaryStage  main stage for application
+     * @param home          first scene for connecting to a server
+     * @param boardOverview home scene for a server
+     * @param board         board scene with the lists and tasks
+     * @param addTask       add task scene - allows user to create a new task with a title
+     * @param detailedTask  allows user to see details of a task
      */
-    public void initialize(Stage primaryStage, Pair<ClientConnectCtrl, Parent> clientConnect,
-                           Pair<HomeCtrl, Parent> home, Pair<BoardCtrl, Parent> board) {
+    public void initialize(Stage primaryStage,
+                           Pair<HomeCtrl, Parent> home,
+                           Pair<BoardOverviewCtrl, Parent> boardOverview,
+                           Pair<BoardCtrl, Parent> board,
+                           Pair<AddTaskCtrl, Parent> addTask,
+                           Pair<DetailedTaskCtrl, Parent> detailedTask) {
         this.primaryStage = primaryStage;
-
-        this.clientConnectCtrl = clientConnect.getKey();
-        this.clientConnect = new Scene(clientConnect.getValue());
 
         this.homeCtrl = home.getKey();
         this.home = new Scene(home.getValue());
 
+        this.boardOverviewCtrl = boardOverview.getKey();
+        this.boardOverview = new Scene(boardOverview.getValue());
+
         this.boardCtrl = board.getKey();
         this.board = new Scene(board.getValue());
 
-        primaryStage.setScene(this.clientConnect);
+        this.addTaskCtrl = addTask.getKey();
+        this.addTask = new Scene(addTask.getValue());
+
+        this.detailedTaskCtrl = detailedTask.getKey();
+        this.detailedTask = new Scene(detailedTask.getValue());
+
+        primaryStage.setScene(this.home);
         primaryStage.show();
     }
 
     /**
+     * board
      * Change scene to home
      */
     public void showHome() {
         primaryStage.setTitle("Home");
         primaryStage.setScene(home);
+    }
+
+    /**
+     * Change scene to board overview
+     */
+    public void showBoardOverview() {
+        primaryStage.setTitle("Board Overview");
+        primaryStage.setScene(boardOverview);
+        boardOverviewCtrl.load();
     }
 
     /**
@@ -71,8 +105,14 @@ public class MainCtrl {
         primaryStage.setScene(board);
     }
 
+    public void showAddTask() {
+        primaryStage.setTitle("Add Task");
+        primaryStage.setScene(addTask);
+    }
+
     /**
      * Getter for the board
+     *
      * @return boardCtrl
      */
     public BoardCtrl getBoard() {
@@ -80,29 +120,50 @@ public class MainCtrl {
     }
 
 
-//
-//    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-//            Pair<AddQuoteCtrl, Parent> add) {
-//        this.primaryStage = primaryStage;
-//        this.overviewCtrl = overview.getKey();
-//        this.overview = new Scene(overview.getValue());
-//
-//        this.addCtrl = add.getKey();
-//        this.add = new Scene(add.getValue());
-//
-//        showOverview();
-//        primaryStage.show();
-//    }
-//
-//    public void showOverview() {
-//        primaryStage.setTitle("Quotes: Overview");
-//        primaryStage.setScene(overview);
-//        overviewCtrl.refresh();
-//    }
-//
-//    public void showAdd() {
-//        primaryStage.setTitle("Quotes: Adding Quote");
-//        primaryStage.setScene(add);
-//        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
-//    }
+    public void showDetailedTask() {
+        primaryStage.setTitle("Task Details");
+        primaryStage.setScene(detailedTask);
+    }
+
+    private double xOffset, yOffset;
+
+    public void initHeader(AnchorPane root) {
+
+        HBox header = new HBox();
+        header.setPrefSize(root.getPrefWidth(), 25);
+        header.setSpacing(15);
+        header.setAlignment(Pos.CENTER_RIGHT);
+        header.setPadding(new Insets(5, 10, 0, 0));
+
+        MFXFontIcon closeIcon = new MFXFontIcon();
+        closeIcon.setDescription("mfx-circle");
+        closeIcon.setSize(15);
+        closeIcon.setId("closeIcon");
+
+        MFXFontIcon minimizeIcon = new MFXFontIcon();
+        minimizeIcon.setDescription("mfx-circle");
+        minimizeIcon.setSize(15);
+        minimizeIcon.setId("minimizeIcon");
+
+
+
+        header.getChildren().add(minimizeIcon);
+        header.getChildren().add(closeIcon);
+
+
+
+        root.getChildren().add(0, header);
+
+        closeIcon.setOnMouseClicked(event -> Platform.exit());
+        minimizeIcon.setOnMouseClicked(event -> primaryStage.setIconified(true));
+
+        header.setOnMousePressed(event -> {
+            xOffset = primaryStage.getX() - event.getScreenX();
+            yOffset = primaryStage.getY() - event.getScreenY();
+        });
+        header.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() + xOffset);
+            primaryStage.setY(event.getScreenY() + yOffset);
+        });
+    }
 }

@@ -3,9 +3,9 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -14,10 +14,12 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
+
     public String title;
 
-    @OneToMany(mappedBy = "board")
-    public Set<TaskList> lists;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "BoardID")
+    public List<TaskList> lists = new ArrayList<>();
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
@@ -26,7 +28,6 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
-        lists = new HashSet<>();
     }
 
     @SuppressWarnings("unused")

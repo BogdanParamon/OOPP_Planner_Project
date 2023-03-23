@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class TestTaskRepository implements TaskRepository {
 
-    public final List<Task> quotes = new ArrayList<>();
+    public final List<Task> tasks = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
@@ -75,7 +75,10 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public <S extends Task> S save(S entity) {
-        return null;
+        call("save");
+        entity.taskId = (long) tasks.size() + 1;
+        tasks.add(entity);
+        return entity;
     }
 
     @Override
@@ -90,6 +93,9 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public boolean existsById(Long aLong) {
+        for (Task task : tasks)
+            if (task.taskId == aLong)
+                return true;
         return false;
     }
 
@@ -165,7 +171,8 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public <S extends Task, R> R findBy(Example<S> example,
-                                Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+                                        Function<FluentQuery.FetchableFluentQuery<S>,
+                                                R> queryFunction) {
         return null;
     }
 }

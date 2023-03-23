@@ -2,28 +2,34 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import javafx.fxml.Initializable;
+import commons.Board;
+import commons.TaskList;
 import javafx.fxml.FXML;
-import javafx.scene.layout.VBox;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BoardCtrl implements Initializable {
 
-    @FXML
-    private Text boardName;
-
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    @FXML
+    private Text boardName;
+    @FXML
+    private AnchorPane root;
+    @FXML
+    private HBox board_hbox;
+    private Board board;
 
-    @FXML private VBox list1;
 
     /**
      * Setup server and main controller
-     * @param server server to connect to
+     *
+     * @param server   server to connect to
      * @param mainCtrl the main controller - for switching scenes
      */
     @Inject
@@ -39,21 +45,40 @@ public class BoardCtrl implements Initializable {
      *               the root object was not localized.
      */
     public void initialize(URL url, ResourceBundle bundle) {
-        list1.getChildren().add(new Card());
+        mainCtrl.initHeader(root);
+    }
+
+
+
+    public void switchToAddTask() {
+
+        mainCtrl.showAddTask();
     }
 
     /**
      * Uses showHome method to switch scenes to Home scene
      */
-    public void switchToHomeScene() {
-        mainCtrl.showHome();
+    public void switchToBoardOverviewScene() {
+        mainCtrl.showBoardOverview();
     }
 
-    /**
-     * Sets the right board name to each board
-     * @param name the name of the specific board
-     */
-    public void setBoardName(String name) {
-        boardName.setText(name);
+    public void setBoard(Board board) {
+        this.board = board;
+        boardName.setText(board.title);
+        board_hbox.getChildren().clear();
+        for (var taskList : board.lists) {
+            List list = new List();
+            list.setTaskList(taskList);
+            board_hbox.getChildren().add(list);
+        }
     }
+
+    public void addList() {
+        TaskList list = new TaskList("New List");
+        server.addList(list, board.boardId);
+        List listUI = new List();
+        board_hbox.getChildren().add(listUI);
+    }
+
+
 }

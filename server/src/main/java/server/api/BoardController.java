@@ -1,7 +1,10 @@
 package server.api;
 
 import commons.Board;
+import commons.TaskList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
@@ -10,15 +13,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
-    private final BoardRepository repo;
+    private final BoardRepository boardRepository;
 
     /**
      * Constructor for the BoardController class
      *
-     * @param repo The repository containing Board instances
+     * @param boardRepository The repository containing Board instances
      */
-    public BoardController(BoardRepository repo) {
-        this.repo = repo;
+    public BoardController(BoardRepository boardRepository) {
+        this.boardRepository = boardRepository;
     }
 
     /**
@@ -26,9 +29,9 @@ public class BoardController {
      *
      * @return A list containing all boards in the repository
      */
-    @GetMapping("")
+    @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
-        return repo.findAll();
+        return boardRepository.findAll();
     }
 
     /**
@@ -40,10 +43,24 @@ public class BoardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        if (id < 0 || !boardRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(boardRepository.findById(id).get());
+    }
+
+    /**
+     * Gets the list of TaskLists from the specified board
+     *
+     * @param boardId the ID of the board which the lists will be retrieved from
+     * @return a List conatining the list of TaskLists in the board
+     */
+    @GetMapping("/{boardId}/taskLists")
+    public ResponseEntity<List<TaskList>> getListsByBoardId(@PathVariable("boardId") long boardId) {
+        if (boardId < 0 || !boardRepository.existsById(boardId))
+            return ResponseEntity.badRequest().build();
+        Board parentBoard = boardRepository.findById(boardId).get();
+        return ResponseEntity.ok(parentBoard.lists);
     }
 
     /**
@@ -53,12 +70,54 @@ public class BoardController {
      * @return A ResponseEntity object that can handle all outcomes of
      * attempted addition to the board repository
      */
-    @PostMapping(path = {"", "/"})
+    @PostMapping(path = "/add")
     public ResponseEntity<Board> add(@RequestBody Board board) {
         if (board == null || board.title == null || board.title.isEmpty())
             return ResponseEntity.badRequest().build();
 
-        Board saved = repo.save(board);
+        Board saved = boardRepository.save(board);
         return ResponseEntity.ok(saved);
+    }
+
+    /**
+     * Deletes a board from the database
+     * @param boardId id of board to be deleted
+     * @return successful if board exists
+     */
+    @DeleteMapping(path =  "/delete")
+    public ResponseEntity<Board> delete(@RequestParam long boardId) {
+        if (!boardRepository.existsById(boardId))
+            return ResponseEntity.badRequest().build();
+
+        boardRepository.deleteById(boardId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Update a board
+     * @param board board to be updated
+     * @return updated board
+     */
+    @PostMapping("/update")
+    public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
+        if (board == null || !boardRepository.existsById(board.boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Board updatedBoard = boardRepository.save(board);
+        return ResponseEntity.ok(updatedBoard);
+    }
+
+
+    @PostMapping(path = "/deleteAll")
+    public ResponseEntity<String> deleteAll() {
+        boardRepository.deleteAll();
+        return ResponseEntity.ok("Successful");
+    }
+
+    @MessageMapping("/boards")
+    @SendTo("/topic/boards")
+    public Board addMessage(Board board) {
+        add(board);
+        return board;
     }
 }
