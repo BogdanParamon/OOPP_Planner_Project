@@ -23,7 +23,7 @@ public class BoardCtrl implements Initializable {
     private AnchorPane root;
     @FXML
     private HBox board_hbox;
-    public Board board;
+    private Board board;
 
 
     /**
