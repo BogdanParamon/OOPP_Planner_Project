@@ -3,9 +3,7 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -19,7 +17,8 @@ public class TaskList {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "listID")
-    public Set<Task> tasks = new HashSet<>();
+    @OrderColumn
+    public List<Task> tasks = new ArrayList<>();
 
     /**
      * Creates a new TaskList object with the given title, board and an empty set of Tasks.
@@ -80,5 +79,13 @@ public class TaskList {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setListId(long listId) {
+        this.listId = listId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

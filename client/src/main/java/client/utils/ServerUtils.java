@@ -15,8 +15,6 @@
  */
 package client.utils;
 
-//import commons.Quote;
-
 import commons.Board;
 import commons.Task;
 import commons.TaskList;
@@ -76,6 +74,33 @@ public class ServerUtils {
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
     }
 
+    public List<Task> getAll() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Task>>() {
+                });
+    }
+
+    public List<Task> getAllTasks(String sortBy) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/sorted")
+                .queryParam("sortBy", sortBy)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Task>>() {
+                });
+    }
+
+    public Task updateTask(Long id, Task task) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/" + id)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.json(task), Task.class);
+    }
+
     public List<Board> getBoards() {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/boards")
@@ -95,11 +120,29 @@ public class ServerUtils {
 
     public TaskList addList(TaskList list, long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskList")
+                .target(SERVER).path("api/taskLists")
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(list,APPLICATION_JSON),TaskList.class);
+                .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
+    }
+
+    public TaskList updateList(long id, TaskList taskList) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskLists/" + id)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(taskList, APPLICATION_JSON), TaskList.class);
+    }
+
+    public List<TaskList> getListsByBoardId(long boardId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/{boardId}/taskLists")
+                .resolveTemplate("boardId",boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<TaskList>>() {
+                });
     }
 
     public Board getBoardById(long boardId) {
@@ -115,7 +158,8 @@ public class ServerUtils {
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
         try {
-            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() { }).get();
+            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() {
+            }).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
@@ -141,5 +185,13 @@ public class ServerUtils {
 
     public void send(String dest, Object o) {
         session.send(dest, o);
+    }
+
+    public void deleteAllBoards() {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/deleteAll")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity("", APPLICATION_JSON), String.class);
     }
 }

@@ -11,8 +11,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -28,8 +26,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
-    private ObservableList<MFXButton> items;
     @FXML
     private MFXListView<MFXButton> boards;
 
@@ -70,23 +66,20 @@ public class BoardOverviewCtrl implements Initializable {
             Platform.runLater(() -> {
                 MFXButton button = new MFXButton(board.title);
                 button.setOnAction(event -> switchSceneToBoard(board));
-                items.add(button);
+                boards.getItems().add(button);
                 boardTitle.clear();
             });
         });
     }
 
     public void load() {
-        items = FXCollections.observableArrayList();
         var boardEntities = server.getBoards();
-
+        boards.getItems().clear();
         for (var i : boardEntities) {
             MFXButton button = new MFXButton(i.title);
             button.setOnAction(event -> switchSceneToBoard(i));
-            items.add(button);
+            boards.getItems().add(button);
         }
-
-        boards.setItems(items);
         subheadingAnimation();
     }
 
@@ -120,8 +113,6 @@ public class BoardOverviewCtrl implements Initializable {
         try {
             Board board = new Board(boardTitle.getText());
             server.send("/app/boards", board);
-            //board = server.addBoard(board);
-            //switchSceneToBoard(board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -129,6 +120,12 @@ public class BoardOverviewCtrl implements Initializable {
             alert.showAndWait();
         }
     }
+
+    public void deleteAll() {
+        server.deleteAllBoards();
+        boards.getItems().clear();
+    }
+
 
     public void switchSceneToHome() {
         mainCtrl.showHome();

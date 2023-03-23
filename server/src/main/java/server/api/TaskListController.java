@@ -10,19 +10,20 @@ import server.database.TaskListRepository;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/taskList")
+@RequestMapping("/api/taskLists")
 public class TaskListController {
-    private final TaskListRepository repository;
+    private final TaskListRepository taskListRepository;
     private final BoardRepository boardRepository;
 
     /**
      * Constructor for class TaskListController
      *
-     * @param repository      - the repository containing all task lists
+     * @param taskListRepository      - the repository containing all task lists
      * @param boardRepository - the repository containing all boards
      */
-    public TaskListController(TaskListRepository repository, BoardRepository boardRepository) {
-        this.repository = repository;
+    public TaskListController(TaskListRepository taskListRepository,
+                              BoardRepository boardRepository) {
+        this.taskListRepository = taskListRepository;
         this.boardRepository = boardRepository;
     }
 
@@ -33,7 +34,7 @@ public class TaskListController {
      */
     @GetMapping(path = {"", "/"})
     public List<TaskList> getAll() {
-        return repository.findAll();
+        return taskListRepository.findAll();
     }
 
     /**
@@ -44,28 +45,29 @@ public class TaskListController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TaskList> getById(@PathVariable("id") long id) {
-        if (id < 0 || !repository.existsById(id)) {
+        if (id < 0 || !taskListRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repository.findById(id).get());
+        return ResponseEntity.ok(taskListRepository.findById(id).get());
     }
 
     /**
      * Adds a task list to the repository
-     * 
+     *
      * @param boardId the ID of the board the list will be added to
-     * @param list - list to be added
+     * @param list    - list to be added
      * @return a response entity object of type TaskList
      */
-    @PostMapping(path = {"", "/"})
+    @PostMapping(path = "/add")
     public ResponseEntity<TaskList> add(@RequestBody TaskList list, @RequestParam long boardId) {
-        if (list.title == null || list.tasks == null) {
+        if (list.title == null || list.tasks == null
+                || list.title.isEmpty() ||  ! boardRepository.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList saved = repository.save(list);
-        Board parentBoard = boardRepository.findById(boardId).get();
+        Board parentBoard = boardRepository.getById(boardId);
         parentBoard.lists.add(list);
         boardRepository.save(parentBoard);
+        TaskList saved = taskListRepository.save(list);
         return ResponseEntity.ok(saved);
     }
 
@@ -75,14 +77,30 @@ public class TaskListController {
      * @param id - id of the task list to be deleted
      * @return a response entity object of type TaskList
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<TaskList> delete(@PathVariable("id") long id) {
-        if (id < 0 || !repository.existsById(id)) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<TaskList> delete(@RequestParam long id) {
+        if (id < 0 || !taskListRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList tl = repository.getById(id);
-        repository.deleteById(id);
+        TaskList tl = taskListRepository.getById(id);
+        taskListRepository.deleteById(id);
 
-        return ResponseEntity.ok(tl);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Updates a task list
+     *
+     * @param taskList - the new updated list
+     * @return a response entity object of type TaskList that confirms to the client that
+     * the operation was successful
+     */
+    @PostMapping("/update")
+    public ResponseEntity<TaskList> updateList(@RequestBody TaskList taskList) {
+        if (taskList == null || !taskListRepository.existsById(taskList.listId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        TaskList updatedList = taskListRepository.save(taskList);
+        return ResponseEntity.ok(updatedList);
     }
 }

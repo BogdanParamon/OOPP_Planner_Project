@@ -29,5 +29,6 @@
 
               </font>
       </MFXButton>
+      <MFXButton buttonType="RAISED" layoutX="300.0" layoutY="288.0" text="Delete all boards" onAction="#deleteAll"/>
    </children>
 </AnchorPane>
