@@ -1,5 +1,6 @@
 package client.scenes;
 
+import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,8 @@ public class List extends Pane {
 
     @FXML
     private MFXButton addButton;
+
+    private TaskList taskList;
 
 
     public List() {
@@ -56,7 +59,6 @@ public class List extends Pane {
             event.setDropCompleted(true);
             event.consume();
         });
-
     }
 
     public void addTask(String title, Integer index) {
@@ -74,6 +76,15 @@ public class List extends Pane {
 
     public void deleteCard(Card card) {
         list.getChildren().remove(card);
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
+        for (var task : taskList.tasks) {
+            Card card = new Card();
+            card.setText(task.title);
+            list.getChildren().add(card);
+        }
     }
 
 }
