@@ -68,7 +68,7 @@ public class ServerUtils {
 
     public Task addTask(Task task) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks")
+                .target(SERVER).path("api/tasks/add")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
@@ -95,7 +95,7 @@ public class ServerUtils {
 
     public Task updateTask(Long id, Task task) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/" + id)
+                .target(SERVER).path("api/tasks/update")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .put(Entity.json(task), Task.class);
@@ -112,7 +112,7 @@ public class ServerUtils {
 
     public Board addBoard(Board board) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards")
+                .target(SERVER).path("api/boards/add")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
@@ -120,16 +120,16 @@ public class ServerUtils {
 
     public TaskList addList(TaskList list, long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskLists")
+                .target(SERVER).path("api/taskLists/add")
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
     }
 
-    public TaskList updateList(long id, TaskList taskList) {
+    public TaskList updateList(TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskLists/" + id)
+                .target(SERVER).path("api/taskLists/update")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .put(Entity.entity(taskList, APPLICATION_JSON), TaskList.class);
@@ -143,6 +143,14 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<TaskList>>() {
                 });
+    }
+
+    public Board getBoardById(long boardId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/" + boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Board.class);
     }
 
     public StompSession connectWebsocket() {
