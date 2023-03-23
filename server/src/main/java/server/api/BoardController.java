@@ -46,7 +46,7 @@ public class BoardController {
         if (id < 0 || !boardRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(boardRepository.getById(id));
+        return ResponseEntity.ok(boardRepository.findById(id).get());
     }
 
     /**
@@ -59,7 +59,7 @@ public class BoardController {
     public ResponseEntity<List<TaskList>> getListsByBoardId(@PathVariable("boardId") long boardId) {
         if (boardId < 0 || !boardRepository.existsById(boardId))
             return ResponseEntity.badRequest().build();
-        Board parentBoard = boardRepository.getById(boardId);
+        Board parentBoard = boardRepository.findById(boardId).get();
         return ResponseEntity.ok(parentBoard.lists);
     }
 

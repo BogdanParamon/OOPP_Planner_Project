@@ -64,7 +64,7 @@ public class TaskListController {
                 || list.title.isEmpty() ||  ! boardRepository.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-        Board parentBoard = boardRepository.getById(boardId);
+        Board parentBoard = boardRepository.findById(boardId).get();
         parentBoard.lists.add(list);
         boardRepository.save(parentBoard);
         TaskList saved = taskListRepository.save(list);
@@ -82,7 +82,7 @@ public class TaskListController {
         if (id < 0 || !taskListRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList tl = taskListRepository.getById(id);
+        TaskList tl = taskListRepository.findById(id).get();
         taskListRepository.deleteById(id);
 
         return ResponseEntity.ok().build();
