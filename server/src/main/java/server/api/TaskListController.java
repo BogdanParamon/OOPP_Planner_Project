@@ -100,7 +100,6 @@ public class TaskListController {
         if (taskList == null || !taskListRepository.existsById(taskList.listId)) {
             return ResponseEntity.badRequest().build();
         }
-        System.out.println(taskList);
         TaskList updatedList = taskListRepository.save(taskList);
         return ResponseEntity.ok(updatedList);
     }
