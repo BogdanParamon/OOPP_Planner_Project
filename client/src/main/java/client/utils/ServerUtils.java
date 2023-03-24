@@ -127,7 +127,7 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
     }
 
-    public TaskList updateList(long id, TaskList taskList) {
+    public TaskList updateList(TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/taskLists/update")
                 .request(APPLICATION_JSON)

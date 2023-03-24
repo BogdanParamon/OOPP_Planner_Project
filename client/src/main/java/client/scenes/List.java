@@ -1,7 +1,9 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -22,6 +24,10 @@ public class List extends Pane {
 
     private TaskList taskList;
 
+    @FXML private MFXTextField title;
+
+    private ServerUtils server;
+
 
     public List() {
         FXMLLoader loader =
@@ -35,6 +41,13 @@ public class List extends Pane {
             System.out.println("Error");
             throw new RuntimeException(e);
         }
+
+        title.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue);
+            taskList.setTitle(newValue);
+            server.updateList(taskList);
+        });
+
 
         addButton.setOnAction(event -> addTask(null, null));
         addButton.setText("");
@@ -80,6 +93,7 @@ public class List extends Pane {
 
     public void setTaskList(TaskList taskList) {
         this.taskList = taskList;
+        title.setText(taskList.title);
         for (var task : taskList.tasks) {
             Card card = new Card();
             card.setText(task.title);
@@ -87,4 +101,7 @@ public class List extends Pane {
         }
     }
 
+    public void setServerUtils(ServerUtils server) {
+        this.server = server;
+    }
 }

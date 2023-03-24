@@ -46,10 +46,10 @@ public class TaskController {
                 || !taskListRepository.existsById(taskListId)) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList list = taskListRepository.findById(taskListId).get();
-        list.addTask(task);
-        taskListRepository.save(list);
         Task saved = taskRepository.save(task);
+        TaskList list = taskListRepository.findById(taskListId).get();
+        list.addTask(saved);
+        taskListRepository.save(list);
         return ResponseEntity.ok(saved);
     }
 

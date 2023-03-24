@@ -68,6 +68,7 @@ public class BoardCtrl implements Initializable {
         board_hbox.getChildren().clear();
         for (var taskList : board.lists) {
             List list = new List();
+            list.setServerUtils(server);
             list.setTaskList(taskList);
             board_hbox.getChildren().add(list);
         }
@@ -75,10 +76,10 @@ public class BoardCtrl implements Initializable {
 
     public void addList() {
         TaskList list = new TaskList("New List");
-        server.addList(list, board.boardId);
+        list = server.addList(list, board.boardId);
         List listUI = new List();
+        listUI.setServerUtils(server);
+        listUI.setTaskList(list);
         board_hbox.getChildren().add(listUI);
     }
-
-
 }
