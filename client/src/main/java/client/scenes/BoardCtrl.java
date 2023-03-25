@@ -3,14 +3,18 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.Task;
 import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class BoardCtrl implements Initializable {
@@ -24,7 +28,6 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
-
 
     /**
      * Setup server and main controller
@@ -51,9 +54,9 @@ public class BoardCtrl implements Initializable {
 
 
     public void switchToAddTask() {
-
         mainCtrl.showAddTask();
     }
+
 
     /**
      * Uses showHome method to switch scenes to Home scene
@@ -67,16 +70,15 @@ public class BoardCtrl implements Initializable {
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
         for (var taskList : board.lists) {
-            List list = new List();
-            list.setTaskList(taskList);
+            List list = new List(mainCtrl, server, taskList);
             board_hbox.getChildren().add(list);
         }
     }
 
     public void addList() {
         TaskList list = new TaskList("New List");
-        server.addList(list, board.boardId);
-        List listUI = new List();
+        list = server.addList(list, board.boardId);
+        List listUI = new List(mainCtrl, server, list);
         board_hbox.getChildren().add(listUI);
     }
 

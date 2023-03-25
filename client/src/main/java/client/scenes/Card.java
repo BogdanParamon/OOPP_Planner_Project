@@ -1,10 +1,15 @@
 package client.scenes;
 
+import client.Main;
+import client.utils.ServerUtils;
+import commons.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -12,15 +17,21 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class Card extends Pane {
-    @FXML
-    private Text title;
 
-    private String text = "";
+    private final MainCtrl mainCtrl;
+    private ServerUtils server;
 
-    /**
-     * New component Card
-     */
-    public Card() {
+    private Task task;
+
+    @FXML private Text title;
+
+
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task) {
+
+        this.mainCtrl = mainCtrl;
+        this.server = server;
+        this.task = task;
+
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
         loader.setRoot(this);
@@ -33,45 +44,26 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
+        title.setText(task.title);
+
         init();
     }
-
-
-    /**
-     * @return title text
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * @param text title to change
-     */
-    public void setText(String text) {
-        this.text = text;
-        title.setText(text);
-    }
-
 
     void init() {
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(text); // TODO pass this
+            content.putString(task.title);
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
-            System.out.println("Drag done");
-
-            // TODO not remove when invalid drop
-            ((VBox) getParent()).getChildren().remove(this);
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                ((VBox) getParent()).getChildren().remove(this);
+            }
             event.consume();
         });
-
     }
-
-
 }
