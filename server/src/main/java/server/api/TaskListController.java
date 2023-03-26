@@ -3,11 +3,16 @@ package server.api;
 import commons.Board;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TaskListRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/taskLists")
@@ -102,5 +107,13 @@ public class TaskListController {
         }
         TaskList updatedList = taskListRepository.save(taskList);
         return ResponseEntity.ok(updatedList);
+    }
+
+    @MessageMapping("/taskLists/add/{boardId}")
+    @SendTo("/topic/taskLists/add/{boardId}")
+    @Transactional
+    public TaskList addMessage(TaskList taskList, @DestinationVariable("boardId") long boardId) {
+        add(taskList, boardId);
+        return taskList;
     }
 }

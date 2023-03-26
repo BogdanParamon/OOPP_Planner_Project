@@ -4,11 +4,13 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,6 +26,8 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
+
+    private StompSession.Subscription subscription;
 
 
     /**
@@ -48,7 +52,16 @@ public class BoardCtrl implements Initializable {
         mainCtrl.initHeader(root);
     }
 
-
+    public StompSession.Subscription registerForNewLists() {
+        return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class, taskList -> {
+            Platform.runLater(() -> {
+                List list = new List();
+                list.setServerUtils(server);
+                list.setTaskList(taskList);
+                board_hbox.getChildren().add(list);
+            });
+        });
+    }
 
     public void switchToAddTask() {
 
@@ -59,6 +72,7 @@ public class BoardCtrl implements Initializable {
      * Uses showHome method to switch scenes to Home scene
      */
     public void switchToBoardOverviewScene() {
+        subscription.unsubscribe();
         mainCtrl.showBoardOverview();
     }
 
@@ -72,14 +86,11 @@ public class BoardCtrl implements Initializable {
             list.setTaskList(taskList);
             board_hbox.getChildren().add(list);
         }
+        subscription = registerForNewLists();
     }
 
     public void addList() {
         TaskList list = new TaskList("New List");
-        list = server.addList(list, board.boardId);
-        List listUI = new List();
-        listUI.setServerUtils(server);
-        listUI.setTaskList(list);
-        board_hbox.getChildren().add(listUI);
+        server.send("/app/taskLists/add/" + board.boardId, list);
     }
 }
