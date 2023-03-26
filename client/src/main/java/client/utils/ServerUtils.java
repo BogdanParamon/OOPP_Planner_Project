@@ -66,9 +66,10 @@ public class ServerUtils {
     }
 
 
-    public Task addTask(Task task) {
+    public Task addTask(Task task, long taskListId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/add")
+                .queryParam("taskListId", taskListId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
@@ -127,7 +128,7 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
     }
 
-    public TaskList updateList(long id, TaskList taskList) {
+    public TaskList updateList(TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/taskLists/update")
                 .request(APPLICATION_JSON)
@@ -193,5 +194,13 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity("", APPLICATION_JSON), String.class);
+    }
+
+    public Task getTaskById(long taskId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/" + taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Task.class);
     }
 }

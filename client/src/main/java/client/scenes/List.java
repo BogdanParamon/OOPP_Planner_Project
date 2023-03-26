@@ -7,6 +7,7 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -17,21 +18,19 @@ import java.util.Objects;
 
 public class List extends Pane {
 
+    private final MainCtrl mainCtrl;
+    private final ServerUtils server;
+    private final TaskList taskList;
+    private Integer dragIndex;
+
     @FXML private VBox list;
     @FXML private MFXButton addButton;
-
-    private MainCtrl mainCtrl;
-    private ServerUtils server;
-    private TaskList taskList;
-
-    private Integer dragIndex;
 
     public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList) {
 
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
-
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
@@ -45,18 +44,22 @@ public class List extends Pane {
             throw new RuntimeException(e);
         }
 
-        addButton.setOnAction(event -> addTask(null, null));
+        for (Task task : taskList.tasks) {
+            Card card = new Card(mainCtrl, server, task, taskList);
+            list.getChildren().add(0, card);
+        }
+
+        addButton.setOnAction(event -> addTask());
         addButton.setText("");
         dragIndex = null;
 
+        initDrag(mainCtrl, server);
+    }
+
+    private void initDrag(MainCtrl mainCtrl, ServerUtils server) {
         setOnDragOver(event -> {
             event.acceptTransferModes(TransferMode.MOVE);
-            int sceneY =  (int) event.getSceneY() - 190;
-            int length = list.getChildren().size();
-            int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
-
-            if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
-
+            int index = getIndex(event);
 
             if (!Objects.equals(index,dragIndex)) {
                 if (dragIndex != null) {
@@ -66,7 +69,7 @@ public class List extends Pane {
                 dragIndex = index;
                 System.out.println(dragIndex);
 
-                Card card = new Card(mainCtrl, server, new Task(""));
+                Card card = new Card(mainCtrl, server, new Task(""), null);
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
                 list.getChildren().add(dragIndex, card);
             }
@@ -75,7 +78,6 @@ public class List extends Pane {
         });
 
         setOnDragExited(event -> {
-            System.out.println("Drag exited");
             if (dragIndex != null) {
                 list.getChildren().remove(list.getChildren().get(dragIndex));
                 dragIndex = null;
@@ -86,12 +88,9 @@ public class List extends Pane {
             System.out.println("Drag dropped");
             Dragboard db = event.getDragboard();
 
-            int sceneY =  (int) event.getSceneY() - 190;
-            int length = list.getChildren().size();
-            int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
-            if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
+            int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(db.getString(), index) ;
+            addTask(Long.parseLong(db.getString()), index) ;
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -99,28 +98,35 @@ public class List extends Pane {
         });
     }
 
-    public void addTask(String title, Integer index) {
-        int len = list.getChildren().size();
-        if (title == null) title = "Title " + len;
 
-        Task task = new Task(title);
-        Card card = new Card(mainCtrl, server, task);
-        list.getChildren().add(index == null ? len - 1 : index, card);
+    private int getIndex(DragEvent event) {
+        int sceneY =  (int) event.getSceneY() - 190;
+        int length = list.getChildren().size();
+        int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
+        if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
+        return index;
+    }
+
+    public void addTask() {
+        Task task = server.addTask(new Task("Title"), taskList.listId);
+        taskList.tasks.add(0, task);
+        Card card = new Card(mainCtrl, server, task, taskList);
+        list.getChildren().add(0, card);
+    }
+
+    public void addTask(long taskId, Integer index) {
+        int len = list.getChildren().size();
+
+        Task task = server.getTaskById(taskId);
+        taskList.tasks.add(index, task);
+        server.updateList(taskList);
+        Card card = new Card(mainCtrl, server, task, taskList);
+        list.getChildren().add(index, card);
 
         VBox.setMargin(card, new Insets(5, 0,5, 5));
-
     }
 
     public void deleteCard(Card card) {
         list.getChildren().remove(card);
     }
-
-    public void setTaskList(TaskList taskList) {
-        this.taskList = taskList;
-        for (var task : taskList.tasks) {
-            Card card = new Card(mainCtrl, server, task);
-            list.getChildren().add(card);
-        }
-    }
-
 }

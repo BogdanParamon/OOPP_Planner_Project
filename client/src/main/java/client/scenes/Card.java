@@ -1,15 +1,13 @@
 package client.scenes;
 
-import client.Main;
 import client.utils.ServerUtils;
 import commons.Task;
+import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -19,18 +17,19 @@ import java.io.IOException;
 public class Card extends Pane {
 
     private final MainCtrl mainCtrl;
-    private ServerUtils server;
-
-    private Task task;
+    private final ServerUtils server;
+    private final TaskList taskList;
+    private final Task task;
 
     @FXML private Text title;
 
 
-    public Card(MainCtrl mainCtrl, ServerUtils server, Task task) {
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.task = task;
+        this.taskList = taskList;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
@@ -45,22 +44,23 @@ public class Card extends Pane {
         }
 
         title.setText(task.title);
-
-        init();
+        initDrag();
     }
 
-    void init() {
+    void initDrag() {
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(task.title);
+            content.putString(String.valueOf(task.taskId));
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
+                taskList.tasks.remove(task);
+                server.updateList(taskList);
                 ((VBox) getParent()).getChildren().remove(this);
             }
             event.consume();

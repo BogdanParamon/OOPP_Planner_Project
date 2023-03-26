@@ -3,18 +3,14 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
-import commons.Task;
 import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class BoardCtrl implements Initializable {
@@ -50,7 +46,6 @@ public class BoardCtrl implements Initializable {
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
     }
-
 
 
     public void switchToAddTask() {
