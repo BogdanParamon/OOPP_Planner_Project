@@ -109,7 +109,7 @@ public class BoardCtrl implements Initializable {
         save.setVisible(false);
         if (!newTitleS.isEmpty()) {
             this.board.title = newTitleS;
-            setBoard(board);
+            boardName.setText(this.board.title);
             updateBoard(this.board);
         }
         newtTitle.setText("");
