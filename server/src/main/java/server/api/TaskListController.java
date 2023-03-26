@@ -64,11 +64,11 @@ public class TaskListController {
                 || list.title.isEmpty() ||  ! boardRepository.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-        Board parentBoard = boardRepository.findById(boardId).get();
-        parentBoard.lists.add(list);
-        boardRepository.save(parentBoard);
         TaskList saved = taskListRepository.save(list);
-        return ResponseEntity.ok(saved);
+        Board parentBoard = boardRepository.findById(boardId).get();
+        parentBoard.lists.add(saved);
+        boardRepository.save(parentBoard);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -95,7 +95,7 @@ public class TaskListController {
      * @return a response entity object of type TaskList that confirms to the client that
      * the operation was successful
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<TaskList> updateList(@RequestBody TaskList taskList) {
         if (taskList == null || !taskListRepository.existsById(taskList.listId)) {
             return ResponseEntity.badRequest().build();

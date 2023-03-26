@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -26,11 +27,13 @@ public class List extends Pane {
     @FXML private VBox list;
     @FXML private MFXButton addButton;
 
-    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList) {
+    @FXML private MFXTextField title;
 
+    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList) {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
+
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
@@ -48,6 +51,12 @@ public class List extends Pane {
             Card card = new Card(mainCtrl, server, task, taskList);
             list.getChildren().add(0, card);
         }
+
+        title.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue);
+            taskList.setTitle(newValue);
+            server.updateList(taskList);
+        });
 
         addButton.setOnAction(event -> addTask());
         addButton.setText("");
@@ -124,9 +133,5 @@ public class List extends Pane {
         list.getChildren().add(index, card);
 
         VBox.setMargin(card, new Insets(5, 0,5, 5));
-    }
-
-    public void deleteCard(Card card) {
-        list.getChildren().remove(card);
     }
 }
