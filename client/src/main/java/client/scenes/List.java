@@ -73,7 +73,6 @@ public class List extends Pane {
             if (!Objects.equals(index,dragIndex)) {
                 if (dragIndex != null) {
                     list.getChildren().remove(list.getChildren().get(dragIndex));
-                    System.out.println("Removed");
                 }
                 dragIndex = index;
                 System.out.println(dragIndex);
