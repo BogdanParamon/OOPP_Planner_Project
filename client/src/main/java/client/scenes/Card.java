@@ -1,5 +1,8 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
+import commons.Task;
+import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.ClipboardContent;
@@ -12,15 +15,22 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class Card extends Pane {
-    @FXML
-    private Text title;
 
-    private String text = "";
+    private final MainCtrl mainCtrl;
+    private final ServerUtils server;
+    private final TaskList taskList;
+    private final Task task;
 
-    /**
-     * New component Card
-     */
-    public Card() {
+    @FXML private Text title;
+
+
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
+
+        this.mainCtrl = mainCtrl;
+        this.server = server;
+        this.task = task;
+        this.taskList = taskList;
+
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
         loader.setRoot(this);
@@ -33,45 +43,27 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
-        init();
+        title.setText(task.title);
+        initDrag();
     }
 
-
-    /**
-     * @return title text
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * @param text title to change
-     */
-    public void setText(String text) {
-        this.text = text;
-        title.setText(text);
-    }
-
-
-    void init() {
+    void initDrag() {
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(text); // TODO pass this
+            content.putString(String.valueOf(task.taskId));
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
-            System.out.println("Drag done");
-
-            // TODO not remove when invalid drop
-            ((VBox) getParent()).getChildren().remove(this);
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                taskList.tasks.remove(task);
+                server.updateList(taskList);
+                ((VBox) getParent()).getChildren().remove(this);
+            }
             event.consume();
         });
-
     }
-
-
 }

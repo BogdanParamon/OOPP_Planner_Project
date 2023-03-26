@@ -36,7 +36,6 @@ public class BoardCtrl implements Initializable {
     @FXML
     private Button save;
 
-
     /**
      * Setup server and main controller
      *
@@ -60,11 +59,10 @@ public class BoardCtrl implements Initializable {
     }
 
 
-
     public void switchToAddTask() {
-
         mainCtrl.showAddTask();
     }
+
 
     /**
      * Uses showHome method to switch scenes to Home scene
@@ -78,9 +76,7 @@ public class BoardCtrl implements Initializable {
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
         for (var taskList : board.lists) {
-            List list = new List();
-            list.setServerUtils(server);
-            list.setTaskList(taskList);
+            List list = new List(mainCtrl, server, taskList);
             board_hbox.getChildren().add(list);
         }
     }
@@ -88,9 +84,7 @@ public class BoardCtrl implements Initializable {
     public void addList() {
         TaskList list = new TaskList("New List");
         list = server.addList(list, board.boardId);
-        List listUI = new List();
-        listUI.setServerUtils(server);
-        listUI.setTaskList(list);
+        List listUI = new List(mainCtrl, server, list);
         board_hbox.getChildren().add(listUI);
     }
 

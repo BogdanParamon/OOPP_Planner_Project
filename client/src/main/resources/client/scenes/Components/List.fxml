@@ -23,7 +23,7 @@
     </MFXTextField>
 
     <MFXScrollPane id="ScrollList" layoutX="5" layoutY="50" prefHeight="300" prefWidth="150" vbarPolicy="NEVER">
-        <VBox fx:id="list" alignment="CENTER" layoutY="12.0" prefWidth="140">
+        <VBox fx:id="list" alignment="CENTER" layoutY="12.0" prefWidth="140" spacing="10">
             <HBox fx:id="addButtonWrapper">
                 <MFXButton fx:id="addButton">
                     <graphic>
