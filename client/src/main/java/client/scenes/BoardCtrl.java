@@ -14,8 +14,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
-
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
