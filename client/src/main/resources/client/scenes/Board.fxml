@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane style="-fx-border-color: black; -fx-border-width: 2px;" fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-border-color: black; -fx-border-width: 2px;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
 
 
@@ -31,7 +31,7 @@
                </padding></HBox>
          </content>
       </ScrollPane>
-        <Text fx:id="boardName" layoutX="183.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="260.17819993769444">
+        <Text fx:id="boardName" layoutX="240.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="260.17819993769444">
             <font>
                 <Font name="Roboto" size="30.0" />
             </font>
@@ -100,20 +100,24 @@
                 </ImageView>
             </children>
         </Pane>
-      <TextField fx:id="newtTitle" layoutX="183.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Enter new title" style="-fx-background-color: ddd;" visible="false">
+      <TextField fx:id="newtTitle" layoutX="240.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Enter new title" style="-fx-background-color: ddd;" visible="false">
          <font>
             <Font size="22.0" />
          </font>
       </TextField>
-      <MFXButton fx:id="editTitle" layoutX="477.0" layoutY="38.0" onAction="#updateTitle" style="-fx-background-color: ddd;" text="Edit title">
-         <font>
-            <Font name="Roboto" size="20.0" />
-         </font>
+      <MFXButton fx:id="editTitle" layoutX="183.0" layoutY="38.0" onAction="#updateTitle" text="">
+          <graphic>
+              <ImageView fitHeight="30.0" fitWidth="29.0">
+                  <Image url="@/client/images/editing.png" />
+              </ImageView>
+          </graphic>
       </MFXButton>
-      <MFXButton fx:id="save" layoutX="477.0" layoutY="38.0" onAction="#saveNewTitle" prefHeight="42.0" prefWidth="104.0" style="-fx-background-color: ddd;" text="Save" visible="false">
-         <font>
-            <Font name="Roboto" size="20.0" />
-         </font>
+      <MFXButton fx:id="save" layoutX="183.0" layoutY="38.0" onAction="#saveNewTitle" text="" visible="false">
+         <graphic>
+             <ImageView fitHeight="30.0" fitWidth="29.0">
+                 <Image url="@/client/images/confirm.png" />
+             </ImageView>
+         </graphic>
       </MFXButton>
     </children>
 </AnchorPane>
