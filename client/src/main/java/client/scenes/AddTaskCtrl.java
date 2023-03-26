@@ -25,7 +25,6 @@ public class AddTaskCtrl {
 
     public void ok() {
         try {
-//            server.addTask(getTask());
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
