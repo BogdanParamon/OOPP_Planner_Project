@@ -196,7 +196,7 @@ public class ServerUtils {
                 .delete();
     }
 
-    public void deleteTask(Task task){
+    public void deleteTask(Task task) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/delete/")
                 .queryParam("taskId", task.taskId)
@@ -205,7 +205,7 @@ public class ServerUtils {
                 .delete();
     }
 
-    public Response deleteTaskList(TaskList taskList){
+    public Response deleteTaskList(TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/taskLists/delete/")
                 .queryParam("id", taskList.listId)

@@ -54,7 +54,7 @@ public class Card extends Pane {
     }
 
 
-    public void deleteTask(VBox list){
+    public void deleteTask(VBox list) {
         deleteTaskButton.setOnAction(event -> {
             list.getChildren().remove(this);
             server.deleteTask(task);
