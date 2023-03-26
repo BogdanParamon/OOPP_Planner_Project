@@ -75,7 +75,6 @@ public class List extends Pane {
                     list.getChildren().remove(list.getChildren().get(dragIndex));
                 }
                 dragIndex = index;
-                System.out.println(dragIndex);
 
                 Card card = new Card(mainCtrl, server, new Task(""), null);
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
@@ -131,6 +130,6 @@ public class List extends Pane {
         Card card = new Card(mainCtrl, server, task, taskList);
         list.getChildren().add(index, card);
 
-        VBox.setMargin(card, new Insets(5, 0,5, 5));
+        VBox.setMargin(card, new Insets(5, 0, 5, 5));
     }
 }
