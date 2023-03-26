@@ -112,7 +112,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            server.send("/app/boards", board);
+            server.send("/app/boards/add", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

@@ -114,8 +114,8 @@ public class BoardController {
         return ResponseEntity.ok("Successful");
     }
 
-    @MessageMapping("/boards")
-    @SendTo("/topic/boards")
+    @MessageMapping("/boards/add")
+    @SendTo("/topic/boards/add")
     public Board addMessage(Board board) {
         add(board);
         return board;
