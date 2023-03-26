@@ -1,5 +1,8 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
+import commons.Task;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.ClipboardContent;
@@ -12,15 +15,24 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class Card extends Pane {
+
     @FXML
     private Text title;
 
+    private ServerUtils server;
+
     private String text = "";
+
+    @FXML
+    private MFXButton deleteTaskButton;
+
+    private Task task;
 
     /**
      * New component Card
      */
     public Card() {
+
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
         loader.setRoot(this);
@@ -33,9 +45,21 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
+        deleteTaskButton.setOnAction(event -> {
+            ((VBox) getParent()).getChildren().remove(this);
+            server.deleteTask(this.task);
+        });
+
         init();
     }
 
+
+    public void deleteTask(VBox list){
+        deleteTaskButton.setOnAction(event -> {
+            list.getChildren().remove(this);
+            server.deleteTask(task);
+        });
+    }
 
     /**
      * @return title text
@@ -51,6 +75,7 @@ public class Card extends Pane {
         this.text = text;
         title.setText(text);
     }
+
 
 
     void init() {

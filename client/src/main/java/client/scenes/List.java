@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -9,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -24,7 +26,11 @@ public class List extends Pane {
 
     private TaskList taskList;
 
+    private Card card;
+
     @FXML private MFXTextField title;
+
+    @FXML private MFXButton deleteTaskListButton;
 
     private ServerUtils server;
 
@@ -52,6 +58,12 @@ public class List extends Pane {
         addButton.setOnAction(event -> addTask(null, null));
         addButton.setText("");
 
+        deleteTaskListButton.setOnAction(event -> {
+            ((HBox) getParent()).getChildren().remove(this);
+            server.deleteTaskList(taskList);
+        });
+
+
         setOnDragOver(event -> {
             event.acceptTransferModes(TransferMode.MOVE);
             event.consume();
@@ -77,6 +89,7 @@ public class List extends Pane {
     public void addTask(String title, Integer index) {
         int len = list.getChildren().size();
 
+
         Card card = new Card();
         if (title == null ) card.setText("Title " + len);
 
@@ -87,9 +100,7 @@ public class List extends Pane {
 
     }
 
-    public void deleteCard(Card card) {
-        list.getChildren().remove(card);
-    }
+
 
     public void setTaskList(TaskList taskList) {
         this.taskList = taskList;
