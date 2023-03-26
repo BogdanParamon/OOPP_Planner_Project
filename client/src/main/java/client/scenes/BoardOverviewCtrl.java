@@ -68,7 +68,8 @@ public class BoardOverviewCtrl implements Initializable {
         server.registerForMessages("/topic/boards", ArrayList.class, board -> {
             Platform.runLater(() -> {
                 MFXButton button = new MFXButton((String) board.get(1));
-                button.setOnAction(event -> switchSceneToBoard(server.getBoardById((long) board.get(0))));
+                button.setOnAction(event
+                        -> switchSceneToBoard(server.getBoardById((long) board.get(0))));
                 boards.getItems().add(button);
                 boardTitle.clear();
             });
