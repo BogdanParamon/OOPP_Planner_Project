@@ -153,6 +153,14 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
+    public Board updateBoard(Board board) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/update")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
     public StompSession connectWebsocket() {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
