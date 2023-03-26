@@ -194,4 +194,8 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity("", APPLICATION_JSON), String.class);
     }
+
+    public void disconnectWebsocket() {
+        session.disconnect();
+    }
 }

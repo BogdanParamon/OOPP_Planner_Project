@@ -62,7 +62,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards", Board.class, board -> {
+        server.registerForMessages("/topic/boards/add", Board.class, board -> {
             Platform.runLater(() -> {
                 MFXButton button = new MFXButton(board.title);
                 button.setOnAction(event -> switchSceneToBoard(board));
@@ -128,6 +128,7 @@ public class BoardOverviewCtrl implements Initializable {
 
 
     public void switchSceneToHome() {
+        server.disconnectWebsocket();
         mainCtrl.showHome();
     }
 
