@@ -16,26 +16,6 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class Card extends Pane {
-//<<<<<<< HEAD
-//
-//    @FXML
-//    private Text title;
-//
-//    private ServerUtils server;
-//
-//    private String text = "";
-//
-//    @FXML
-//    private MFXButton deleteTaskButton;
-//
-//    private Task task;
-//
-//    /**
-//     * New component Card
-//     */
-//    public Card() {
-//
-//=======
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
@@ -81,14 +61,6 @@ public class Card extends Pane {
 
         title.setText(task.title);
         initDrag();
-    }
-
-
-    public void deleteTask(VBox list) {
-        deleteTaskButton.setOnAction(event -> {
-            list.getChildren().remove(this);
-            server.deleteTask(task);
-        });
     }
 
 
