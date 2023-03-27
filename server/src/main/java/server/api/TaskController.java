@@ -98,7 +98,7 @@ public class TaskController {
      * @return ResponseEntity with the updated Task object or a not found status code.
      */
 
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     public ResponseEntity<Task> updateTask(@RequestBody Task task) {
         if (task == null || !taskRepository.existsById(task.taskId)) {
             return ResponseEntity.badRequest().build();
