@@ -4,12 +4,16 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-
+import javafx.stage.Modality;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,7 +28,13 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
+    @FXML
+    private TextField newtTitle;
 
+    @FXML
+    private Button editTitle;
+    @FXML
+    private Button save;
 
     /**
      * Setup server and main controller
@@ -49,11 +59,10 @@ public class BoardCtrl implements Initializable {
     }
 
 
-
     public void switchToAddTask() {
-
         mainCtrl.showAddTask();
     }
+
 
     /**
      * Uses showHome method to switch scenes to Home scene
@@ -67,9 +76,7 @@ public class BoardCtrl implements Initializable {
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
         for (var taskList : board.lists) {
-            List list = new List();
-            list.setServerUtils(server);
-            list.setTaskList(taskList);
+            List list = new List(mainCtrl, server, taskList);
             board_hbox.getChildren().add(list);
         }
     }
@@ -77,9 +84,39 @@ public class BoardCtrl implements Initializable {
     public void addList() {
         TaskList list = new TaskList("New List");
         list = server.addList(list, board.boardId);
-        List listUI = new List();
-        listUI.setServerUtils(server);
-        listUI.setTaskList(list);
+        List listUI = new List(mainCtrl, server, list);
         board_hbox.getChildren().add(listUI);
+    }
+
+    public void updateTitle() {
+        newtTitle.setVisible(true);
+        boardName.setVisible(false);
+        editTitle.setVisible(false);
+        save.setVisible(true);
+    }
+
+    public void saveNewTitle() {
+        String newTitleS = newtTitle.getText().trim();
+        newtTitle.setVisible(false);
+        boardName.setVisible(true);
+        editTitle.setVisible(true);
+        save.setVisible(false);
+        if (!newTitleS.isEmpty()) {
+            this.board.title = newTitleS;
+            boardName.setText(this.board.title);
+            updateBoard(this.board);
+        }
+        newtTitle.setText("");
+    }
+
+    public void updateBoard(Board board) {
+        try {
+            server.send("/app/boards", board);
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 }

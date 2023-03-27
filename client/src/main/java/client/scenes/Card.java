@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import commons.Task;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.ClipboardContent;
@@ -15,23 +16,51 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class Card extends Pane {
+//<<<<<<< HEAD
+//
+//    @FXML
+//    private Text title;
+//
+//    private ServerUtils server;
+//
+//    private String text = "";
+//
+//    @FXML
+//    private MFXButton deleteTaskButton;
+//
+//    private Task task;
+//
+//    /**
+//     * New component Card
+//     */
+//    public Card() {
+//
+//=======
 
-    @FXML
-    private Text title;
-
-    private ServerUtils server;
-
-    private String text = "";
+    private final MainCtrl mainCtrl;
+    private final ServerUtils server;
+    private final TaskList taskList;
+    private final Task task;
 
     @FXML
     private MFXButton deleteTaskButton;
 
-    private Task task;
+    @FXML private Text title;
+
 
     /**
-     * New component Card
+     * New Card component
+     * @param mainCtrl
+     * @param server
+     * @param task
+     * @param taskList
      */
-    public Card() {
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
+
+        this.mainCtrl = mainCtrl;
+        this.server = server;
+        this.task = task;
+        this.taskList = taskList;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
@@ -50,7 +79,8 @@ public class Card extends Pane {
             server.deleteTask(this.task);
         });
 
-        init();
+        title.setText(task.title);
+        initDrag();
     }
 
 
@@ -61,42 +91,24 @@ public class Card extends Pane {
         });
     }
 
-    /**
-     * @return title text
-     */
-    public String getText() {
-        return text;
-    }
 
-    /**
-     * @param text title to change
-     */
-    public void setText(String text) {
-        this.text = text;
-        title.setText(text);
-    }
-
-
-
-    void init() {
+    void initDrag() {
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(text); // TODO pass this
+            content.putString(String.valueOf(task.taskId));
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
-            System.out.println("Drag done");
-
-            // TODO not remove when invalid drop
-            ((VBox) getParent()).getChildren().remove(this);
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                taskList.tasks.remove(task);
+                server.updateList(taskList);
+                ((VBox) getParent()).getChildren().remove(this);
+            }
             event.consume();
         });
-
     }
-
-
 }

@@ -67,9 +67,10 @@ public class ServerUtils {
     }
 
 
-    public Task addTask(Task task) {
+    public Task addTask(Task task, long taskListId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/add")
+                .queryParam("taskListId", taskListId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
@@ -154,6 +155,14 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
+    public Board updateBoard(Board board) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/update")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
     public StompSession connectWebsocket() {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
@@ -196,6 +205,7 @@ public class ServerUtils {
                 .delete();
     }
 
+
     public void deleteTask(Task task) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/delete/")
@@ -214,4 +224,11 @@ public class ServerUtils {
                 .delete();
     }
 
+    public Task getTaskById(long taskId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/" + taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Task.class);
+    }
 }
