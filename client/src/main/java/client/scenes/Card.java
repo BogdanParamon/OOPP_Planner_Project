@@ -8,10 +8,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 
@@ -21,11 +23,10 @@ public class Card extends Pane {
     private final ServerUtils server;
     private final TaskList taskList;
     private final Task task;
-
     @FXML
     private MFXButton deleteTaskButton;
 
-    @FXML private Text title;
+    @FXML private TextField taskTitle;
 
 
     /**
@@ -34,6 +35,7 @@ public class Card extends Pane {
      * @param server
      * @param task
      * @param taskList
+    @FXML private TextField taskTitle;
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
@@ -60,8 +62,10 @@ public class Card extends Pane {
             taskList.tasks.remove(this.task);
         });
 
-        title.setText(task.title);
+        taskTitle.setText(task.title);
+
         initDrag();
+        initEditTaskTitle();
     }
 
 
@@ -83,5 +87,17 @@ public class Card extends Pane {
             }
             event.consume();
         });
+    }
+
+    void initEditTaskTitle() {
+        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+    }
+
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            taskTitle.getParent().requestFocus();
+            task.title = taskTitle.getText();
+            server.updateTask(task);
+        }
     }
 }

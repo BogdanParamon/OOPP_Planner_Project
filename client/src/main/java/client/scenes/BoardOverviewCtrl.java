@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class BoardOverviewCtrl implements Initializable {
@@ -34,7 +35,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private Text subheading;
 
-    @FXML private AnchorPane root;
+    @FXML
+    private AnchorPane root;
 
     private int index = 0;
 
@@ -57,15 +59,17 @@ public class BoardOverviewCtrl implements Initializable {
      * @param bundle The resources used to localize the root object, or {@code null} if
      *               the root object was not localized.
      */
+    @Override
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
     }
 
     public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards", Board.class, board -> {
+        server.registerForMessages("/topic/boards", ArrayList.class, board -> {
             Platform.runLater(() -> {
-                MFXButton button = new MFXButton(board.title);
-                button.setOnAction(event -> switchSceneToBoard(board));
+                MFXButton button = new MFXButton((String) board.get(1));
+                button.setOnAction(event
+                        -> switchSceneToBoard(server.getBoardById((long)(int) board.get(0))));
                 boards.getItems().add(button);
                 boardTitle.clear();
             });
@@ -73,13 +77,13 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void load() {
-        var boardEntities = server.getBoards();
+        var boardTitlesAndIds = server.getBoardTitlesAndIds();
         boards.getItems().clear();
-        for (var i : boardEntities) {
-            MFXButton button = new MFXButton(i.title);
-            button.setOnAction(event -> switchSceneToBoard(i));
+        boardTitlesAndIds.forEach((aLong, s) -> {
+            MFXButton button = new MFXButton(s);
+            button.setOnAction(event -> switchSceneToBoard(server.getBoardById(aLong)));
             boards.getItems().add(button);
-        }
+        });
         subheadingAnimation();
     }
 

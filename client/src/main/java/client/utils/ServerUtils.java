@@ -33,6 +33,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -95,7 +96,7 @@ public class ServerUtils {
                 });
     }
 
-    public Task updateTask(Long id, Task task) {
+    public Task updateTask(Task task) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/update")
                 .request(APPLICATION_JSON)
@@ -140,7 +141,7 @@ public class ServerUtils {
     public List<TaskList> getListsByBoardId(long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/boards/{boardId}/taskLists")
-                .resolveTemplate("boardId",boardId)
+                .resolveTemplate("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<TaskList>>() {
@@ -155,12 +156,13 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
-    public Board updateBoard(Board board) {
+    public Map<Long, String> getBoardTitlesAndIds() {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/update")
+                .target(SERVER).path("api/boards/titles&ids")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(board, APPLICATION_JSON), Board.class);
+                .get(new GenericType<Map<Long, String>>() {
+                });
     }
 
     public StompSession connectWebsocket() {
