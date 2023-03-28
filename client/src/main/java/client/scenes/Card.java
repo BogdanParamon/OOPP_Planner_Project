@@ -25,7 +25,13 @@ public class Card extends Pane {
 
     @FXML private TextField taskTitle;
 
-
+    /**
+     * Constructs a new Card instance with the specified parameters.
+     * @param mainCtrl  The MainCtrl instance that manages the main application view.
+     * @param server    The ServerUtils instance for handling server communication.
+     * @param task      The Task instance representing the task to be displayed in the card.
+     * @param taskList  The TaskList instance containing the task.
+     */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
         this.mainCtrl = mainCtrl;
@@ -76,9 +82,9 @@ public class Card extends Pane {
 
     private void handleKeyRelease(KeyEvent event){
         if (event.getCode() == KeyCode.ENTER) {
-            taskTitle.getParent().requestFocus(); // Lose focus
-            task.title = taskTitle.getText(); // Save the updated task title
-            server.updateTask(task); // Update the task on the server
+            taskTitle.getParent().requestFocus();
+            task.title = taskTitle.getText();
+            server.updateTask(task);
         }
     }
 }
