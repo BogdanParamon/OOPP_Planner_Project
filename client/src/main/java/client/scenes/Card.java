@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class Card extends Pane {
@@ -72,7 +71,7 @@ public class Card extends Pane {
     }
 
     void initEditTaskTitle(){
-       taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
     }
 
     private void handleKeyRelease(KeyEvent event){
