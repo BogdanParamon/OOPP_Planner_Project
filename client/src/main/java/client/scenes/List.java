@@ -58,6 +58,7 @@ public class List extends Pane {
             list.getChildren().add(0, card);
         }
 
+        title.setText(taskList.title);
         title.textProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println(newValue);
             taskList.setTitle(newValue);
