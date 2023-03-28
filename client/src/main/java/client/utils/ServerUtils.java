@@ -95,7 +95,7 @@ public class ServerUtils {
                 });
     }
 
-    public Task updateTask(Long id, Task task) {
+    public Task updateTask(Task task) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/update")
                 .request(APPLICATION_JSON)
