@@ -114,16 +114,20 @@ public class BoardCtrl implements Initializable {
             List list = new List(mainCtrl, server, taskList);
             board_hbox.getChildren().add(list);
         }
-        root.setStyle("-fx-background-color: #" + board.backgroundColor + "; -fx-border-color: black; -fx-border-width: 2px;");
+        root.setStyle("-fx-background-color: #" + board.backgroundColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
         editTitle.setStyle("-fx-background-color: #" + board.backgroundColor + ";");
         save.setStyle("-fx-background-color: #" + board.backgroundColor + ";");
-        addListTaskVBox.setStyle("-fx-background-color: #" + board.buttonsBackground + "; -fx-background-radius: 10px;");
+        addListTaskVBox.setStyle("-fx-background-color: #"
+                + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle("-fx-background-color: #" + board.buttonsBackground + ";");
         addTask.setStyle("-fx-background-color: #" + board.buttonsBackground + ";");
         btnCustomize.setStyle("-fx-background-color: #" + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle("-fx-background-color: #" + board.buttonsBackground + ";");
-        overviewBoardsPane.setStyle("-fx-background-color: #" + board.buttonsBackground + ";-fx-background-radius: 10px;");
-        custimozePane.setStyle("-fx-background-color: #" + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        overviewBoardsPane.setStyle("-fx-background-color: #"
+                + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        custimozePane.setStyle("-fx-background-color: #"
+                + board.buttonsBackground + ";-fx-background-radius: 10px;");
     }
 
     public void addList() {
@@ -180,23 +184,28 @@ public class BoardCtrl implements Initializable {
     public void applyChanges() {
         //background color
         String rootColor = colorPickerBackground.getValue().toString().substring(2, 8);
-        root.setStyle("-fx-background-color: #" + rootColor + "; -fx-border-color: black; -fx-border-width: 2px;");
+        root.setStyle("-fx-background-color: #" + rootColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
         editTitle.setStyle("-fx-background-color: #" + rootColor + ";");
         save.setStyle("-fx-background-color: #" + rootColor + ";");
         this.board.backgroundColor = rootColor;
         txtCust.setFill(Paint.valueOf(rootColor));
         //board color
         String boardColor = colorPickerBoard.getValue().toString().substring(2, 8);
-        boardScrollPane.setStyle("-fx-background-color: #" + boardColor + "; -fx-background-radius: 10px;");
+        boardScrollPane.setStyle("-fx-background-color: #"
+                + boardColor + "; -fx-background-radius: 10px;");
         //button color
         String buttonColor = colorPickerButtons.getValue().toString().substring(2, 8);
-        addListTaskVBox.setStyle("-fx-background-color: #" + buttonColor + "; -fx-background-radius: 10px;");
+        addListTaskVBox.setStyle("-fx-background-color: #"
+                + buttonColor + "; -fx-background-radius: 10px;");
         addList.setStyle("-fx-background-color: #" + buttonColor + ";");
         addTask.setStyle("-fx-background-color: #" + buttonColor + ";");
         btnCustomize.setStyle("-fx-background-color: #" + buttonColor + ";");
         btnOverviewBoards.setStyle("-fx-background-color: #" + buttonColor + ";");
-        overviewBoardsPane.setStyle("-fx-background-color: #" + buttonColor + ";-fx-background-radius: 10px;");
-        custimozePane.setStyle("-fx-background-color: #" + buttonColor + ";-fx-background-radius: 10px;");
+        overviewBoardsPane.setStyle("-fx-background-color: #"
+                + buttonColor + ";-fx-background-radius: 10px;");
+        custimozePane.setStyle("-fx-background-color: #"
+                + buttonColor + ";-fx-background-radius: 10px;");
         this.board.buttonsBackground = buttonColor;
 
         updateBoard(board);
@@ -204,7 +213,8 @@ public class BoardCtrl implements Initializable {
 
     public void resetBackgroundColor() {
         this.board.backgroundColor = "ffffff";
-        root.setStyle("-fx-background-color: #" + board.backgroundColor + "; -fx-border-color: black; -fx-border-width: 2px;");
+        root.setStyle("-fx-background-color: #" + board.backgroundColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
         editTitle.setStyle("-fx-background-color: #ffffff;");
         save.setStyle("-fx-background-color: #ffffff;");
         updateBoard(board);
