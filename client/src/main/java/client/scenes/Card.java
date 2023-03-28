@@ -1,26 +1,49 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
+import commons.Task;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 
 public class Card extends Pane {
-    @FXML
-    private Text title;
 
-    private String text = "";
+    private final MainCtrl mainCtrl;
+    private final ServerUtils server;
+    private final TaskList taskList;
+    private final Task task;
+    @FXML
+    private MFXButton deleteTaskButton;
+
+    @FXML private TextField taskTitle;
+
 
     /**
-     * New component Card
+     * New Card component
+     * @param mainCtrl
+     * @param server
+     * @param task
+     * @param taskList
+    @FXML private TextField taskTitle;
      */
-    public Card() {
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
+
+        this.mainCtrl = mainCtrl;
+        this.server = server;
+        this.task = task;
+        this.taskList = taskList;
+
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
         loader.setRoot(this);
@@ -33,45 +56,48 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
-        init();
+        deleteTaskButton.setOnAction(event -> {
+            ((VBox) getParent()).getChildren().remove(this);
+            server.deleteTask(this.task);
+            taskList.tasks.remove(this.task);
+        });
+
+        taskTitle.setText(task.title);
+
+        initDrag();
+        initEditTaskTitle();
     }
 
 
-    /**
-     * @return title text
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * @param text title to change
-     */
-    public void setText(String text) {
-        this.text = text;
-        title.setText(text);
-    }
-
-
-    void init() {
+    void initDrag() {
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(text); // TODO pass this
+            content.putString(String.valueOf(task.taskId));
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
-            System.out.println("Drag done");
-
-            // TODO not remove when invalid drop
-            ((VBox) getParent()).getChildren().remove(this);
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                taskList.tasks.remove(task);
+                server.updateList(taskList);
+                ((VBox) getParent()).getChildren().remove(this);
+            }
             event.consume();
         });
-
     }
 
+    void initEditTaskTitle() {
+        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+    }
 
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            taskTitle.getParent().requestFocus();
+            task.title = taskTitle.getText();
+            server.updateTask(task);
+        }
+    }
 }

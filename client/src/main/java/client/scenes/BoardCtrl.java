@@ -12,7 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.springframework.messaging.simp.stomp.StompSession;
-
+import jakarta.ws.rs.WebApplicationException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,10 +34,13 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
-
-    private ArrayList<List> lists;
+    @FXML
+    private TextField newtTitle;
+    @FXML
+    private Button editTitle;
+    @FXML
+    private Button save;
     private Set<StompSession.Subscription> subscriptions;
-
 
     /**
      * Setup server and main controller
@@ -60,11 +67,8 @@ public class BoardCtrl implements Initializable {
     public StompSession.Subscription registerForNewLists() {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
-                    List list = new List();
-                    list.setServerUtils(server);
-                    list.setTaskList(taskList);
-                    list.setBoardId(board.boardId);
-                    board_hbox.getChildren().add(list);
+                    List listUI = new List(mainCtrl, server, taskList, this.board);
+                    board_hbox.getChildren().add(listUI);
                 }));
     }
 
@@ -85,7 +89,6 @@ public class BoardCtrl implements Initializable {
     }
 
     public void switchToAddTask() {
-
         mainCtrl.showAddTask();
     }
 
@@ -103,10 +106,7 @@ public class BoardCtrl implements Initializable {
         board_hbox.getChildren().clear();
         subscriptions = new HashSet<>();
         for (var taskList : board.lists) {
-            List list = new List();
-            list.setServerUtils(server);
-            list.setTaskList(taskList);
-            list.setBoardId(board.boardId);
+            List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
         subscriptions.add(registerForNewLists());
@@ -116,5 +116,37 @@ public class BoardCtrl implements Initializable {
     public void addList() {
         TaskList list = new TaskList("New List");
         server.send("/app/taskLists/add/" + board.boardId, list);
+    }
+
+    public void updateTitle() {
+        newtTitle.setVisible(true);
+        boardName.setVisible(false);
+        editTitle.setVisible(false);
+        save.setVisible(true);
+    }
+
+    public void saveNewTitle() {
+        String newTitleS = newtTitle.getText().trim();
+        newtTitle.setVisible(false);
+        boardName.setVisible(true);
+        editTitle.setVisible(true);
+        save.setVisible(false);
+        if (!newTitleS.isEmpty()) {
+            this.board.title = newTitleS;
+            boardName.setText(this.board.title);
+            updateBoard(this.board);
+        }
+        newtTitle.setText("");
+    }
+
+    public void updateBoard(Board board) {
+        try {
+            server.send("/app/boards/add", board);
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 }

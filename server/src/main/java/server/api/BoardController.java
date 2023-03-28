@@ -8,7 +8,10 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -81,10 +84,11 @@ public class BoardController {
 
     /**
      * Deletes a board from the database
+     *
      * @param boardId id of board to be deleted
      * @return successful if board exists
      */
-    @DeleteMapping(path =  "/delete")
+    @DeleteMapping(path = "/delete")
     public ResponseEntity<Board> delete(@RequestParam long boardId) {
         if (!boardRepository.existsById(boardId))
             return ResponseEntity.badRequest().build();
@@ -95,10 +99,11 @@ public class BoardController {
 
     /**
      * Update a board
+     *
      * @param board board to be updated
      * @return updated board
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
         if (board == null || !boardRepository.existsById(board.boardId)) {
             return ResponseEntity.badRequest().build();
@@ -108,16 +113,27 @@ public class BoardController {
     }
 
 
-    @PostMapping(path = "/deleteAll")
+    @DeleteMapping(path = "/deleteAll")
     public ResponseEntity<String> deleteAll() {
         boardRepository.deleteAll();
         return ResponseEntity.ok("Successful");
     }
 
+    @GetMapping(path = "/titles&ids")
+    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
+        Map<Long, String> map = new HashMap<>();
+        for (Board board : boardRepository.findAll())
+            map.put(board.boardId, board.title);
+        return ResponseEntity.ok(map);
+    }
+
     @MessageMapping("/boards/add")
     @SendTo("/topic/boards/add")
-    public Board addMessage(Board board) {
+    public List<Object> addMessage(Board board) {
         add(board);
-        return board;
+        List<Object> titleAndId = new ArrayList<>(2);
+        titleAndId.add(board.boardId);
+        titleAndId.add(board.title);
+        return titleAndId;
     }
 }
