@@ -55,8 +55,9 @@ public class Board {
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
         return boardId == board.boardId && Objects.equals(title, board.title)
-                && Objects.equals(lists, board.lists) && Objects.equals(backgroundColor, board.backgroundColor)
-                &&Objects.equals(buttonsBackground, board.buttonsBackground);
+                && Objects.equals(lists, board.lists)
+                && Objects.equals(backgroundColor, board.backgroundColor)
+                && Objects.equals(buttonsBackground, board.buttonsBackground);
     }
 
     /**
