@@ -2,19 +2,14 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Task;
-import io.github.palexdev.materialfx.controls.MFXButton;
 import commons.TaskList;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 
@@ -27,16 +22,18 @@ public class Card extends Pane {
     @FXML
     private MFXButton deleteTaskButton;
 
-    @FXML private TextField taskTitle;
+    @FXML
+    private TextField taskTitle;
 
 
     /**
      * New Card component
+     *
      * @param mainCtrl
      * @param server
      * @param task
      * @param taskList
-    @FXML private TextField taskTitle;
+     * @FXML private TextField taskTitle;
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
@@ -96,8 +93,7 @@ public class Card extends Pane {
                 if (!event.getDragboard().getString().equals("Same list"))
                     taskList.tasks.remove(task);
                 server.updateList(taskList);
-            }
-            else {
+            } else {
                 orignalParent[0].getChildren().add(index[0], this);
                 setVisible(true);
             }

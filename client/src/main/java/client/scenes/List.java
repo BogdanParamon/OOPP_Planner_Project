@@ -8,7 +8,6 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -27,12 +26,16 @@ public class List extends Pane {
     private final TaskList taskList;
     private Integer dragIndex;
 
-    @FXML private VBox list;
-    @FXML private MFXButton addButton;
+    @FXML
+    private VBox list;
+    @FXML
+    private MFXButton addButton;
 
-    @FXML private MFXTextField title;
+    @FXML
+    private MFXTextField title;
 
-    @FXML private MFXButton deleteTaskListButton;
+    @FXML
+    private MFXButton deleteTaskListButton;
 
     private Board board;
 
@@ -83,7 +86,7 @@ public class List extends Pane {
             event.acceptTransferModes(TransferMode.MOVE);
             int index = getIndex(event);
 
-            if (!Objects.equals(index,dragIndex)) {
+            if (!Objects.equals(index, dragIndex)) {
                 if (dragIndex != null) {
                     list.getChildren().remove(list.getChildren().get(dragIndex));
                 }
@@ -109,7 +112,7 @@ public class List extends Pane {
 
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(Long.parseLong(db.getString()), index, event) ;
+            addTask(Long.parseLong(db.getString()), index, event);
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -119,7 +122,7 @@ public class List extends Pane {
 
 
     private int getIndex(DragEvent event) {
-        int sceneY =  (int) event.getSceneY() - 190;
+        int sceneY = (int) event.getSceneY() - 190;
         int length = list.getChildren().size();
         int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
         if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
