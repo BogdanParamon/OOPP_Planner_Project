@@ -144,7 +144,7 @@ public class List extends Pane {
 
     private void initEditTaskListTitle() {
         title.setOnKeyReleased(event -> handleKeyRelease(event));
-        title.focusedProperty().addListener(this::handleFocusChangeForTitle);
+        title.delegateFocusedProperty().addListener(this::handleFocusChangeForTitle);
     }
 
     private void handleKeyRelease(KeyEvent event) {
