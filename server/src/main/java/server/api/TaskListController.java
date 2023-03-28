@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TaskListRepository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/taskLists")
@@ -109,11 +109,33 @@ public class TaskListController {
         return ResponseEntity.ok(updatedList);
     }
 
+    @PutMapping("/rename")
+    public ResponseEntity<TaskList> renameList(@RequestParam long listId,
+                                               @RequestBody String newTitle) {
+        if (newTitle == null || !taskListRepository.existsById(listId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        TaskList taskList = taskListRepository.findById(listId).get();
+        taskList.title = newTitle;
+        TaskList updatedList = taskListRepository.save(taskList);
+        return ResponseEntity.ok(updatedList);
+    }
+
     @MessageMapping("/taskLists/add/{boardId}")
     @SendTo("/topic/taskLists/add/{boardId}")
     @Transactional
     public TaskList addMessage(TaskList taskList, @DestinationVariable("boardId") long boardId) {
         add(taskList, boardId);
         return taskList;
+    }
+
+    @MessageMapping("/taskLists/rename/{boardId}")
+    @SendTo("/topic/taskLists/rename/{boardId}")
+    @Transactional
+    public ArrayList<Object> renameMessage(ArrayList<Object> listIdAndNewTitle) {
+        var listId = listIdAndNewTitle.get(0);
+        listId = (long) (int) listId;
+        renameList((Long) listId, (String) listIdAndNewTitle.get(1));
+        return listIdAndNewTitle;
     }
 }

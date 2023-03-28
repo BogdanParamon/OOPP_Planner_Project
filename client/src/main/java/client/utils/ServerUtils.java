@@ -168,7 +168,8 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
-    public <T> StompSession.Subscription registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
+    public <T> StompSession.Subscription registerForMessages(String dest, Class<T> type,
+                                                             Consumer<T> consumer) {
         return session.subscribe(dest, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {

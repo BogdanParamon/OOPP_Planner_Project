@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class List extends Pane {
 
@@ -27,6 +28,7 @@ public class List extends Pane {
     @FXML private MFXTextField title;
 
     private ServerUtils server;
+    private long boardId;
 
 
     public List() {
@@ -44,8 +46,10 @@ public class List extends Pane {
 
         title.textProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println(newValue);
-            taskList.setTitle(newValue);
-            server.updateList(taskList);
+            ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
+            listIdAndNewTitle.add(taskList.listId);
+            listIdAndNewTitle.add(newValue);
+            server.send("/app/taskLists/rename/" + boardId, listIdAndNewTitle);
         });
 
 
@@ -103,5 +107,19 @@ public class List extends Pane {
 
     public void setServerUtils(ServerUtils server) {
         this.server = server;
+    }
+
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTitle(String newTitle) {
+        if (!newTitle.equals(title.getText())) {
+            title.setText(newTitle);
+        }
+    }
+
+    public void setBoardId(long boardId) {
+        this.boardId = boardId;
     }
 }
