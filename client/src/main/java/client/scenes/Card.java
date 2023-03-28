@@ -76,11 +76,11 @@ public class Card extends Pane {
         });
     }
 
-    void initEditTaskTitle(){
+    void initEditTaskTitle() {
         taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
     }
 
-    private void handleKeyRelease(KeyEvent event){
+    private void handleKeyRelease(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             taskTitle.getParent().requestFocus();
             task.title = taskTitle.getText();
