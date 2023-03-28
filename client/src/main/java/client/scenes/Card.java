@@ -10,6 +10,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
@@ -71,20 +72,36 @@ public class Card extends Pane {
 
     void initDrag() {
 
+        int[] index = {0};
+        VBox[] orignalParent = new VBox[1];
+
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putString(String.valueOf(task.taskId));
+
+            // clever way to  work around variables in lambda
+            orignalParent[0] = (VBox) getParent();
+            index[0] = ((VBox) getParent()).getChildren().indexOf(this);
+
+            mainCtrl.boardCtrl.getRoot().getChildren().add(this); // find a better way for this
+            setVisible(false);
+
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
-                taskList.tasks.remove(task);
+                if (!event.getDragboard().getString().equals("Same list"))
+                    taskList.tasks.remove(task);
                 server.updateList(taskList);
-                ((VBox) getParent()).getChildren().remove(this);
             }
+            else {
+                orignalParent[0].getChildren().add(index[0], this);
+                setVisible(true);
+            }
+            mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
             event.consume();
         });
     }

@@ -9,6 +9,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -55,7 +56,7 @@ public class List extends Pane {
 
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList);
-            list.getChildren().add(0, card);
+            list.getChildren().add(list.getChildren().size() - 1, card);
         }
 
         title.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -104,12 +105,11 @@ public class List extends Pane {
         });
 
         setOnDragDropped(event -> {
-            System.out.println("Drag dropped");
             Dragboard db = event.getDragboard();
 
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(Long.parseLong(db.getString()), index) ;
+            addTask(Long.parseLong(db.getString()), index, event) ;
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -133,16 +133,18 @@ public class List extends Pane {
         list.getChildren().add(0, card);
     }
 
-    public void addTask(long taskId, Integer index) {
-        int len = list.getChildren().size();
+    public void addTask(long taskId, Integer index, DragEvent event) {
 
         Task task = server.getTaskById(taskId);
+        if (taskList.tasks.remove(task)) {
+            var db = event.getDragboard();
+            var content = new ClipboardContent();
+            content.putString("Same list");
+            db.setContent(content);
+        }
         taskList.tasks.add(index, task);
         server.updateList(taskList);
         Card card = new Card(mainCtrl, server, task, taskList);
         list.getChildren().add(index, card);
-
-        VBox.setMargin(card, new Insets(5, 0, 5, 5));
-
     }
 }
