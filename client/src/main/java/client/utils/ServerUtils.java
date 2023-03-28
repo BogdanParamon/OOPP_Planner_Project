@@ -21,6 +21,7 @@ import commons.TaskList;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -203,7 +204,26 @@ public class ServerUtils {
                 .target(SERVER).path("api/boards/deleteAll")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity("", APPLICATION_JSON), String.class);
+                .delete();
+    }
+
+
+    public void deleteTask(Task task) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/delete/")
+                .queryParam("taskId", task.taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Response deleteTaskList(TaskList taskList) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskLists/delete/")
+                .queryParam("id", taskList.listId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
     }
 
     public Task getTaskById(long taskId) {

@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Board;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -11,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -29,7 +31,11 @@ public class List extends Pane {
 
     @FXML private MFXTextField title;
 
-    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList) {
+    @FXML private MFXButton deleteTaskListButton;
+
+    private Board board;
+
+    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList, Board board) {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
@@ -61,6 +67,12 @@ public class List extends Pane {
         addButton.setOnAction(event -> addTask());
         addButton.setText("");
         dragIndex = null;
+
+        deleteTaskListButton.setOnAction(event -> {
+            ((HBox) getParent()).getChildren().remove(this);
+            server.deleteTaskList(taskList);
+            board.lists.remove(this.taskList);
+        });
 
         initDrag(mainCtrl, server);
     }
@@ -131,5 +143,6 @@ public class List extends Pane {
         list.getChildren().add(index, card);
 
         VBox.setMargin(card, new Insets(5, 0, 5, 5));
+
     }
 }

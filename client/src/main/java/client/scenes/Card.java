@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Task;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import commons.TaskList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,15 +23,19 @@ public class Card extends Pane {
     private final ServerUtils server;
     private final TaskList taskList;
     private final Task task;
+    @FXML
+    private MFXButton deleteTaskButton;
 
     @FXML private TextField taskTitle;
 
+
     /**
-     * Constructs a new Card instance with the specified parameters.
-     * @param mainCtrl  The MainCtrl instance that manages the main application view.
-     * @param server    The ServerUtils instance for handling server communication.
-     * @param task      The Task instance representing the task to be displayed in the card.
-     * @param taskList  The TaskList instance containing the task.
+     * New Card component
+     * @param mainCtrl
+     * @param server
+     * @param task
+     * @param taskList
+    @FXML private TextField taskTitle;
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
@@ -51,10 +56,18 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
+        deleteTaskButton.setOnAction(event -> {
+            ((VBox) getParent()).getChildren().remove(this);
+            server.deleteTask(this.task);
+            taskList.tasks.remove(this.task);
+        });
+
         taskTitle.setText(task.title);
+
         initDrag();
         initEditTaskTitle();
     }
+
 
     void initDrag() {
 
