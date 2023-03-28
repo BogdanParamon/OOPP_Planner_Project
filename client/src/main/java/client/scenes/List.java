@@ -6,12 +6,11 @@ import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -59,11 +58,7 @@ public class List extends Pane {
         }
 
         title.setText(taskList.title);
-        title.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
-            taskList.setTitle(newValue);
-            server.updateList(taskList);
-        });
+        initEditTaskListTitle();
 
         addButton.setOnAction(event -> addTask());
         addButton.setText("");
@@ -145,5 +140,29 @@ public class List extends Pane {
 
         VBox.setMargin(card, new Insets(5, 0, 5, 5));
 
+    }
+
+    private void initEditTaskListTitle() {
+        title.setOnKeyReleased(event -> handleKeyRelease(event));
+        title.focusedProperty().addListener(this::handleFocusChangeForTitle);
+    }
+
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            title.getParent().requestFocus();
+            saveTaskListTitle();
+        }
+    }
+
+    private void handleFocusChangeForTitle(ObservableValue<? extends Boolean>
+                                                   observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskListTitle();
+        }
+    }
+
+    private void saveTaskListTitle() {
+        taskList.setTitle(title.getText());
+        server.updateList(taskList);
     }
 }
