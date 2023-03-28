@@ -8,9 +8,9 @@
 <fx:root prefHeight="70.0" style="-fx-background-radius: 10px; -fx-background-color: white; -fx-border-color: ddd; -fx-border-radius: 10px" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Text fx:id="title" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lectures" textAlignment="RIGHT" wrappingWidth="69.0" />
-      <MFXButton fx:id="deleteTaskButton" layoutX="77.0" layoutY="4.0" text="X">
+      <MFXButton fx:id="deleteTaskButton" layoutX="90.0" layoutY="4.0" text="X">
          <font>
-            <Font name="System Bold Italic" size="11.0" />
+            <Font name="Roboto Bold" size="11.0" />
          </font>
       </MFXButton>
    </children>

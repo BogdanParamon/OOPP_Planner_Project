@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Board;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -32,7 +33,9 @@ public class List extends Pane {
 
     @FXML private MFXButton deleteTaskListButton;
 
-    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList) {
+    private Board board;
+
+    public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList, Board board) {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
@@ -68,6 +71,7 @@ public class List extends Pane {
         deleteTaskListButton.setOnAction(event -> {
             ((HBox) getParent()).getChildren().remove(this);
             server.deleteTaskList(taskList);
+            board.lists.remove(this.taskList);
         });
 
         initDrag(mainCtrl, server);
