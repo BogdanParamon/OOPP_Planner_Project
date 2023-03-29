@@ -6,12 +6,11 @@ import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -63,13 +62,7 @@ public class List extends Pane {
         }
 
         title.setText(taskList.title);
-        title.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
-            ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
-            listIdAndNewTitle.add(taskList.listId);
-            listIdAndNewTitle.add(newValue);
-            server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
-        });
+        initEditTaskListTitle();
 
         addButton.setOnAction(event -> addTask());
         addButton.setText("");
@@ -167,5 +160,32 @@ public class List extends Pane {
 
     public VBox getList() {
         return list;
+    }
+
+    private void initEditTaskListTitle() {
+        title.setOnKeyReleased(event -> handleKeyRelease(event));
+        title.delegateFocusedProperty().addListener(this::handleFocusChangeForTitle);
+    }
+
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            title.getParent().requestFocus();
+            saveTaskListTitle();
+        }
+    }
+
+    private void handleFocusChangeForTitle(ObservableValue<? extends Boolean>
+                                                   observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskListTitle();
+        }
+    }
+
+    private void saveTaskListTitle() {
+        taskList.setTitle(title.getText());
+        ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
+        listIdAndNewTitle.add(taskList.listId);
+        listIdAndNewTitle.add(title.getText());
+        server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 }
