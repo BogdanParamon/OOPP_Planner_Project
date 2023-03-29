@@ -2,8 +2,8 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Task;
-import io.github.palexdev.materialfx.controls.MFXButton;
 import commons.TaskList;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,16 +24,17 @@ public class Card extends Pane {
     @FXML
     private MFXButton deleteTaskButton;
 
-    @FXML private TextField taskTitle;
+    @FXML
+    private TextField taskTitle;
 
 
     /**
      * New Card component
+     *
      * @param mainCtrl
      * @param server
      * @param task
      * @param taskList
-    @FXML private TextField taskTitle;
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
@@ -77,20 +78,35 @@ public class Card extends Pane {
 
     void initDrag() {
 
+        int[] index = {0};
+        VBox[] orignalParent = new VBox[1];
+
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putString(String.valueOf(task.taskId));
+
+            // clever way to  work around variables in lambda
+            orignalParent[0] = (VBox) getParent();
+            index[0] = ((VBox) getParent()).getChildren().indexOf(this);
+
+            mainCtrl.boardCtrl.getRoot().getChildren().add(this); // find a better way for this
+            setVisible(false);
+
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
-                taskList.tasks.remove(task);
+                if (!event.getDragboard().getString().equals("Same list"))
+                    taskList.tasks.remove(task);
                 server.updateList(taskList);
-                ((VBox) getParent()).getChildren().remove(this);
+            } else {
+                orignalParent[0].getChildren().add(index[0], this);
+                setVisible(true);
             }
+            mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
             event.consume();
         });
     }
