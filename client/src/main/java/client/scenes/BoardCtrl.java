@@ -233,4 +233,9 @@ public class BoardCtrl implements Initializable {
             alert.showAndWait();
         }
     }
+
+    public AnchorPane getRoot() {
+        return root;
+    }
+
 }

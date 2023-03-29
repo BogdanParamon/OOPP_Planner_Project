@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.Packet;
+import commons.User;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -27,6 +28,8 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private User user;
     @FXML
     private MFXListView<MFXButton> boards;
 
@@ -134,6 +137,10 @@ public class BoardOverviewCtrl implements Initializable {
     public void switchSceneToHome() {
         server.disconnectWebsocket();
         mainCtrl.showHome();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }
