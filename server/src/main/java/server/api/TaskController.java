@@ -1,15 +1,19 @@
 package server.api;
 
+import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -121,6 +125,18 @@ public class TaskController {
         }
         taskRepository.deleteById(taskId);
         return ResponseEntity.ok().build();
+    }
+
+    @MessageMapping("/tasks/add/{boardId}/{listId}")
+    @SendTo("/topic/tasks/add/{boardId}")
+    @Transactional
+    public Packet addMessage(Task task, @DestinationVariable("boardId") long boardId,
+                             @DestinationVariable("listId") long listId) {
+        add(listId, task);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.task = task;
+        return packet;
     }
 }
 

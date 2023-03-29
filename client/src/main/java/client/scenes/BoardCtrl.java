@@ -3,6 +3,8 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.Packet;
+import commons.Task;
 import commons.TaskList;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,10 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class BoardCtrl implements Initializable {
 
@@ -88,6 +87,31 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForBoardRenames() {
+        return server.registerForMessages("/topic/boards/rename/" + board.boardId, Packet.class,
+                boardIdAndNewTitle -> Platform.runLater(() -> {
+                    boardName.setText(boardIdAndNewTitle.stringValue);
+                }));
+    }
+
+    public StompSession.Subscription registerForNewTasks() {
+        return server.registerForMessages("/topic/tasks/add/" + board.boardId, Packet.class,
+                listIdAndTask -> Platform.runLater(() -> {
+                    long listId = listIdAndTask.longValue;
+                    Task task = listIdAndTask.task;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            taskList.tasks.add(0, task);
+                            Card card = new Card(mainCtrl, server, task, taskList);
+                            list.getChildren().add(0, card);
+                            break;
+                        }
+                    }
+                }));
+    }
+
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
@@ -111,6 +135,8 @@ public class BoardCtrl implements Initializable {
         }
         subscriptions.add(registerForNewLists());
         subscriptions.add(registerForListRenames());
+        subscriptions.add(registerForBoardRenames());
+        subscriptions.add(registerForNewTasks());
     }
 
     public void addList() {
@@ -132,16 +158,17 @@ public class BoardCtrl implements Initializable {
         editTitle.setVisible(true);
         save.setVisible(false);
         if (!newTitleS.isEmpty()) {
-            this.board.title = newTitleS;
-            boardName.setText(this.board.title);
-            updateBoard(this.board);
+//            this.board.title = newTitleS;
+//            boardName.setText(this.board.title);
+//            updateBoard(this.board);
+            renameBoard(newTitleS);
         }
         newtTitle.setText("");
     }
 
-    public void updateBoard(Board board) {
+    public void renameBoard(String newTitle) {
         try {
-            server.send("/app/boards/add", board);
+            server.send("/app/boards/rename/" + board.boardId, newTitle);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

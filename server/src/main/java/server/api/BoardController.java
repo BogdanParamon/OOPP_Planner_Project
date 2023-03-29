@@ -1,10 +1,13 @@
 package server.api;
 
 import commons.Board;
+import commons.Packet;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
@@ -127,6 +130,18 @@ public class BoardController {
         return ResponseEntity.ok(map);
     }
 
+    @PutMapping("/rename")
+    public ResponseEntity<Board> renameBoard(@RequestParam long boardId,
+                                               @RequestBody String newTitle) {
+        if (newTitle == null || !boardRepository.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Board board = boardRepository.findById(boardId).get();
+        board.title = newTitle;
+        Board updatedBoard = boardRepository.save(board);
+        return ResponseEntity.ok(updatedBoard);
+    }
+
     @MessageMapping("/boards/add")
     @SendTo("/topic/boards/add")
     public List<Object> addMessage(Board board) {
@@ -135,5 +150,17 @@ public class BoardController {
         titleAndId.add(board.boardId);
         titleAndId.add(board.title);
         return titleAndId;
+    }
+
+    @MessageMapping("/boards/rename/{boardId}")
+    @SendTo("/topic/boards/rename/{boardId}")
+    @Transactional
+    public Packet renameMessage(String newTitle,
+                                @DestinationVariable("boardId") long boardId) {
+        renameBoard(boardId, newTitle);
+        Packet boardIdAndNewTitle = new Packet();
+        boardIdAndNewTitle.longValue = boardId;
+        boardIdAndNewTitle.stringValue = newTitle;
+        return boardIdAndNewTitle;
     }
 }

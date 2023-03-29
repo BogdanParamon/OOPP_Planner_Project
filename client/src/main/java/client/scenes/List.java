@@ -43,6 +43,7 @@ public class List extends Pane {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
+        this.board = board;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
@@ -133,10 +134,12 @@ public class List extends Pane {
     }
 
     public void addTask() {
-        Task task = server.addTask(new Task("Title"), taskList.listId);
-        taskList.tasks.add(0, task);
-        Card card = new Card(mainCtrl, server, task, taskList);
-        list.getChildren().add(0, card);
+        Task task = new Task("Title");
+        server.send("/app/tasks/add/" + board.boardId + "/" + taskList.listId, task);
+//        Task task = server.addTask(new Task("Title"), taskList.listId);
+//        taskList.tasks.add(0, task);
+//        Card card = new Card(mainCtrl, server, task, taskList);
+//        list.getChildren().add(0, card);
     }
 
     public void addTask(long taskId, Integer index) {
