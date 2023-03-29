@@ -5,7 +5,6 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -13,13 +12,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.checkerframework.checker.units.qual.C;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class Tag extends Pane {
@@ -28,12 +21,18 @@ public class Tag extends Pane {
     private final ServerUtils server;
     private commons.Tag tag;
 
-    @FXML MFXTextField tagName;
-    @FXML Pane tagPane;
-    @FXML MFXButton deleteTag;
-    @FXML MFXButton edit;
-    @FXML MFXButton saveTag;
-    @FXML ColorPicker colorPicker;
+    @FXML
+    MFXTextField tagName;
+    @FXML
+    Pane tagPane;
+    @FXML
+    MFXButton deleteTag;
+    @FXML
+    MFXButton edit;
+    @FXML
+    MFXButton saveTag;
+    @FXML
+    ColorPicker colorPicker;
 
     public Tag(MainCtrl mainCtrl, ServerUtils server, commons.Tag tag) {
 
