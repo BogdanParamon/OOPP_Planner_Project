@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
@@ -104,13 +105,27 @@ public class Card extends Pane {
 
     void initEditTaskTitle() {
         taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
+
 
     private void handleKeyRelease(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             taskTitle.getParent().requestFocus();
-            task.title = taskTitle.getText();
-            server.updateTask(task);
+            saveTaskTitle();
         }
     }
+
+    private void handleFocusChange(ObservableValue<? extends Boolean>
+                                           observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskTitle();
+        }
+    }
+
+    private void saveTaskTitle() {
+        task.title = taskTitle.getText();
+        server.updateTask(task);
+    }
+
 }

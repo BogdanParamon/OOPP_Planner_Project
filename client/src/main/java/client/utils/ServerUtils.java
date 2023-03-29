@@ -180,8 +180,9 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
-    public <T> void registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
+    public <T> StompSession.Subscription registerForMessages(String dest, Class<T> type,
+                                                             Consumer<T> consumer) {
+        return session.subscribe(dest, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
                 return type;
@@ -232,5 +233,9 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Task.class);
+    }
+
+    public void disconnectWebsocket() {
+        session.disconnect();
     }
 }
