@@ -35,7 +35,6 @@ public class Card extends Pane {
      * @param server
      * @param task
      * @param taskList
-     * @FXML private TextField taskTitle;
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
