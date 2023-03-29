@@ -19,7 +19,7 @@
     <children>
       <ScrollPane id="board" fx:id="boardScrollPane" hbarPolicy="ALWAYS" layoutX="183.0" layoutY="95.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="470.0" prefWidth="690.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;" vbarPolicy="NEVER">
          <content>
-            <HBox fx:id="board_hbox" alignment="CENTER_LEFT" fillHeight="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="450.0" prefWidth="686.0" spacing="15" HBox.hgrow="ALWAYS">
+            <HBox fx:id="board_hbox" alignment="CENTER_LEFT" fillHeight="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="450.0" spacing="15" HBox.hgrow="ALWAYS">
                <padding>
                   <Insets left="20.0" right="20.0" />
                </padding></HBox>
