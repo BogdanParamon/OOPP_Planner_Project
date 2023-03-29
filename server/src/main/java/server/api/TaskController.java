@@ -1,10 +1,12 @@
 package server.api;
 
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.database.TagRepository;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
 
@@ -21,16 +23,21 @@ public class TaskController {
 
     private final TaskListRepository taskListRepository;
 
+    private final TagRepository tagRepository;
+
+
     /**
      * Constructor for TaskController.
      *
      * @param taskRepository     The TaskRepository object to be used for database access.
-     * @param taskListRepository
+     * @param taskListRepository The TaskListRepository object to be used for database access.
+     * @param tagRepository     The TagRepository object to be used for database access.
      */
 
-    public TaskController(TaskRepository taskRepository, TaskListRepository taskListRepository) {
+    public TaskController(TaskRepository taskRepository, TaskListRepository taskListRepository, TagRepository tagRepository) {
         this.taskRepository = taskRepository;
         this.taskListRepository = taskListRepository;
+        this.tagRepository = tagRepository;
     }
 
     /**
@@ -121,6 +128,20 @@ public class TaskController {
         }
         taskRepository.deleteById(taskId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = {"/addTag"})
+    public ResponseEntity<Task> addTag(@RequestParam long tagId, @RequestParam long taskId) {
+        if (!tagRepository.existsById(tagId) || !taskRepository.existsById(taskId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Task task = taskRepository.getById(taskId);
+        Tag tag = tagRepository.getById(tagId);
+
+        task.addTag(tag);
+        taskRepository.save(task);
+
+        return ResponseEntity.ok(task);
     }
 }
 
