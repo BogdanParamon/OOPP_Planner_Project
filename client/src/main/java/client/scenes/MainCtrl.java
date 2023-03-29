@@ -37,8 +37,6 @@ public class MainCtrl {
     protected Scene board;
     protected AddTaskCtrl addTaskCtrl;
     protected Scene addTask;
-
-    protected DetailedTaskCtrl detailedTaskCtrl;
     protected Scene detailedTask;
 
 
@@ -50,14 +48,12 @@ public class MainCtrl {
      * @param boardOverview home scene for a server
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
-     * @param detailedTask  allows user to see details of a task
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
-                           Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<DetailedTaskCtrl, Parent> detailedTask) {
+                           Pair<AddTaskCtrl, Parent> addTask) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -71,9 +67,6 @@ public class MainCtrl {
 
         this.addTaskCtrl = addTask.getKey();
         this.addTask = new Scene(addTask.getValue());
-
-        this.detailedTaskCtrl = detailedTask.getKey();
-        this.detailedTask = new Scene(detailedTask.getValue());
 
         primaryStage.setScene(this.home);
         primaryStage.show();

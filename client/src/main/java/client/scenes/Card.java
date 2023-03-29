@@ -20,22 +20,20 @@ import javafx.stage.Modality;
 
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.checkerframework.checker.units.qual.A;
 
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Card extends Pane {
-
-
-
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final TaskList taskList;
     private final Task task;
 
-    @FXML private TextField taskTitle;
+    @FXML
+    private TextField taskTitle;
 
     @FXML
     private MFXButton openTask;
@@ -105,18 +103,26 @@ public class Card extends Pane {
     }
 
     void displayDialog(){
+//        Stage stage = new Stage();
+//        stage.initModality(Modality.WINDOW_MODAL);
+//        stage.initStyle(StageStyle.DECORATED);
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Components/DetailedTask.fxml"));
+//        AnchorPane root;
+//
+//        try {
+//            root = loader.load();
+//        } catch (IOException e){
+//            throw new RuntimeException();
+//        }
+//
+//        stage.setScene(new Scene(root));
+//        stage.show();
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initStyle(StageStyle.DECORATED);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/DetailedTask.fxml"));
-        AnchorPane root;
+        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
 
-        try {
-            root = loader.load();
-        } catch (IOException e){
-            throw new RuntimeException();
-        }
-
+        AnchorPane root = detailedTask;
         stage.setScene(new Scene(root));
         stage.show();
     }

@@ -61,13 +61,11 @@ public class Main extends Application {
                 FXML.load(HomeCtrl.class, "client", "scenes", "Home.fxml");
         var board = FXML.load(BoardCtrl.class, "client", "scenes", "Board.fxml");
         var addTask = FXML.load(AddTaskCtrl.class, "client", "scenes", "AddTask.fxml");
-        var detailedTask =
-                FXML.load(DetailedTaskCtrl.class, "client", "scenes", "DetailedTask.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-        mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask, detailedTask);
+        mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask);
     }
 }
