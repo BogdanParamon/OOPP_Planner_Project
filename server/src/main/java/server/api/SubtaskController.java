@@ -22,8 +22,8 @@ public class SubtaskController {
 
     @PostMapping(path = "/add")
     public ResponseEntity<Subtask> add(@RequestParam long taskId, @RequestBody Subtask subtask) {
-        if(subtask == null || subtask.subtaskText == null || subtask.subtaskText.isEmpty()
-        || !taskRepository.existsById(taskId)) {
+        if (subtask == null || subtask.subtaskText == null || subtask.subtaskText.isEmpty()
+                || !taskRepository.existsById(taskId)) {
             return ResponseEntity.badRequest().build();
         }
         Subtask savedSubtask = subtaskRepository.save(subtask);
@@ -35,7 +35,7 @@ public class SubtaskController {
 
     @PutMapping(path = "/update")
     public ResponseEntity<Subtask> updateSubtask(@RequestBody Subtask subtask) {
-        if(subtask == null || !subtaskRepository.existsById(subtask.subTaskId)) {
+        if (subtask == null || !subtaskRepository.existsById(subtask.subTaskId)) {
             return ResponseEntity.badRequest().build();
         }
         Subtask updatedSubtask =  subtaskRepository.save(subtask);
@@ -44,7 +44,7 @@ public class SubtaskController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Subtask> delete(@RequestParam long subtaskId) {
-        if(!subtaskRepository.existsById(subtaskId) || subtaskId < 0) {
+        if (!subtaskRepository.existsById(subtaskId) || subtaskId < 0) {
             return ResponseEntity.badRequest().build();
         }
         subtaskRepository.deleteById(subtaskId);
