@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TaskListRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

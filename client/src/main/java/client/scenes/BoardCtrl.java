@@ -119,7 +119,7 @@ public class BoardCtrl implements Initializable {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
-                            for (Node cardNode : list.getList().getChildren()){
+                            for (Node cardNode : list.getList().getChildren()) {
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
                                     card.getTaskTitle().setText(task.title);
