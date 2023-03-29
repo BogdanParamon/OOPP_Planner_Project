@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -25,12 +26,15 @@ public class List extends Pane {
     private final TaskList taskList;
     private Integer dragIndex;
 
-    @FXML private VBox list;
-    @FXML private MFXButton addButton;
+    @FXML
+    private VBox list;
+    @FXML
+    private MFXButton addButton;
 
-    @FXML private MFXTextField title;
-
-    @FXML private MFXButton deleteTaskListButton;
+    @FXML
+    private MFXTextField title;
+    @FXML
+    private MFXButton deleteTaskListButton;
 
     private Board board;
 
@@ -38,7 +42,7 @@ public class List extends Pane {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
-
+        this.board = board;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
@@ -78,7 +82,7 @@ public class List extends Pane {
             event.acceptTransferModes(TransferMode.MOVE);
             int index = getIndex(event);
 
-            if (!Objects.equals(index,dragIndex)) {
+            if (!Objects.equals(index, dragIndex)) {
                 if (dragIndex != null) {
                     list.getChildren().remove(list.getChildren().get(dragIndex));
                 }
@@ -105,7 +109,7 @@ public class List extends Pane {
 
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(Long.parseLong(db.getString()), index) ;
+            addTask(Long.parseLong(db.getString()), index);
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -115,7 +119,7 @@ public class List extends Pane {
 
 
     private int getIndex(DragEvent event) {
-        int sceneY =  (int) event.getSceneY() - 190;
+        int sceneY = (int) event.getSceneY() - 190;
         int length = list.getChildren().size();
         int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
         if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
@@ -142,6 +146,16 @@ public class List extends Pane {
 
     }
 
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTitle(String newTitle) {
+        if (!newTitle.equals(title.getText())) {
+            title.setText(newTitle);
+        }
+    }
+
     private void initEditTaskListTitle() {
         title.setOnKeyReleased(event -> handleKeyRelease(event));
         title.delegateFocusedProperty().addListener(this::handleFocusChangeForTitle);
@@ -163,6 +177,9 @@ public class List extends Pane {
 
     private void saveTaskListTitle() {
         taskList.setTitle(title.getText());
-        server.updateList(taskList);
+        ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
+        listIdAndNewTitle.add(taskList.listId);
+        listIdAndNewTitle.add(title.getText());
+        server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 }
