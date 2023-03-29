@@ -146,6 +146,29 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForTaskDeletes() {
+        return server.registerForMessages("/topic/tasks/delete/" + board.boardId, Packet.class,
+                packet -> Platform.runLater(() -> {
+                    long listId = packet.longValue;
+                    long taskId = packet.longValue2;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node cardNode : list.getList().getChildren()) {
+                                Card card = (Card) cardNode;
+                                if (card.getTask().taskId == taskId) {
+                                    list.getList().getChildren().remove(card);
+                                    list.getTaskList().tasks.remove(card.getTask());
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }));
+    }
+
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
@@ -162,17 +185,18 @@ public class BoardCtrl implements Initializable {
         this.board = board;
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
-        subscriptions = new HashSet<>();
         for (var taskList : board.lists) {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
+        subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
-        subscriptions.add(registerForListRenames());
-        subscriptions.add(registerForBoardRenames());
         subscriptions.add(registerForNewTasks());
-        subscriptions.add(registerForTaskUpdates());
         subscriptions.add(registerForListDeletes());
+        subscriptions.add(registerForTaskDeletes());
+        subscriptions.add(registerForBoardRenames());
+        subscriptions.add(registerForListRenames());
+        subscriptions.add(registerForTaskUpdates());
     }
 
     public void addList() {

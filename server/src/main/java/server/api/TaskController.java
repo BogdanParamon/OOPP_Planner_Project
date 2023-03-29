@@ -150,5 +150,17 @@ public class TaskController {
         packet.task = task;
         return packet;
     }
+
+    @MessageMapping("/tasks/delete/{boardId}/{listId}")
+    @SendTo("/topic/tasks/delete/{boardId}")
+    @Transactional
+    public Packet deleteMessage(Long taskId, @DestinationVariable("boardId") long boardId,
+                                @DestinationVariable("listId") long listId) {
+        delete(taskId);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.longValue2 = taskId;
+        return packet;
+    }
 }
 

@@ -61,9 +61,7 @@ public class Card extends Pane {
         }
 
         deleteTaskButton.setOnAction(event -> {
-            ((VBox) getParent()).getChildren().remove(this);
-            server.deleteTask(this.task);
-            taskList.tasks.remove(this.task);
+            server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
         });
 
         taskTitle.setText(task.title);
