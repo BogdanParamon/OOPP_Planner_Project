@@ -41,6 +41,9 @@ public class MainCtrl {
     protected DetailedTaskCtrl detailedTaskCtrl;
     protected Scene detailedTask;
 
+    protected Scene userOrAdmin;
+    protected UserOrAdminCtrl userOrAdminCtrl;
+    private double xOffset, yOffset;
 
     /**
      * Initialize all controllers and scenes
@@ -57,7 +60,8 @@ public class MainCtrl {
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<DetailedTaskCtrl, Parent> detailedTask) {
+                           Pair<DetailedTaskCtrl, Parent> detailedTask,
+                           Pair<UserOrAdminCtrl, Parent> userOrAdmin) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -74,6 +78,9 @@ public class MainCtrl {
 
         this.detailedTaskCtrl = detailedTask.getKey();
         this.detailedTask = new Scene(detailedTask.getValue());
+
+        this.userOrAdminCtrl = userOrAdmin.getKey();
+        this.userOrAdmin = new Scene(userOrAdmin.getValue());
 
         primaryStage.setScene(this.home);
         primaryStage.show();
@@ -110,6 +117,11 @@ public class MainCtrl {
         primaryStage.setScene(addTask);
     }
 
+    public void showUserOrAdmin() {
+        primaryStage.setTitle("Select mode");
+        primaryStage.setScene(userOrAdmin);
+    }
+
     /**
      * Getter for the board
      *
@@ -119,13 +131,10 @@ public class MainCtrl {
         return boardCtrl;
     }
 
-
     public void showDetailedTask() {
         primaryStage.setTitle("Task Details");
         primaryStage.setScene(detailedTask);
     }
-
-    private double xOffset, yOffset;
 
     public void initHeader(AnchorPane root) {
 
@@ -146,10 +155,8 @@ public class MainCtrl {
         minimizeIcon.setId("minimizeIcon");
 
 
-
         header.getChildren().add(minimizeIcon);
         header.getChildren().add(closeIcon);
-
 
 
         root.getChildren().add(0, header);
