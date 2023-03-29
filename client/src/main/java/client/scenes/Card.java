@@ -3,20 +3,32 @@ package client.scenes;
 import client.utils.ServerUtils;
 import commons.Task;
 import commons.TaskList;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Modality;
+
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Card extends Pane {
+
+
+
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
@@ -24,6 +36,9 @@ public class Card extends Pane {
     private final Task task;
 
     @FXML private TextField taskTitle;
+
+    @FXML
+    private MFXButton openTask;
 
     /**
      * Constructs a new Card instance with the specified parameters.
@@ -54,6 +69,7 @@ public class Card extends Pane {
         taskTitle.setText(task.title);
         initDrag();
         initEditTaskTitle();
+        openTask.setOnAction(event -> displayDialog());
     }
 
     void initDrag() {
@@ -86,5 +102,22 @@ public class Card extends Pane {
             task.title = taskTitle.getText();
             server.updateTask(task);
         }
+    }
+
+    void displayDialog(){
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initStyle(StageStyle.DECORATED);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/DetailedTask.fxml"));
+        AnchorPane root;
+
+        try {
+            root = loader.load();
+        } catch (IOException e){
+            throw new RuntimeException();
+        }
+
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 }

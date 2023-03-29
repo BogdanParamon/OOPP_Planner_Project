@@ -2,11 +2,16 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
 
 public class DetailedTaskCtrl {
 
     private ServerUtils server;
     private MainCtrl mainCtrl;
+
+    @FXML
+    private VBox tasks_vbox;
 
     /**
      * Setup server and main controller
