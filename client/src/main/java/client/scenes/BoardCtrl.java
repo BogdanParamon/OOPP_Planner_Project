@@ -86,6 +86,11 @@ public class BoardCtrl implements Initializable {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
+        tagList.getChildren().remove(1, tagList.getChildren().size());
+        for (var tag : board.tags) {
+            Tag tagUI = new Tag(mainCtrl, server, tag);
+            tagList.getChildren().add(tagUI);
+        }
     }
 
     public void addList() {
@@ -133,6 +138,4 @@ public class BoardCtrl implements Initializable {
         tag = server.addTagToBoard(board.boardId, tag);
         tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
     }
-
-
 }
