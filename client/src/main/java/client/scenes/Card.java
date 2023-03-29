@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Board;
 import commons.Task;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import commons.TaskList;
@@ -22,6 +23,7 @@ public class Card extends Pane {
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
+    private final Board board;
     private final TaskList taskList;
     private final Task task;
     @FXML
@@ -38,12 +40,13 @@ public class Card extends Pane {
      * @param taskList
     @FXML private TextField taskTitle;
      */
-    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
+    public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList, Board board) {
 
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.task = task;
         this.taskList = taskList;
+        this.board = board;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Card.fxml"));
@@ -71,7 +74,6 @@ public class Card extends Pane {
 
 
     void initDrag() {
-
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
@@ -112,7 +114,14 @@ public class Card extends Pane {
 
     private void saveTaskTitle() {
         task.title = taskTitle.getText();
-        server.updateTask(task);
+        server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
     }
 
+    public Task getTask() {
+        return task;
+    }
+
+    public TextField getTaskTitle() {
+        return taskTitle;
+    }
 }

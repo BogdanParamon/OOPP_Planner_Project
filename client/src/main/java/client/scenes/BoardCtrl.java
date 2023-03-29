@@ -101,8 +101,31 @@ public class BoardCtrl implements Initializable {
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
                             taskList.tasks.add(0, task);
-                            Card card = new Card(mainCtrl, server, task, taskList);
+                            Card card = new Card(mainCtrl, server, task, taskList, board);
                             list.getList().getChildren().add(0, card);
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForTaskUpdates() {
+        return server.registerForMessages("/topic/tasks/update/" + board.boardId, Packet.class,
+                packet -> Platform.runLater(() -> {
+                    long listId = packet.longValue;
+                    Task task = packet.task;
+                    long taskId = task.taskId;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node cardNode : list.getList().getChildren()){
+                                Card card = (Card) cardNode;
+                                if (card.getTask().taskId == taskId) {
+                                    card.getTaskTitle().setText(task.title);
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
@@ -134,6 +157,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForBoardRenames());
         subscriptions.add(registerForNewTasks());
+        subscriptions.add(registerForTaskUpdates());
     }
 
     public void addList() {
@@ -155,9 +179,6 @@ public class BoardCtrl implements Initializable {
         editTitle.setVisible(true);
         save.setVisible(false);
         if (!newTitleS.isEmpty()) {
-//            this.board.title = newTitleS;
-//            boardName.setText(this.board.title);
-//            updateBoard(this.board);
             renameBoard(newTitleS);
         }
         newtTitle.setText("");

@@ -138,5 +138,17 @@ public class TaskController {
         packet.task = task;
         return packet;
     }
+
+    @MessageMapping("/tasks/update/{boardId}/{listId}")
+    @SendTo("/topic/tasks/update/{boardId}")
+    @Transactional
+    public Packet updateMessage(Task task, @DestinationVariable("boardId") long boardId,
+                                @DestinationVariable("listId") long listId) {
+        updateTask(task);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.task = task;
+        return packet;
+    }
 }
 

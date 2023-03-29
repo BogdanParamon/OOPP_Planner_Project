@@ -58,7 +58,7 @@ public class List extends Pane {
         }
 
         for (Task task : taskList.tasks) {
-            Card card = new Card(mainCtrl, server, task, taskList);
+            Card card = new Card(mainCtrl, server, task, taskList, board);
             list.getChildren().add(0, card);
         }
 
@@ -89,7 +89,7 @@ public class List extends Pane {
                 }
                 dragIndex = index;
 
-                Card card = new Card(mainCtrl, server, new Task(""), null);
+                Card card = new Card(mainCtrl, server, new Task(""), null, board);
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
                 list.getChildren().add(dragIndex, card);
             }
@@ -130,10 +130,6 @@ public class List extends Pane {
     public void addTask() {
         Task task = new Task("Title");
         server.send("/app/tasks/add/" + board.boardId + "/" + taskList.listId, task);
-//        Task task = server.addTask(new Task("Title"), taskList.listId);
-//        taskList.tasks.add(0, task);
-//        Card card = new Card(mainCtrl, server, task, taskList);
-//        list.getChildren().add(0, card);
     }
 
     public void addTask(long taskId, Integer index) {
@@ -142,7 +138,7 @@ public class List extends Pane {
         Task task = server.getTaskById(taskId);
         taskList.tasks.add(index, task);
         server.updateList(taskList);
-        Card card = new Card(mainCtrl, server, task, taskList);
+        Card card = new Card(mainCtrl, server, task, taskList, board);
         list.getChildren().add(index, card);
 
         VBox.setMargin(card, new Insets(5, 0, 5, 5));
