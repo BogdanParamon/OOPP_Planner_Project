@@ -34,7 +34,8 @@ public class TaskController {
      * @param tagRepository     The TagRepository object to be used for database access.
      */
 
-    public TaskController(TaskRepository taskRepository, TaskListRepository taskListRepository, TagRepository tagRepository) {
+    public TaskController(TaskRepository taskRepository,
+                          TaskListRepository taskListRepository, TagRepository tagRepository) {
         this.taskRepository = taskRepository;
         this.taskListRepository = taskListRepository;
         this.tagRepository = tagRepository;
