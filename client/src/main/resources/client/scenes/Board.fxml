@@ -136,7 +136,7 @@
                     </Text>
                     <Pane prefWidth="50"/>
 
-                    <MFXButton text="">
+                    <MFXButton text="" onAction="#addTag">
                         <graphic>
                             <ImageView fitHeight="30" fitWidth="30">
                                 <Image url="@/client/images/addButton.png"/>

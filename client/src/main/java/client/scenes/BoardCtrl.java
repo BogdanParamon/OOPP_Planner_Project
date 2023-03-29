@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,8 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import java.util.Random;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -35,6 +38,10 @@ public class BoardCtrl implements Initializable {
     private Button editTitle;
     @FXML
     private Button save;
+
+    @FXML private VBox tagList;
+
+    @FXML private MFXButton addTag;
 
     /**
      * Setup server and main controller
@@ -119,4 +126,13 @@ public class BoardCtrl implements Initializable {
             alert.showAndWait();
         }
     }
+    public void addTag() {
+        String color = String.format("#%06X",
+                new Random(System.currentTimeMillis()).nextInt(0x1000000));
+        commons.Tag tag = new commons.Tag("New Tag", color);
+        tag = server.addTagToBoard(board.boardId, tag);
+        tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
+    }
+
+
 }
