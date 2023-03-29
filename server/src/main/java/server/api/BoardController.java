@@ -144,11 +144,11 @@ public class BoardController {
 
     @MessageMapping("/boards/add")
     @SendTo("/topic/boards/add")
-    public List<Object> addMessage(Board board) {
+    public Packet addMessage(Board board) {
         add(board);
-        List<Object> titleAndId = new ArrayList<>(2);
-        titleAndId.add(board.boardId);
-        titleAndId.add(board.title);
+        Packet titleAndId = new Packet();
+        titleAndId.longValue = board.boardId;
+        titleAndId.stringValue = board.title;
         return titleAndId;
     }
 

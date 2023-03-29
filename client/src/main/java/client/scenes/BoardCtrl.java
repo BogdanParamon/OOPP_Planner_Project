@@ -73,14 +73,11 @@ public class BoardCtrl implements Initializable {
 
     public StompSession.Subscription registerForListRenames() {
         return server.registerForMessages("/topic/taskLists/rename/" + board.boardId,
-                ArrayList.class, listIdAndNewTitle -> Platform.runLater(() -> {
-                    var listId = listIdAndNewTitle.get(0);
-                    listId = (long) (int) listId;
-                    String newTitle = (String) listIdAndNewTitle.get(1);
+                Packet.class, listIdAndNewTitle -> Platform.runLater(() -> {
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
-                        if (list.getTaskList().listId == (Long) listId) {
-                            list.setTitle(newTitle);
+                        if (list.getTaskList().listId == listIdAndNewTitle.longValue) {
+                            list.setTitle(listIdAndNewTitle.stringValue);
                             break;
                         }
                     }

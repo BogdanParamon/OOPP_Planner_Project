@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Board;
+import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -183,9 +184,9 @@ public class List extends Pane {
 
     private void saveTaskListTitle() {
         taskList.setTitle(title.getText());
-        ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
-        listIdAndNewTitle.add(taskList.listId);
-        listIdAndNewTitle.add(title.getText());
+        Packet listIdAndNewTitle = new Packet();
+        listIdAndNewTitle.longValue = taskList.listId;
+        listIdAndNewTitle.stringValue = title.getText();
         server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 }

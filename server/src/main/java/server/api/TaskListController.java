@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Board;
+import commons.Packet;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -132,10 +133,8 @@ public class TaskListController {
     @MessageMapping("/taskLists/rename/{boardId}")
     @SendTo("/topic/taskLists/rename/{boardId}")
     @Transactional
-    public ArrayList<Object> renameMessage(ArrayList<Object> listIdAndNewTitle) {
-        var listId = listIdAndNewTitle.get(0);
-        listId = (long) (int) listId;
-        renameList((Long) listId, (String) listIdAndNewTitle.get(1));
+    public Packet renameMessage(Packet listIdAndNewTitle) {
+        renameList(listIdAndNewTitle.longValue, listIdAndNewTitle.stringValue);
         return listIdAndNewTitle;
     }
 }
