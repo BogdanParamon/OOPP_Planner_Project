@@ -54,6 +54,7 @@ public class MainCtrl {
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param detailedTask  allows user to see details of a task
+     * @param userOrAdmin   allow user to pick between user view and admin view
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,

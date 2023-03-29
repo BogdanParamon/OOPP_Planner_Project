@@ -33,7 +33,8 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return userId == user.userId && userName.equals(user.userName) && Objects.equals(boards, user.boards);
+        return userId == user.userId && userName.equals(user.userName) &&
+                Objects.equals(boards, user.boards);
     }
 
     @Override
