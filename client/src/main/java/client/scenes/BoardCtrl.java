@@ -277,4 +277,9 @@ public class BoardCtrl implements Initializable {
         updateBoard(board);
         colorPickerButtons.setValue(Color.valueOf("ddd"));
     }
+    
+    public AnchorPane getRoot() {
+        return root;
+    }
+    
 }
