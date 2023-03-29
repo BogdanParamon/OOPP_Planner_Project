@@ -4,7 +4,6 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
-<<<<<<< client/src/main/java/client/scenes/BoardCtrl.java
 import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
@@ -14,12 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-=======
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
->>>>>>> client/src/main/java/client/scenes/BoardCtrl.java
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
