@@ -20,7 +20,6 @@ import javafx.stage.Modality;
 
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.checkerframework.checker.units.qual.A;
 
 
 import java.io.IOException;
@@ -102,21 +101,7 @@ public class Card extends Pane {
         }
     }
 
-    void displayDialog(){
-//        Stage stage = new Stage();
-//        stage.initModality(Modality.WINDOW_MODAL);
-//        stage.initStyle(StageStyle.DECORATED);
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Components/DetailedTask.fxml"));
-//        AnchorPane root;
-//
-//        try {
-//            root = loader.load();
-//        } catch (IOException e){
-//            throw new RuntimeException();
-//        }
-//
-//        stage.setScene(new Scene(root));
-//        stage.show();
+    void displayDialog() {
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initStyle(StageStyle.DECORATED);

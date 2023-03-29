@@ -39,8 +39,9 @@ public class DetailedTask extends AnchorPane {
 
     /**
      * Setup server and main controller
+     * @param mainCtrl the main controller
      * @param server server to connect to
-     * @param mainCtrl the main controller - for switching scenes
+     * @param task the task related to the detailed view
      */
     @Inject
     public DetailedTask(MainCtrl mainCtrl, ServerUtils server, Task task) {
@@ -50,7 +51,8 @@ public class DetailedTask extends AnchorPane {
         this.task = task;
 
         FXMLLoader loader =
-                new FXMLLoader(getClass().getResource("/client/scenes/Components/DetailedTask.fxml"));
+                new FXMLLoader(getClass()
+                        .getResource("/client/scenes/Components/DetailedTask.fxml"));
         loader.setRoot(this);
         loader.setController(DetailedTask.this);
 
@@ -62,7 +64,8 @@ public class DetailedTask extends AnchorPane {
         }
 
         for (Subtask subtask : this.task.subtasks) {
-            client.scenes.Subtask subtaskUI = new client.scenes.Subtask(mainCtrl, server, task, subtask);
+            client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, task, subtask);
             tasks_vbox.getChildren().add(0, subtaskUI);
         }
 
@@ -74,9 +77,11 @@ public class DetailedTask extends AnchorPane {
     }
 
     public void addSubtask() {
-        Subtask subtask = server.addSubtask(task.taskId, new Subtask("New Subtask"));
+        Subtask subtask =
+                server.addSubtask(task.taskId, new Subtask("New Subtask"));
         task.subtasks.add(0, subtask);
-        client.scenes.Subtask subtaskUI = new client.scenes.Subtask(mainCtrl, server, task, subtask);
+        client.scenes.Subtask subtaskUI =
+                new client.scenes.Subtask(mainCtrl, server, task, subtask);
         tasks_vbox.getChildren().add(0, subtaskUI);
     }
 
