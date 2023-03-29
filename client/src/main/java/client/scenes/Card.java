@@ -2,17 +2,18 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Task;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import commons.TaskList;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class Card extends Pane {
 
@@ -20,10 +21,20 @@ public class Card extends Pane {
     private final ServerUtils server;
     private final TaskList taskList;
     private final Task task;
+    @FXML
+    private MFXButton deleteTaskButton;
 
-    @FXML private Text title;
+    @FXML private TextField taskTitle;
 
 
+    /**
+     * New Card component
+     * @param mainCtrl
+     * @param server
+     * @param task
+     * @param taskList
+    @FXML private TextField taskTitle;
+     */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList) {
 
         this.mainCtrl = mainCtrl;
@@ -43,9 +54,26 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
-        title.setText(task.title);
+        deleteTaskButton.setOnAction(event -> {
+            ((VBox) getParent()).getChildren().remove(this);
+            server.deleteTask(this.task);
+            taskList.tasks.remove(this.task);
+        });
+
+        taskTitle.setText(task.title);
+
         initDrag();
+        initEditTaskTitle();
+
+        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
+        if (cssURL != null) {
+            String cssPath = cssURL.toExternalForm();
+            getStylesheets().add(cssPath);
+        } else {
+            System.out.println("Can not load Cardstyle.css");
+        }
     }
+
 
     void initDrag() {
 
@@ -66,4 +94,30 @@ public class Card extends Pane {
             event.consume();
         });
     }
+
+    void initEditTaskTitle() {
+        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.focusedProperty().addListener(this::handleFocusChange);
+    }
+
+
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            taskTitle.getParent().requestFocus();
+            saveTaskTitle();
+        }
+    }
+
+    private void handleFocusChange(ObservableValue<? extends Boolean>
+                                           observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskTitle();
+        }
+    }
+
+    private void saveTaskTitle() {
+        task.title = taskTitle.getText();
+        server.updateTask(task);
+    }
+
 }

@@ -113,7 +113,7 @@ public class BoardController {
     }
 
 
-    @PostMapping(path = "/deleteAll")
+    @DeleteMapping(path = "/deleteAll")
     public ResponseEntity<String> deleteAll() {
         boardRepository.deleteAll();
         return ResponseEntity.ok("Successful");
@@ -127,8 +127,8 @@ public class BoardController {
         return ResponseEntity.ok(map);
     }
 
-    @MessageMapping("/boards")
-    @SendTo("/topic/boards")
+    @MessageMapping("/boards/add")
+    @SendTo("/topic/boards/add")
     public List<Object> addMessage(Board board) {
         add(board);
         List<Object> titleAndId = new ArrayList<>(2);

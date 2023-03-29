@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
+<<<<<<< client/src/main/java/client/scenes/BoardCtrl.java
 import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
@@ -13,6 +14,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+=======
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+>>>>>>> client/src/main/java/client/scenes/BoardCtrl.java
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -20,9 +27,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import org.springframework.messaging.simp.stomp.StompSession;
+import jakarta.ws.rs.WebApplicationException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class BoardCtrl implements Initializable {
 
@@ -37,7 +52,6 @@ public class BoardCtrl implements Initializable {
     private Board board;
     @FXML
     private TextField newtTitle;
-
     @FXML
     private Button editTitle;
     @FXML
@@ -69,6 +83,8 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton btnOverviewBoards;
 
+    private Set<StompSession.Subscription> subscriptions;
+
     /**
      * Setup server and main controller
      *
@@ -91,17 +107,40 @@ public class BoardCtrl implements Initializable {
         mainCtrl.initHeader(root);
     }
 
+    public StompSession.Subscription registerForNewLists() {
+        return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
+                taskList -> Platform.runLater(() -> {
+                    List listUI = new List(mainCtrl, server, taskList, this.board);
+                    board_hbox.getChildren().add(listUI);
+                }));
+    }
+
+    public StompSession.Subscription registerForListRenames() {
+        return server.registerForMessages("/topic/taskLists/rename/" + board.boardId,
+                ArrayList.class, listIdAndNewTitle -> Platform.runLater(() -> {
+                    var listId = listIdAndNewTitle.get(0);
+                    listId = (long) (int) listId;
+                    String newTitle = (String) listIdAndNewTitle.get(1);
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        if (list.getTaskList().listId == (Long) listId) {
+                            list.setTitle(newTitle);
+                            break;
+                        }
+                    }
+                }));
+    }
 
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
-
 
     /**
      * Uses showHome method to switch scenes to Home scene
      */
     public void switchToBoardOverviewScene() {
         customize.setVisible(false);
+        subscriptions.forEach(StompSession.Subscription::unsubscribe);
         mainCtrl.showBoardOverview();
     }
 
@@ -109,8 +148,9 @@ public class BoardCtrl implements Initializable {
         this.board = board;
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
+        subscriptions = new HashSet<>();
         for (var taskList : board.lists) {
-            List list = new List(mainCtrl, server, taskList);
+            List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
         root.setStyle("-fx-background-color: #" + board.backgroundColor
@@ -127,13 +167,13 @@ public class BoardCtrl implements Initializable {
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: #"
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        subscriptions.add(registerForNewLists());
+        subscriptions.add(registerForListRenames());
     }
 
     public void addList() {
         TaskList list = new TaskList("New List");
-        list = server.addList(list, board.boardId);
-        List listUI = new List(mainCtrl, server, list);
-        board_hbox.getChildren().add(listUI);
+        server.send("/app/taskLists/add/" + board.boardId, list);
     }
 
     public void updateTitle() {
@@ -159,7 +199,7 @@ public class BoardCtrl implements Initializable {
 
     public void updateBoard(Board board) {
         try {
-            server.send("/app/boards", board);
+            server.send("/app/boards/add", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

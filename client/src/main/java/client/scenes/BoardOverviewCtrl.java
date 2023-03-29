@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.User;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -27,6 +28,8 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private User user;
     @FXML
     private MFXListView<MFXButton> boards;
 
@@ -65,11 +68,11 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards", ArrayList.class, board -> {
+        server.registerForMessages("/topic/boards/add", ArrayList.class, board -> {
             Platform.runLater(() -> {
                 MFXButton button = new MFXButton((String) board.get(1));
                 button.setOnAction(event
-                        -> switchSceneToBoard(server.getBoardById((long) board.get(0))));
+                        -> switchSceneToBoard(server.getBoardById((long) (int) board.get(0))));
                 boards.getItems().add(button);
                 boardTitle.clear();
             });
@@ -116,7 +119,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            server.send("/app/boards", board);
+            server.send("/app/boards/add", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -132,7 +135,12 @@ public class BoardOverviewCtrl implements Initializable {
 
 
     public void switchSceneToHome() {
+        server.disconnectWebsocket();
         mainCtrl.showHome();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }
