@@ -164,4 +164,8 @@ public class List extends Pane {
             title.setText(newTitle);
         }
     }
+
+    public VBox getList() {
+        return list;
+    }
 }

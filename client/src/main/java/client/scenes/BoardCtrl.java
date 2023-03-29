@@ -105,7 +105,7 @@ public class BoardCtrl implements Initializable {
                         if (taskList.listId == listId) {
                             taskList.tasks.add(0, task);
                             Card card = new Card(mainCtrl, server, task, taskList);
-                            list.getChildren().add(0, card);
+                            list.getList().getChildren().add(0, card);
                             break;
                         }
                     }
