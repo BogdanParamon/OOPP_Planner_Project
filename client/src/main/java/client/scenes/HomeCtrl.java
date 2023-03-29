@@ -58,7 +58,7 @@ public class HomeCtrl implements Initializable {
             ServerUtils.setSession(server.connectWebsocket());
             mainCtrl.boardOverviewCtrl.registerForBoardUpdates();
 
-            switchSceneToBoardOverview();
+            switchSceneToUserOrAdmin();
             mainCtrl.home.getStylesheets().remove("/client/styles/inputerror.css");
             errorMsg.setVisible(false);
         } else {
@@ -82,6 +82,10 @@ public class HomeCtrl implements Initializable {
      */
     public void switchSceneToBoardOverview() {
         mainCtrl.showBoardOverview();
+    }
+
+    public void switchSceneToUserOrAdmin() {
+        mainCtrl.showUserOrAdmin();
     }
 
 }

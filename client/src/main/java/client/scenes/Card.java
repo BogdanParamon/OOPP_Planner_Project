@@ -7,12 +7,13 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class Card extends Pane {
 
@@ -65,6 +66,14 @@ public class Card extends Pane {
 
         initDrag();
         initEditTaskTitle();
+
+        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
+        if (cssURL != null) {
+            String cssPath = cssURL.toExternalForm();
+            getStylesheets().add(cssPath);
+        } else {
+            System.out.println("Can not load Cardstyle.css");
+        }
     }
 
 
