@@ -136,4 +136,12 @@ public class TaskListController {
         renameList(listIdAndNewTitle.longValue, listIdAndNewTitle.stringValue);
         return listIdAndNewTitle;
     }
+
+    @MessageMapping("/taskLists/delete/{boardId}")
+    @SendTo("/topic/taskLists/delete/{boardId}")
+    @Transactional
+    public Long deleteMessage(Long listId) {
+        delete(listId);
+        return listId;
+    }
 }

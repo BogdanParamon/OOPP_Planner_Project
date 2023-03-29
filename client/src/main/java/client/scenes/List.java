@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -69,9 +68,7 @@ public class List extends Pane {
         dragIndex = null;
 
         deleteTaskListButton.setOnAction(event -> {
-            ((HBox) getParent()).getChildren().remove(this);
-            server.deleteTaskList(taskList);
-            board.lists.remove(this.taskList);
+            server.send("/app/taskLists/delete/" + board.boardId, taskList.listId);
         });
 
         initDrag(mainCtrl, server);

@@ -132,6 +132,20 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForListDeletes() {
+        return server.registerForMessages("/topic/taskLists/delete/" + board.boardId, Long.class,
+                listId -> Platform.runLater(() -> {
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        if (list.getTaskList().listId == listId) {
+                            board_hbox.getChildren().remove(list);
+                            board.lists.remove(list.getTaskList());
+                            break;
+                        }
+                    }
+                }));
+    }
+
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
@@ -158,6 +172,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForBoardRenames());
         subscriptions.add(registerForNewTasks());
         subscriptions.add(registerForTaskUpdates());
+        subscriptions.add(registerForListDeletes());
     }
 
     public void addList() {
