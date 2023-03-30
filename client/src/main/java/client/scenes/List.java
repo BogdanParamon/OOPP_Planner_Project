@@ -109,7 +109,9 @@ public class List extends Pane {
 
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(Long.parseLong(db.getString()), index, event);
+            Card.setDragToListId(taskList.listId);
+            Card.setDragToIndex(index);
+            //addTask(Long.parseLong(db.getString()), index, event);
             dragIndex = null;
 
             event.setDropCompleted(true);

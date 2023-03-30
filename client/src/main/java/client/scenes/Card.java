@@ -29,6 +29,9 @@ public class Card extends Pane {
     @FXML
     private TextField taskTitle;
 
+    private static long dragFromListId;
+    private static long dragToListId;
+    private static int dragToIndex;
 
     /**
      * New Card component
@@ -90,6 +93,7 @@ public class Card extends Pane {
             // clever way to  work around variables in lambda
             orignalParent[0] = (VBox) getParent();
             index[0] = ((VBox) getParent()).getChildren().indexOf(this);
+            dragFromListId = taskList.listId;
 
             mainCtrl.boardCtrl.getRoot().getChildren().add(this); // find a better way for this
             setVisible(false);
@@ -108,6 +112,8 @@ public class Card extends Pane {
                 setVisible(true);
             }
             mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
+            dragFromListId = 0;
+            dragToListId = 0;
             event.consume();
         });
     }
@@ -143,5 +149,29 @@ public class Card extends Pane {
 
     public TextField getTaskTitle() {
         return taskTitle;
+    }
+
+    public static long getDragFromListId() {
+        return dragFromListId;
+    }
+
+    public static void setDragFromListId(long dragFromListId) {
+        Card.dragFromListId = dragFromListId;
+    }
+
+    public static long getDragToListId() {
+        return dragToListId;
+    }
+
+    public static void setDragToListId(long dragToListId) {
+        Card.dragToListId = dragToListId;
+    }
+
+    public static int getDragToIndex() {
+        return dragToIndex;
+    }
+
+    public static void setDragToIndex(int dragToIndex) {
+        Card.dragToIndex = dragToIndex;
     }
 }
