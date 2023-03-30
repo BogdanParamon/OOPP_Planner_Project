@@ -6,17 +6,20 @@ import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -26,12 +29,16 @@ public class List extends Pane {
     private final TaskList taskList;
     private Integer dragIndex;
 
-    @FXML private VBox list;
-    @FXML private MFXButton addButton;
+    @FXML
+    private VBox list;
+    @FXML
+    private MFXButton addButton;
 
-    @FXML private MFXTextField title;
+    @FXML
+    private MFXTextField title;
 
-    @FXML private MFXButton deleteTaskListButton;
+    @FXML
+    private MFXButton deleteTaskListButton;
 
     private Board board;
 
@@ -39,7 +46,7 @@ public class List extends Pane {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.taskList = taskList;
-
+        this.board = board;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/List.fxml"));
@@ -55,14 +62,11 @@ public class List extends Pane {
 
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList);
-            list.getChildren().add(0, card);
+            list.getChildren().add(list.getChildren().size() - 1, card);
         }
 
-        title.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
-            taskList.setTitle(newValue);
-            server.updateList(taskList);
-        });
+        title.setText(taskList.title);
+        initEditTaskListTitle();
 
         addButton.setOnAction(event -> addTask());
         addButton.setText("");
@@ -82,7 +86,7 @@ public class List extends Pane {
             event.acceptTransferModes(TransferMode.MOVE);
             int index = getIndex(event);
 
-            if (!Objects.equals(index,dragIndex)) {
+            if (!Objects.equals(index, dragIndex)) {
                 if (dragIndex != null) {
                     list.getChildren().remove(list.getChildren().get(dragIndex));
                 }
@@ -104,12 +108,11 @@ public class List extends Pane {
         });
 
         setOnDragDropped(event -> {
-            System.out.println("Drag dropped");
             Dragboard db = event.getDragboard();
 
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
-            addTask(Long.parseLong(db.getString()), index) ;
+            addTask(Long.parseLong(db.getString()), index, event);
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -119,7 +122,7 @@ public class List extends Pane {
 
 
     private int getIndex(DragEvent event) {
-        int sceneY =  (int) event.getSceneY() - 190;
+        int sceneY = (int) event.getSceneY() - 190;
         int length = list.getChildren().size();
         int index = length != 1 ? (sceneY / 75) % (length - 1) : 0;
         if (sceneY >= 85 * (length - 1)) index = Integer.max(0, length - 2);
@@ -133,16 +136,55 @@ public class List extends Pane {
         list.getChildren().add(0, card);
     }
 
-    public void addTask(long taskId, Integer index) {
-        int len = list.getChildren().size();
+    public void addTask(long taskId, Integer index, DragEvent event) {
 
         Task task = server.getTaskById(taskId);
+        if (taskList.tasks.remove(task)) {
+            var db = event.getDragboard();
+            var content = new ClipboardContent();
+            content.putString("Same list");
+            db.setContent(content);
+        }
         taskList.tasks.add(index, task);
         server.updateList(taskList);
         Card card = new Card(mainCtrl, server, task, taskList);
         list.getChildren().add(index, card);
+    }
 
-        VBox.setMargin(card, new Insets(5, 0, 5, 5));
+    public TaskList getTaskList() {
+        return taskList;
+    }
 
+    public void setTitle(String newTitle) {
+        if (!newTitle.equals(title.getText())) {
+            title.setText(newTitle);
+        }
+    }
+
+    private void initEditTaskListTitle() {
+        title.setOnKeyReleased(event -> handleKeyRelease(event));
+        title.delegateFocusedProperty().addListener(this::handleFocusChangeForTitle);
+    }
+
+    private void handleKeyRelease(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            title.getParent().requestFocus();
+            saveTaskListTitle();
+        }
+    }
+
+    private void handleFocusChangeForTitle(ObservableValue<? extends Boolean>
+                                                   observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskListTitle();
+        }
+    }
+
+    private void saveTaskListTitle() {
+        taskList.setTitle(title.getText());
+        ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
+        listIdAndNewTitle.add(taskList.listId);
+        listIdAndNewTitle.add(title.getText());
+        server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 }

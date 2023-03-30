@@ -20,6 +20,10 @@ public class Board {
 
     public String title;
 
+    public String backgroundColor;
+
+    public String buttonsBackground;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
@@ -35,6 +39,9 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
+        //default colors
+        this.backgroundColor = "ffffff";
+        this.buttonsBackground = "ddd";
     }
 
     @SuppressWarnings("unused")
@@ -55,7 +62,10 @@ public class Board {
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
         return boardId == board.boardId && Objects.equals(title, board.title)
-                && Objects.equals(lists, board.lists) && Objects.equals(tags, board.tags);
+                && Objects.equals(lists, board.lists)
+                && Objects.equals(backgroundColor, board.backgroundColor)
+                && Objects.equals(buttonsBackground, board.buttonsBackground)
+                && Objects.equals(tags, board.tags);
     }
 
     /**
@@ -66,7 +76,7 @@ public class Board {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(boardId, title, lists, tags);
+        return Objects.hash(boardId, title, backgroundColor, buttonsBackground, lists, tags);
     }
 
     /**
