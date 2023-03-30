@@ -65,7 +65,7 @@ public class Card extends Pane {
         initDrag();
         initEditTaskTitle();
 
-        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
+        URL cssURL = getClass().getResource("/client/styles/Cardstyle.css");
         if (cssURL != null) {
             String cssPath = cssURL.toExternalForm();
             getStylesheets().add(cssPath);
@@ -96,7 +96,7 @@ public class Card extends Pane {
     }
 
     void initEditTaskTitle() {
-        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.setOnKeyReleased(this::handleKeyRelease);
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
 
