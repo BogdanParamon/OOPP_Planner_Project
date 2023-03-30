@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Board;
+import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -21,7 +22,7 @@ public class Card extends Pane {
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final Board board;
-    private final TaskList taskList;
+    private TaskList taskList;
     private final Task task;
     @FXML
     private MFXButton deleteTaskButton;
@@ -103,14 +104,17 @@ public class Card extends Pane {
         });
 
         setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.MOVE) {
-                if (!event.getDragboard().getString().equals("Same list"))
-                    taskList.tasks.remove(task);
-                server.updateList(taskList);
-            } else {
-                orignalParent[0].getChildren().add(index[0], this);
-                setVisible(true);
+            if (event.getTransferMode() == TransferMode.MOVE
+                    && !(dragFromListId == dragToListId && index[0] == dragToIndex)) {
+                Packet packet = new Packet();
+                packet.longValue = task.taskId;
+                packet.longValue2 = dragFromListId;
+                packet.longValue3 = dragToListId;
+                packet.intValue = dragToIndex;
+                server.send("/app/tasks/drag/" + board.boardId, packet);
             }
+            orignalParent[0].getChildren().add(index[0], this);
+            setVisible(true);
             mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
             dragFromListId = 0;
             dragToListId = 0;
@@ -149,6 +153,14 @@ public class Card extends Pane {
 
     public TextField getTaskTitle() {
         return taskTitle;
+    }
+
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
     }
 
     public static long getDragFromListId() {

@@ -93,7 +93,6 @@ public class List extends Pane {
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
                 list.getChildren().add(dragIndex, card);
             }
-
             event.consume();
         });
 
@@ -105,13 +104,10 @@ public class List extends Pane {
         });
 
         setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
             Card.setDragToListId(taskList.listId);
             Card.setDragToIndex(index);
-            //addTask(Long.parseLong(db.getString()), index, event);
             dragIndex = null;
 
             event.setDropCompleted(true);
@@ -131,21 +127,6 @@ public class List extends Pane {
     public void addTask() {
         Task task = new Task("Title");
         server.send("/app/tasks/add/" + board.boardId + "/" + taskList.listId, task);
-    }
-
-    public void addTask(long taskId, Integer index, DragEvent event) {
-
-        Task task = server.getTaskById(taskId);
-        if (taskList.tasks.remove(task)) {
-            var db = event.getDragboard();
-            var content = new ClipboardContent();
-            content.putString("Same list");
-            db.setContent(content);
-        }
-        taskList.tasks.add(index, task);
-        server.updateList(taskList);
-        Card card = new Card(mainCtrl, server, task, taskList, board);
-        list.getChildren().add(index, card);
     }
 
     public TaskList getTaskList() {

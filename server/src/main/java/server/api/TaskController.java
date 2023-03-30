@@ -190,15 +190,15 @@ public class TaskController {
         return packet;
     }
 
-    @MessageMapping("/tasks/drag/{boardId}/{listId}")
+    @MessageMapping("/tasks/drag/{boardId}")
     @SendTo("/topic/tasks/drag/{boardId}")
     @Transactional
-    public Packet dragMessage(Packet packet, @DestinationVariable("boardId") long boardId,
-                                @DestinationVariable("listId") long listId) {
+    public Packet dragMessage(Packet packet, @DestinationVariable("boardId") long boardId) {
         long taskId = packet.longValue;
-        long dragToListId = packet.longValue2;
+        long dragFromListId = packet.longValue2;
+        long dragToListId = packet.longValue3;
         int dragToIndex = packet.intValue;
-        dragTask(taskId, listId, dragToListId, dragToIndex);
+        dragTask(taskId, dragFromListId, dragToListId, dragToIndex);
         return packet;
     }
 }
