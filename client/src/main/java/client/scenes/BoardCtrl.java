@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.Board;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -73,6 +74,8 @@ public class BoardCtrl implements Initializable {
     private ColorPicker colorPickerBackgroundFont;
     @FXML
     private ColorPicker colorPickerButtonsFont;
+    @FXML
+    private MFXScrollPane tagsPane;
 
     private Set<StompSession.Subscription> subscriptions;
 
@@ -178,6 +181,7 @@ public class BoardCtrl implements Initializable {
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: #"
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        tagsPane.setStyle("-fx-background-color: #" + board.buttonsBackground + ";");
         //board
         boardScrollPane.setStyle("-fx-background-color: #"
                 + board.boardColor + "; -fx-background-radius: 5px");
@@ -260,7 +264,8 @@ public class BoardCtrl implements Initializable {
         String rootColor = colorPickerBackground.getValue().toString().substring(2, 8);
         root.setStyle("-fx-background-color: #" + rootColor
                 + "; -fx-border-color: black; -fx-border-width: 2px;");
-        editTitle.setStyle("-fx-background-color: #" + rootColor + ";");
+        editTitle.setStyle("-fx-background-color: #" + rootColor
+                + "; -fx-border-color: #" + rootColor + ";");
         save.setStyle("-fx-background-color: #" + rootColor + ";");
         this.board.backgroundColor = rootColor;
         txtCust.setFill(Paint.valueOf(rootColor));
@@ -284,6 +289,7 @@ public class BoardCtrl implements Initializable {
                 + buttonColor + ";-fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: #"
                 + buttonColor + ";-fx-background-radius: 10px;");
+        tagsPane.setStyle("-fx-background-color: #" + buttonColor + ";");
         this.board.buttonsBackground = buttonColor;
 
         applyChangesFont();
@@ -336,6 +342,8 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setStyle("-fx-background-color: ddd;");
         overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
+        //tags background
+        tagsPane.setStyle("-fx-background-color: #000000");
 
         updateBoard(board);
         colorPickerButtons.setValue(Color.valueOf("ddd"));
