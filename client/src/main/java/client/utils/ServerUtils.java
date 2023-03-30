@@ -261,7 +261,14 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);
     }
-    
+
+    public Tag updateTag(Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/updateTag")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
     public void disconnectWebsocket() {
         session.disconnect();
     }

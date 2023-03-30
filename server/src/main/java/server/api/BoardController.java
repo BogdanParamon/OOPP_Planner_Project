@@ -173,4 +173,13 @@ public class BoardController {
         tagRepository.deleteById(tagId);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping(path = {"/updateTag"})
+    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag) {
+        if (tag == null || !tagRepository.existsById(tag.tagId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Tag updatedTag = tagRepository.save(tag);
+        return ResponseEntity.ok(updatedTag);
+    }
 }

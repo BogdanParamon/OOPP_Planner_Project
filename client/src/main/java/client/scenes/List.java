@@ -93,6 +93,7 @@ public class List extends Pane {
                 dragIndex = index;
 
                 Card card = new Card(mainCtrl, server, new Task(""), null);
+                System.out.println(card.getStyle());
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
                 list.getChildren().add(dragIndex, card);
             }
