@@ -7,6 +7,8 @@ import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +20,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import org.springframework.messaging.simp.stomp.StompSession;
 import javafx.stage.Modality;
-import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
 import java.util.*;
