@@ -79,6 +79,12 @@ public class BoardCtrl implements Initializable {
     private MFXButton btnCustomize;
     @FXML
     private MFXButton btnOverviewBoards;
+    @FXML
+    private Text logo;
+    @FXML
+    private ColorPicker colorPickerBackgroundFont;
+    @FXML
+    private ColorPicker colorPickerButtonsFont;
 
     private Set<StompSession.Subscription> subscriptions;
 
@@ -150,6 +156,13 @@ public class BoardCtrl implements Initializable {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
+        setBoardColors(board);
+        setBoardFontColors(board);
+
+        subscriptions.add(registerForNewLists());
+        subscriptions.add(registerForListRenames());
+    }
+    private void setBoardColors(Board board) {
         root.setStyle("-fx-background-color: #" + board.backgroundColor
                 + "; -fx-border-color: black; -fx-border-width: 2px;");
         editTitle.setStyle("-fx-background-color: #" + board.backgroundColor + ";");
@@ -164,8 +177,20 @@ public class BoardCtrl implements Initializable {
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: #"
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
-        subscriptions.add(registerForNewLists());
-        subscriptions.add(registerForListRenames());
+        //board
+        boardScrollPane.setStyle("-fx-background-color: #"
+                + board.boardColor + "; -fx-background-radius: 5px");
+        board_hbox.setStyle("-fx-background-color: #" + board.boardColor + "; -fx-background-radius: 1px");
+
+    }
+
+    private void setBoardFontColors(Board board) {
+        logo.setFill(Paint.valueOf(board.backgroundColorFont));
+        boardName.setFill(Paint.valueOf(board.backgroundColorFont));
+        btnCustomize.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        addTask.setTextFill(Paint.valueOf(board.buttonsColorFont));
     }
 
     public void addList() {
@@ -210,6 +235,9 @@ public class BoardCtrl implements Initializable {
         else customize.setVisible(true);
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
+        colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
+        colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
+        colorPickerBoard.setValue(Color.valueOf(board.boardColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
     }
 
@@ -228,8 +256,9 @@ public class BoardCtrl implements Initializable {
         txtCust.setFill(Paint.valueOf(rootColor));
         //board color
         String boardColor = colorPickerBoard.getValue().toString().substring(2, 8);
-        boardScrollPane.setStyle("-fx-background-color: #"
-                + boardColor + "; -fx-background-radius: 10px;");
+        boardScrollPane.setStyle("-fx-background-color: #" + boardColor + "; -fx-background-radius: 5px");
+        board_hbox.setStyle("-fx-background-color: #" + boardColor + "; -fx-background-radius: 1px");
+        this.board.boardColor = boardColor;
         //button color
         String buttonColor = colorPickerButtons.getValue().toString().substring(2, 8);
         addListTaskVBox.setStyle("-fx-background-color: #"
@@ -244,7 +273,24 @@ public class BoardCtrl implements Initializable {
                 + buttonColor + ";-fx-background-radius: 10px;");
         this.board.buttonsBackground = buttonColor;
 
+        applyChangesFont();
+
         updateBoard(board);
+    }
+
+    public void applyChangesFont() {
+        //background font
+        String backgroundFontColor = colorPickerBackgroundFont.getValue().toString().substring(2, 8);
+        logo.setFill(Paint.valueOf(backgroundFontColor));
+        boardName.setFill(Paint.valueOf(backgroundFontColor));
+        this.board.backgroundColorFont = backgroundFontColor;
+        //buttons font
+        String buttonsFontColor = colorPickerButtonsFont.getValue().toString().substring(2, 8);
+        btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
+        btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
+        addList.setTextFill(Paint.valueOf(buttonsFontColor));
+        addTask.setTextFill(Paint.valueOf(buttonsFontColor));
+        this.board.buttonsColorFont = buttonsFontColor;
     }
 
     public void resetBackgroundColor() {
@@ -259,7 +305,10 @@ public class BoardCtrl implements Initializable {
     }
 
     public void resetBoardColor() {
-        boardScrollPane.setStyle("-fx-background-color: #ddd; -fx-background-radius: 10px;");
+        boardScrollPane.setStyle("-fx-background-color: #ddd; -fx-background-radius: 5px");
+        board_hbox.setStyle("-fx-background-color: #ddd; -fx-background-radius: 1px");
+        this.board.boardColor = "ddd";
+        updateBoard(board);
 
         colorPickerBoard.setValue(Color.valueOf("ddd"));
     }
@@ -276,6 +325,34 @@ public class BoardCtrl implements Initializable {
 
         updateBoard(board);
         colorPickerButtons.setValue(Color.valueOf("ddd"));
+    }
+
+    public void resetBackgroundFont() {
+        logo.setFill(Paint.valueOf("Black"));
+        boardName.setFill(Paint.valueOf("Black"));
+        board.backgroundColorFont = "Black";
+
+        updateBoard(board);
+        colorPickerBackgroundFont.setValue(Color.valueOf("Black"));
+    }
+
+    public void resetButtonFont() {
+        btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
+        btnCustomize.setTextFill(Paint.valueOf("Black"));
+        addList.setTextFill(Paint.valueOf("Black"));
+        addTask.setTextFill(Paint.valueOf("Black"));
+        board.buttonsColorFont = "Black";
+
+        updateBoard(board);
+        colorPickerButtonsFont.setValue(Color.valueOf("Black"));
+    }
+
+    public void resetAllColors() {
+        resetBoardColor();
+        resetBackgroundColor();
+        resetButtonColor();
+        resetBackgroundFont();
+        resetButtonFont();
     }
     
     public AnchorPane getRoot() {
