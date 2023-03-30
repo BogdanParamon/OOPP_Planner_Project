@@ -5,18 +5,21 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 
-
+<?import javafx.geometry.Insets?>
 <fx:root prefHeight="70.0" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
          styleClass="card">
    <children>
 
-      <MFXButton fx:id="deleteTaskButton" layoutX="90.0" layoutY="4.0" text="X">
+      <MFXButton fx:id="deleteTaskButton" layoutX="110.0" layoutY="4.0" text="X">
          <font>
             <Font name="Roboto Bold" size="11.0" />
          </font>
+         <padding>
+            <Insets />
+         </padding>
       </MFXButton>
 
-      <TextField fx:id="taskTitle" layoutY="19.0" prefWidth="123.0" text="Lectures" />
+      <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" text="Lectures" />
 
    </children>
 
