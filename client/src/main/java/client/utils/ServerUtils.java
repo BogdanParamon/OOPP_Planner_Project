@@ -260,7 +260,8 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);
-
+    }
+    
     public void disconnectWebsocket() {
         session.disconnect();
     }
