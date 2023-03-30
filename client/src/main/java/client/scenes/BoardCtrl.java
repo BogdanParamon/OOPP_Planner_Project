@@ -3,6 +3,8 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.Packet;
+import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
@@ -108,14 +110,96 @@ public class BoardCtrl implements Initializable {
 
     public StompSession.Subscription registerForListRenames() {
         return server.registerForMessages("/topic/taskLists/rename/" + board.boardId,
-                ArrayList.class, listIdAndNewTitle -> Platform.runLater(() -> {
-                    var listId = listIdAndNewTitle.get(0);
-                    listId = (long) (int) listId;
-                    String newTitle = (String) listIdAndNewTitle.get(1);
+                Packet.class, listIdAndNewTitle -> Platform.runLater(() -> {
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
-                        if (list.getTaskList().listId == (Long) listId) {
-                            list.setTitle(newTitle);
+                        if (list.getTaskList().listId == listIdAndNewTitle.longValue) {
+                            list.setTitle(listIdAndNewTitle.stringValue);
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForBoardRenames() {
+        return server.registerForMessages("/topic/boards/rename/" + board.boardId, Packet.class,
+                boardIdAndNewTitle -> Platform.runLater(() -> {
+                    boardName.setText(boardIdAndNewTitle.stringValue);
+                }));
+    }
+
+    public StompSession.Subscription registerForNewTasks() {
+        return server.registerForMessages("/topic/tasks/add/" + board.boardId, Packet.class,
+                listIdAndTask -> Platform.runLater(() -> {
+                    long listId = listIdAndTask.longValue;
+                    Task task = listIdAndTask.task;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            taskList.tasks.add(0, task);
+                            Card card = new Card(mainCtrl, server, task, taskList, board);
+                            list.getList().getChildren().add(0, card);
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForTaskUpdates() {
+        return server.registerForMessages("/topic/tasks/update/" + board.boardId, Packet.class,
+                packet -> Platform.runLater(() -> {
+                    long listId = packet.longValue;
+                    Task task = packet.task;
+                    long taskId = task.taskId;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node cardNode : list.getList().getChildren()) {
+                                Card card = (Card) cardNode;
+                                if (card.getTask().taskId == taskId) {
+                                    card.getTaskTitle().setText(task.title);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForListDeletes() {
+        return server.registerForMessages("/topic/taskLists/delete/" + board.boardId, Long.class,
+                listId -> Platform.runLater(() -> {
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        if (list.getTaskList().listId == listId) {
+                            board_hbox.getChildren().remove(list);
+                            board.lists.remove(list.getTaskList());
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForTaskDeletes() {
+        return server.registerForMessages("/topic/tasks/delete/" + board.boardId, Packet.class,
+                packet -> Platform.runLater(() -> {
+                    long listId = packet.longValue;
+                    long taskId = packet.longValue2;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node cardNode : list.getList().getChildren()) {
+                                Card card = (Card) cardNode;
+                                if (card.getTask().taskId == taskId) {
+                                    list.getList().getChildren().remove(card);
+                                    list.getTaskList().tasks.remove(card.getTask());
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
@@ -139,7 +223,6 @@ public class BoardCtrl implements Initializable {
         this.board = board;
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
-        subscriptions = new HashSet<>();
         for (var taskList : board.lists) {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
@@ -165,9 +248,15 @@ public class BoardCtrl implements Initializable {
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: #"
                 + board.buttonsBackground + ";-fx-background-radius: 10px;");
-        subscriptions.add(registerForNewLists());
-        subscriptions.add(registerForListRenames());
 
+        subscriptions = new HashSet<>();
+        subscriptions.add(registerForNewLists());
+        subscriptions.add(registerForNewTasks());
+        subscriptions.add(registerForListDeletes());
+        subscriptions.add(registerForTaskDeletes());
+        subscriptions.add(registerForBoardRenames());
+        subscriptions.add(registerForListRenames());
+        subscriptions.add(registerForTaskUpdates());
     }
 
     public void addList() {
@@ -189,16 +278,25 @@ public class BoardCtrl implements Initializable {
         editTitle.setVisible(true);
         save.setVisible(false);
         if (!newTitleS.isEmpty()) {
-            this.board.title = newTitleS;
-            boardName.setText(this.board.title);
-            updateBoard(this.board);
+            renameBoard(newTitleS);
         }
         newtTitle.setText("");
     }
 
+    public void renameBoard(String newTitle) {
+        try {
+            server.send("/app/boards/rename/" + board.boardId, newTitle);
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
     public void updateBoard(Board board) {
         try {
-            server.send("/app/boards/add", board);
+            server.send("/app/boards/update", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

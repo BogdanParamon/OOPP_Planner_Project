@@ -1,16 +1,18 @@
 package server.api;
 
 import commons.Board;
+import commons.Packet;
 import commons.Tag;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TagRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,14 +136,16 @@ public class BoardController {
         return ResponseEntity.ok(map);
     }
 
-    @MessageMapping("/boards/add")
-    @SendTo("/topic/boards/add")
-    public List<Object> addMessage(Board board) {
-        add(board);
-        List<Object> titleAndId = new ArrayList<>(2);
-        titleAndId.add(board.boardId);
-        titleAndId.add(board.title);
-        return titleAndId;
+    @PutMapping("/rename")
+    public ResponseEntity<Board> renameBoard(@RequestParam long boardId,
+                                               @RequestBody String newTitle) {
+        if (newTitle == null || !boardRepository.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Board board = boardRepository.findById(boardId).get();
+        board.title = newTitle;
+        Board updatedBoard = boardRepository.save(board);
+        return ResponseEntity.ok(updatedBoard);
     }
 
     @PostMapping(path = {"/addTag"})
@@ -181,5 +185,37 @@ public class BoardController {
         }
         Tag updatedTag = tagRepository.save(tag);
         return ResponseEntity.ok(updatedTag);
+    }
+
+    @MessageMapping("/boards/add")
+    @SendTo("/topic/boards/add")
+    public Packet addMessage(Board board) {
+        add(board);
+        Packet titleAndId = new Packet();
+        titleAndId.longValue = board.boardId;
+        titleAndId.stringValue = board.title;
+        return titleAndId;
+    }
+
+    @MessageMapping("/boards/update")
+    @SendTo("/topic/boards/update")
+    public Packet updateMessage(Board board) {
+        updateBoard(board);
+        Packet packet = new Packet();
+        packet.longValue = board.boardId;
+        packet.board = board;
+        return packet;
+    }
+
+    @MessageMapping("/boards/rename/{boardId}")
+    @SendTo("/topic/boards/rename/{boardId}")
+    @Transactional
+    public Packet renameMessage(String newTitle,
+                                @DestinationVariable("boardId") long boardId) {
+        renameBoard(boardId, newTitle);
+        Packet boardIdAndNewTitle = new Packet();
+        boardIdAndNewTitle.longValue = boardId;
+        boardIdAndNewTitle.stringValue = newTitle;
+        return boardIdAndNewTitle;
     }
 }

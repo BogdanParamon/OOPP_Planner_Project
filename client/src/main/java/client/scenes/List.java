@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Board;
+import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -14,12 +15,10 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -61,7 +60,7 @@ public class List extends Pane {
         }
 
         for (Task task : taskList.tasks) {
-            Card card = new Card(mainCtrl, server, task, taskList);
+            Card card = new Card(mainCtrl, server, task, taskList, board);
             list.getChildren().add(list.getChildren().size() - 1, card);
         }
 
@@ -73,9 +72,7 @@ public class List extends Pane {
         dragIndex = null;
 
         deleteTaskListButton.setOnAction(event -> {
-            ((HBox) getParent()).getChildren().remove(this);
-            server.deleteTaskList(taskList);
-            board.lists.remove(this.taskList);
+            server.send("/app/taskLists/delete/" + board.boardId, taskList.listId);
         });
 
         initDrag(mainCtrl, server);
@@ -92,8 +89,7 @@ public class List extends Pane {
                 }
                 dragIndex = index;
 
-                Card card = new Card(mainCtrl, server, new Task(""), null);
-                System.out.println(card.getStyle());
+                Card card = new Card(mainCtrl, server, new Task(""), null, board);
                 card.setStyle(card.getStyle().replace("ddd", "#43b2e6"));
                 list.getChildren().add(dragIndex, card);
             }
@@ -131,10 +127,8 @@ public class List extends Pane {
     }
 
     public void addTask() {
-        Task task = server.addTask(new Task("Title"), taskList.listId);
-        taskList.tasks.add(0, task);
-        Card card = new Card(mainCtrl, server, task, taskList);
-        list.getChildren().add(0, card);
+        Task task = new Task("Title");
+        server.send("/app/tasks/add/" + board.boardId + "/" + taskList.listId, task);
     }
 
     public void addTask(long taskId, Integer index, DragEvent event) {
@@ -148,7 +142,7 @@ public class List extends Pane {
         }
         taskList.tasks.add(index, task);
         server.updateList(taskList);
-        Card card = new Card(mainCtrl, server, task, taskList);
+        Card card = new Card(mainCtrl, server, task, taskList, board);
         list.getChildren().add(index, card);
     }
 
@@ -160,6 +154,10 @@ public class List extends Pane {
         if (!newTitle.equals(title.getText())) {
             title.setText(newTitle);
         }
+    }
+
+    public VBox getList() {
+        return list;
     }
 
     private void initEditTaskListTitle() {
@@ -183,9 +181,9 @@ public class List extends Pane {
 
     private void saveTaskListTitle() {
         taskList.setTitle(title.getText());
-        ArrayList<Object> listIdAndNewTitle = new ArrayList<>(2);
-        listIdAndNewTitle.add(taskList.listId);
-        listIdAndNewTitle.add(title.getText());
+        Packet listIdAndNewTitle = new Packet();
+        listIdAndNewTitle.longValue = taskList.listId;
+        listIdAndNewTitle.stringValue = title.getText();
         server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 }

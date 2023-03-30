@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.Packet;
 import commons.User;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
@@ -21,7 +22,6 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class BoardOverviewCtrl implements Initializable {
@@ -67,12 +67,12 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.initHeader(root);
     }
 
-    public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards/add", ArrayList.class, board -> {
+    public void registerForNewBoards() {
+        server.registerForMessages("/topic/boards/add", Packet.class, boardIdAndTitle -> {
             Platform.runLater(() -> {
-                MFXButton button = new MFXButton((String) board.get(1));
+                MFXButton button = new MFXButton(boardIdAndTitle.stringValue);
                 button.setOnAction(event
-                        -> switchSceneToBoard(server.getBoardById((long) (int) board.get(0))));
+                        -> switchSceneToBoard(server.getBoardById(boardIdAndTitle.longValue)));
                 boards.getItems().add(button);
                 boardTitle.clear();
             });
