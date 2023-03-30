@@ -5,13 +5,24 @@ import commons.Board;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.input.*;
+import javafx.scene.Scene;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Modality;
+
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import javafx.beans.value.ObservableValue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,9 +40,11 @@ public class Card extends Pane {
     @FXML
     private TextField taskTitle;
 
+    @FXML
+    private MFXButton openTask;
 
     /**
-     * New Card component
+     * Constructs a new Card instance with the specified parameters.
      *
      * @param mainCtrl
      * @param server
@@ -67,6 +80,8 @@ public class Card extends Pane {
 
         initDrag();
         initEditTaskTitle();
+
+        openTask.setOnAction(event -> displayDialog());
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -123,6 +138,17 @@ public class Card extends Pane {
             taskTitle.getParent().requestFocus();
             saveTaskTitle();
         }
+    }
+
+    void displayDialog() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initStyle(StageStyle.DECORATED);
+        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
+
+        AnchorPane root = detailedTask;
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>
