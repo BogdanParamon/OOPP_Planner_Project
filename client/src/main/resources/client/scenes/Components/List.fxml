@@ -23,7 +23,7 @@
             <HBox fx:id="addButtonWrapper">
                 <MFXButton fx:id="addButton">
                     <graphic>
-                        <ImageView fitHeight="30" fitWidth="30">
+                        <ImageView fitHeight="30" fitWidth= "30">
                             <Image url="@/client/images/addButton.png" />
                         </ImageView>
                     </graphic>
