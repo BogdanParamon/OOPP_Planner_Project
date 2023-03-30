@@ -80,7 +80,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void load() {
-        var boardTitlesAndIds = server.getBoardTitlesAndIds();
+        var boardTitlesAndIds = server.getBoardTitlesAndIdsByUserId(user.userId);
         boards.getItems().clear();
         boardTitlesAndIds.forEach((aLong, s) -> {
             MFXButton button = new MFXButton(s);

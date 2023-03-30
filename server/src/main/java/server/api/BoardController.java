@@ -2,29 +2,32 @@ package server.api;
 
 import commons.Board;
 import commons.TaskList;
+import commons.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
+import server.database.UserRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     /**
      * Constructor for the BoardController class
      *
      * @param boardRepository The repository containing Board instances
+     * @param userRepository
      */
-    public BoardController(BoardRepository boardRepository) {
+    public BoardController(BoardRepository boardRepository, UserRepository userRepository) {
         this.boardRepository = boardRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -70,15 +73,18 @@ public class BoardController {
      * Adds a board to the repository
      *
      * @param board the boards that will get added to the repository
+     * @param userId the Id of the user that gets permission to access board
      * @return A ResponseEntity object that can handle all outcomes of
      * attempted addition to the board repository
      */
     @PostMapping(path = "/add")
-    public ResponseEntity<Board> add(@RequestBody Board board) {
+    public ResponseEntity<Board> add(@RequestBody Board board, @RequestParam long userId) {
         if (board == null || board.title == null || board.title.isEmpty())
             return ResponseEntity.badRequest().build();
-
+        User user = userRepository.findById(userId).get();
+        board.users.add(user);
         Board saved = boardRepository.save(board);
+        user.boards.add(saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -119,18 +125,10 @@ public class BoardController {
         return ResponseEntity.ok("Successful");
     }
 
-    @GetMapping(path = "/titles&ids")
-    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
-        Map<Long, String> map = new HashMap<>();
-        for (Board board : boardRepository.findAll())
-            map.put(board.boardId, board.title);
-        return ResponseEntity.ok(map);
-    }
-
     @MessageMapping("/boards/add")
     @SendTo("/topic/boards/add")
-    public List<Object> addMessage(Board board) {
-        add(board);
+    public List<Object> addMessage(Board board, long userId) {
+        add(board, userId);
         List<Object> titleAndId = new ArrayList<>(2);
         titleAndId.add(board.boardId);
         titleAndId.add(board.title);

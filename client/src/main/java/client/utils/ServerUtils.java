@@ -18,6 +18,7 @@ package client.utils;
 import commons.Board;
 import commons.Task;
 import commons.TaskList;
+import commons.User;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -156,9 +157,9 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
-    public Map<Long, String> getBoardTitlesAndIds() {
+    public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/titles&ids")
+                .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<Map<Long, String>>() {
@@ -233,6 +234,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Task.class);
+    }
+
+    public User connectToUser(String userName) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/users/" + userName)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(User.class);
     }
 
     public void disconnectWebsocket() {
