@@ -14,8 +14,6 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -25,10 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import org.springframework.messaging.simp.stomp.StompSession;
-import jakarta.ws.rs.WebApplicationException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import java.net.URL;
 import java.util.ArrayList;
@@ -180,7 +174,8 @@ public class BoardCtrl implements Initializable {
         //board
         boardScrollPane.setStyle("-fx-background-color: #"
                 + board.boardColor + "; -fx-background-radius: 5px");
-        board_hbox.setStyle("-fx-background-color: #" + board.boardColor + "; -fx-background-radius: 1px");
+        board_hbox.setStyle("-fx-background-color: #"
+                + board.boardColor + "; -fx-background-radius: 1px");
 
     }
 
@@ -255,9 +250,12 @@ public class BoardCtrl implements Initializable {
         this.board.backgroundColor = rootColor;
         txtCust.setFill(Paint.valueOf(rootColor));
         //board color
-        String boardColor = colorPickerBoard.getValue().toString().substring(2, 8);
-        boardScrollPane.setStyle("-fx-background-color: #" + boardColor + "; -fx-background-radius: 5px");
-        board_hbox.setStyle("-fx-background-color: #" + boardColor + "; -fx-background-radius: 1px");
+        String boardColor = colorPickerBoard.getValue()
+                .toString().substring(2, 8);
+        boardScrollPane.setStyle("-fx-background-color: #"
+                + boardColor + "; -fx-background-radius: 5px");
+        board_hbox.setStyle("-fx-background-color: #"
+                + boardColor + "; -fx-background-radius: 1px");
         this.board.boardColor = boardColor;
         //button color
         String buttonColor = colorPickerButtons.getValue().toString().substring(2, 8);
@@ -280,7 +278,8 @@ public class BoardCtrl implements Initializable {
 
     public void applyChangesFont() {
         //background font
-        String backgroundFontColor = colorPickerBackgroundFont.getValue().toString().substring(2, 8);
+        String backgroundFontColor = colorPickerBackgroundFont
+                .getValue().toString().substring(2, 8);
         logo.setFill(Paint.valueOf(backgroundFontColor));
         boardName.setFill(Paint.valueOf(backgroundFontColor));
         this.board.backgroundColorFont = backgroundFontColor;
