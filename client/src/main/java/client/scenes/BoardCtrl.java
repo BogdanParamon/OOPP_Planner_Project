@@ -6,15 +6,9 @@ import commons.Board;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -24,11 +18,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import org.springframework.messaging.simp.stomp.StompSession;
 import javafx.stage.Modality;
+import org.springframework.messaging.simp.stomp.StompSession;
+
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class BoardCtrl implements Initializable {
 
@@ -81,6 +74,12 @@ public class BoardCtrl implements Initializable {
     private ColorPicker colorPickerButtonsFont;
 
     private Set<StompSession.Subscription> subscriptions;
+
+    @FXML
+    private VBox tagList;
+
+    @FXML
+    private MFXButton addTag;
 
     /**
      * Setup server and main controller
@@ -150,6 +149,13 @@ public class BoardCtrl implements Initializable {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
+
+        tagList.getChildren().remove(1, tagList.getChildren().size());
+        for (var tag : board.tags) {
+            Tag tagUI = new Tag(mainCtrl, server, tag);
+            tagList.getChildren().add(tagUI);
+        }
+
         setBoardColors(board);
         setBoardFontColors(board);
 
@@ -223,6 +229,14 @@ public class BoardCtrl implements Initializable {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+    }
+
+    public void addTag() {
+        String color = String.format("#%06X",
+                new Random(System.currentTimeMillis()).nextInt(0x1000000));
+        commons.Tag tag = new commons.Tag("New Tag", color);
+        tag = server.addTagToBoard(board.boardId, tag);
+        tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
     }
 
     public void showCustomize() {
@@ -357,5 +371,4 @@ public class BoardCtrl implements Initializable {
     public AnchorPane getRoot() {
         return root;
     }
-    
 }

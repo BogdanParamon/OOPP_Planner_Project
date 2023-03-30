@@ -3,7 +3,9 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -14,6 +16,10 @@ public class Task {
     public long taskId;
 
     public String title;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taskId")
+    public Set<Tag> tags = new HashSet<>();
 
     /**
      * Creates a new Task object with the given title and list.
@@ -41,7 +47,8 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(title, task.title);
+        return taskId == task.taskId && Objects.equals(title, task.title)
+                && Objects.equals(tags, task.tags);
     }
 
     /**
@@ -52,7 +59,7 @@ public class Task {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title);
+        return Objects.hash(taskId, title, tags);
     }
 
     /**
@@ -71,6 +78,10 @@ public class Task {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
     }
 
 }

@@ -16,6 +16,7 @@
 package client.utils;
 
 import commons.Board;
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -235,6 +236,39 @@ public class ServerUtils {
                 .get(Task.class);
     }
 
+    public Tag addTagToBoard(long boardId, commons.Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/addTag")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+
+    public void removeTag(long tagId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/deleteTag")
+                .queryParam("tagId", tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Tag getTagById(long tagId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/getTagById/" + tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Tag.class);
+    }
+
+    public Tag updateTag(Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/updateTag")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
     public void disconnectWebsocket() {
         session.disconnect();
     }
