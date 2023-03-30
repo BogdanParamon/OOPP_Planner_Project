@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Packet {
     public long longValue;
     public long longValue2;
+    public int intValue;
     public String stringValue;
     public Task task;
     public TaskList taskList;

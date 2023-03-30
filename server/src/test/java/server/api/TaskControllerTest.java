@@ -49,7 +49,7 @@ public class TaskControllerTest {
 
     @Test
     public void deleteTaskBadRequest() {
-        ResponseEntity<Task> actual = sut.delete(-1L);
+        ResponseEntity<Task> actual = sut.delete(-1L, -1L);
         assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
     }
 

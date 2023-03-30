@@ -52,7 +52,7 @@ public class TaskController {
         }
         Task saved = taskRepository.save(task);
         TaskList list = taskListRepository.findById(taskListId).get();
-        list.addTask(saved);
+        list.tasks.add(0, saved);
         taskListRepository.save(list);
         return ResponseEntity.ok(saved);
     }
@@ -115,15 +115,22 @@ public class TaskController {
      * Endpoint for deleting a task by ID.
      *
      * @param taskId The ID of the Task to be deleted.
+     * @param taskListId The ID of the TaskList in which the task is.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Task> delete(@RequestParam long taskId) {
-        if (!taskRepository.existsById(taskId) || taskId < 0) {
+    public ResponseEntity<Task> delete(@RequestParam long taskId, @RequestParam long taskListId) {
+        if (!taskRepository.existsById(taskId) || taskId < 0
+                || !taskListRepository.existsById(taskListId) || taskListId < 0) {
             return ResponseEntity.badRequest().build();
         }
-        taskRepository.deleteById(taskId);
+        TaskList taskList = taskListRepository.findById(taskListId).get();
+        Task task = taskRepository.findById(taskId).get();
+        if (taskList.tasks.remove(task)) {
+            taskRepository.deleteById(taskId);
+        }
+        taskListRepository.save(taskList);
         return ResponseEntity.ok().build();
     }
 
@@ -156,7 +163,7 @@ public class TaskController {
     @Transactional
     public Packet deleteMessage(Long taskId, @DestinationVariable("boardId") long boardId,
                                 @DestinationVariable("listId") long listId) {
-        delete(taskId);
+        delete(taskId, listId);
         Packet packet = new Packet();
         packet.longValue = listId;
         packet.longValue2 = taskId;
