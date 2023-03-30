@@ -14,6 +14,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class TaskControllerTest {
     private TestTaskRepository trt;
     private TestTaskListRepository tlrt;
+
+    private TestTagRepository ttrt;
     private TaskController sut;
 
     private static Task getUntitledTask() {
@@ -24,7 +26,7 @@ public class TaskControllerTest {
     public void setup() {
         trt = new TestTaskRepository();
         tlrt = new TestTaskListRepository();
-        sut = new TaskController(trt, tlrt);
+        sut = new TaskController(trt, tlrt, ttrt);
     }
 
     @Test
@@ -49,7 +51,7 @@ public class TaskControllerTest {
 
     @Test
     public void deleteTaskBadRequest() {
-        ResponseEntity<Task> actual = sut.delete(-1L);
+        ResponseEntity<Task> actual = sut.delete(-1L, -1L);
         assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
     }
 

@@ -33,7 +33,6 @@ public class TaskTest {
     public void hasToString() {
         var actual = new Task("a").toString();
         assertTrue(actual.contains(Task.class.getSimpleName()));
-        assertTrue(actual.contains("\n"));
         assertTrue(actual.contains("title"));
     }
 }

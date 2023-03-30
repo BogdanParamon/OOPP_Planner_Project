@@ -11,13 +11,16 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class BoardControllerTest {
 
     private TestBoardRepository repo;
+
     private TestUserRepository userRepository;
+    private TestTagRepository tagRepo;
     private BoardController sut;
 
     @BeforeEach
     public void setup() {
         repo = new TestBoardRepository();
-        sut = new BoardController(repo, userRepository);
+        sut = new BoardController(repo, userRepository, tagRepo);
+
     }
 
     @Test
