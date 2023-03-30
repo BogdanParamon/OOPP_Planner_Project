@@ -8,11 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import server.database.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class TestUserRepository implements UserRepository {
+
+    List<String> calls = new ArrayList<>();
+    List<User> users = new ArrayList<>();
     @Override
     public List<User> findAll() {
         return null;
@@ -65,7 +69,10 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public <S extends User> S save(S entity) {
-        return null;
+        calls.add("save");
+        entity.userId = (long) users.size();
+        users.add(entity);
+        return entity;
     }
 
     @Override
@@ -75,6 +82,9 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(Long aLong) {
+        for (User user : users)
+            if (user.userId == aLong)
+                return Optional.of(user);
         return Optional.empty();
     }
 

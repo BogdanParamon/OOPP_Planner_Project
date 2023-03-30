@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Board;
+import commons.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,8 @@ public class BoardControllerTest {
     @BeforeEach
     public void setup() {
         repo = new TestBoardRepository();
+        userRepository = new TestUserRepository();
+        tagRepo = new TestTagRepository();
         sut = new BoardController(repo, userRepository, tagRepo);
 
     }
@@ -37,6 +40,7 @@ public class BoardControllerTest {
 
     @Test
     public void databaseIsUsed() {
+        userRepository.save(new User("user 0"));
         sut.add(new Board("title"), 0);
         assertTrue(repo.calledMethods.contains("save"));
     }
