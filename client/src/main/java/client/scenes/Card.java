@@ -46,11 +46,11 @@ public class Card extends Pane {
     /**
      * Constructs a new Card instance with the specified parameters.
      *
-     * @param mainCtrl
-     * @param server
-     * @param task
-     * @param taskList
-     * @param board
+     * @param mainCtrl  The MainCtrl instance that manages the main application view.
+     * @param server    The ServerUtils instance for handling server communication.
+     * @param task      The Task instance representing the task to be displayed in the card.
+     * @param taskList  The TaskList instance containing the task.
+     * @param board     The Board instance containing the taskList.
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList, Board board) {
 
