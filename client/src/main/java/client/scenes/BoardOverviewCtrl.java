@@ -68,15 +68,17 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void registerForNewBoards() {
-        server.registerForMessages("/topic/boards/add", Packet.class, boardIdAndTitle -> {
-            Platform.runLater(() -> {
-                MFXButton button = new MFXButton(boardIdAndTitle.stringValue);
-                button.setOnAction(event
-                        -> switchSceneToBoard(server.getBoardById(boardIdAndTitle.longValue)));
-                boards.getItems().add(button);
-                boardTitle.clear();
-            });
-        });
+        server.registerForMessages("/topic/boards/add/" + user.userId,
+                Packet.class, boardIdAndTitleAndUserId -> {
+                    Platform.runLater(() -> {
+                        MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
+                        button.setOnAction(event
+                                -> switchSceneToBoard(server
+                                .getBoardById(boardIdAndTitleAndUserId.longValue)));
+                        boards.getItems().add(button);
+                        boardTitle.clear();
+                    });
+                });
     }
 
     public void load() {
@@ -119,7 +121,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            server.send("/app/boards/add", board);
+            server.send("/app/boards/add/" + user.userId, board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

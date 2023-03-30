@@ -44,8 +44,10 @@ public class UserOrAdminCtrl implements Initializable {
         nameField.setVisible(true);
         passwordField.setVisible(false);
         mode = false;
-        button.setOnAction(event -> switchSceneToBoardOverview(server.connectToUser(nameField.getText())));
+        button.setOnAction(
+                event -> switchSceneToBoardOverview(server.connectToUser(nameField.getText())));
     }
+
 
     public void view() {
         if (mode == false) {
@@ -63,6 +65,7 @@ public class UserOrAdminCtrl implements Initializable {
 
     public void switchSceneToBoardOverview(User user) {
         mainCtrl.boardOverviewCtrl.setUser(user);
+        mainCtrl.boardOverviewCtrl.registerForNewBoards();
         mainCtrl.showBoardOverview();
     }
 

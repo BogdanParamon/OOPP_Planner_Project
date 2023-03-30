@@ -3,12 +3,7 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Objects;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -23,12 +18,6 @@ public class Board {
     public String backgroundColor;
 
     public String buttonsBackground;
-
-    @ManyToMany(
-            cascade = CascadeType.ALL,
-            mappedBy = "boards"
-    )
-    public Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")

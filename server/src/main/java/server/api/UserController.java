@@ -39,7 +39,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/{userId}/boardTitles&Ids")
-    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIdsByUserId(@PathVariable("userId") long userId) {
+    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIdsByUserId(@PathVariable("userId")
+                                                                              long userId) {
         Map<Long, String> map = new HashMap<>();
         User user = repo.findById(userId).get();
         for (Board board : user.boards)

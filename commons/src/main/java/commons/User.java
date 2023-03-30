@@ -16,7 +16,7 @@ public class User {
 
     public String userName;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "registration",
             joinColumns = @JoinColumn(name = "user_id"),

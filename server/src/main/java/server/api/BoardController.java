@@ -11,7 +11,6 @@ import server.database.BoardRepository;
 import server.database.TagRepository;
 import server.database.UserRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +30,11 @@ public class BoardController {
      * Constructor for the BoardController class
      *
      * @param boardRepository The repository containing Board instances
-     * @param userRepository
+     * @param userRepository  The repository containing User instances
      * @param tagRepository   The repository containing Tag instances
      */
-    public BoardController(BoardRepository boardRepository, UserRepository userRepository, TagRepository tagRepository) {
+    public BoardController(BoardRepository boardRepository, UserRepository userRepository,
+                           TagRepository tagRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
@@ -92,7 +92,6 @@ public class BoardController {
         if (board == null || board.title == null || board.title.isEmpty())
             return ResponseEntity.badRequest().build();
         User user = userRepository.findById(userId).get();
-        board.users.add(user);
         Board saved = boardRepository.save(board);
         user.boards.add(saved);
         return ResponseEntity.ok(saved);
@@ -135,14 +134,16 @@ public class BoardController {
         return ResponseEntity.ok("Successful");
     }
 
-    @MessageMapping("/boards/add")
-    @SendTo("/topic/boards/add")
-    public List<Object> addMessage(Board board, long userId) {
+    @MessageMapping("/boards/add/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
+    @Transactional
+    public Packet addMessage(Board board, @DestinationVariable("userId") long userId) {
         add(board, userId);
-        List<Object> titleAndId = new ArrayList<>(2);
-        titleAndId.add(board.boardId);
-        titleAndId.add(board.title);
-        return titleAndId;
+        Packet packet = new Packet();
+        packet.stringValue = board.title;
+        packet.longValue = board.boardId;
+        packet.longValue2 = userId;
+        return packet;
     }
     @GetMapping(path = "/titles&ids")
     public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
@@ -201,16 +202,6 @@ public class BoardController {
         }
         Tag updatedTag = tagRepository.save(tag);
         return ResponseEntity.ok(updatedTag);
-    }
-
-    @MessageMapping("/boards/add")
-    @SendTo("/topic/boards/add")
-    public Packet addMessage(Board board) {
-        add(board,0);
-        Packet titleAndId = new Packet();
-        titleAndId.longValue = board.boardId;
-        titleAndId.stringValue = board.title;
-        return titleAndId;
     }
 
 
