@@ -3,7 +3,12 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -14,6 +19,10 @@ public class Board {
     public long boardId;
 
     public String title;
+
+    public String backgroundColor;
+
+    public String buttonsBackground;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
@@ -30,6 +39,9 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
+        //default colors
+        this.backgroundColor = "ffffff";
+        this.buttonsBackground = "ddd";
     }
 
     @SuppressWarnings("unused")
@@ -50,7 +62,10 @@ public class Board {
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
         return boardId == board.boardId && Objects.equals(title, board.title)
-                && Objects.equals(lists, board.lists) && Objects.equals(tags, board.tags);
+                && Objects.equals(lists, board.lists)
+                && Objects.equals(backgroundColor, board.backgroundColor)
+                && Objects.equals(buttonsBackground, board.buttonsBackground)
+                && Objects.equals(tags, board.tags);
     }
 
     /**
@@ -61,7 +76,7 @@ public class Board {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(boardId, title, lists, tags);
+        return Objects.hash(boardId, title, backgroundColor, buttonsBackground, lists, tags);
     }
 
     /**
