@@ -16,6 +16,7 @@
 package client.utils;
 
 import commons.Board;
+import commons.Subtask;
 import commons.Tag;
 import commons.Task;
 import commons.TaskList;
@@ -234,6 +235,15 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Task.class);
+    }
+
+    public Subtask addSubtask(long taskId, Subtask subtask) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/subtasks/add")
+                .queryParam("taskId", taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
     public Tag addTagToBoard(long boardId, commons.Tag tag) {
