@@ -17,11 +17,13 @@ package client.utils;
 
 import commons.Board;
 import commons.Subtask;
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -180,8 +182,9 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
-    public <T> void registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
+    public <T> StompSession.Subscription registerForMessages(String dest, Class<T> type,
+                                                             Consumer<T> consumer) {
+        return session.subscribe(dest, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
                 return type;
@@ -204,7 +207,26 @@ public class ServerUtils {
                 .target(SERVER).path("api/boards/deleteAll")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity("", APPLICATION_JSON), String.class);
+                .delete();
+    }
+
+
+    public void deleteTask(Task task) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/delete/")
+                .queryParam("taskId", task.taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Response deleteTaskList(TaskList taskList) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskLists/delete/")
+                .queryParam("id", taskList.listId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
     }
 
     public Task getTaskById(long taskId) {
@@ -222,5 +244,42 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    public Tag addTagToBoard(long boardId, commons.Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/addTag")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+
+    public void removeTag(long tagId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/deleteTag")
+                .queryParam("tagId", tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Tag getTagById(long tagId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/getTagById/" + tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Tag.class);
+    }
+
+    public Tag updateTag(Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/updateTag")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+    public void disconnectWebsocket() {
+        session.disconnect();
     }
 }

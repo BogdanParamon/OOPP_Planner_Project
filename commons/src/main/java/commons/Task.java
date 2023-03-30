@@ -2,9 +2,13 @@ package commons;
 
 
 import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -20,6 +24,9 @@ public class Task {
     @OrderColumn
     public List<Subtask> subtasks = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taskId")
+    public Set<Tag> tags = new HashSet<>();
 
     /**
      * Creates a new Task object with the given title and list.
@@ -42,12 +49,13 @@ public class Task {
         Task task = (Task) o;
         return taskId == task.taskId
                 && Objects.equals(title, task.title)
-                && Objects.equals(subtasks, task.subtasks);
+                && Objects.equals(subtasks, task.subtasks)
+                && Objects.equals(tags, task.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title, subtasks);
+        return Objects.hash(taskId, title, subtasks, tags);
     }
 
     /**
@@ -61,6 +69,7 @@ public class Task {
                 "taskId=" + taskId +
                 ", title='" + title + '\'' +
                 ", subtasks=" + subtasks +
+                ", tags=" + tags +
                 '}';
     }
 
@@ -74,6 +83,10 @@ public class Task {
 
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
     }
 
 }

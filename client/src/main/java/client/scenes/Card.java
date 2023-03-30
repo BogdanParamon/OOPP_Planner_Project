@@ -21,8 +21,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javafx.beans.value.ObservableValue;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class Card extends Pane {
 
@@ -30,6 +32,8 @@ public class Card extends Pane {
     private final ServerUtils server;
     private final TaskList taskList;
     private final Task task;
+    @FXML
+    private MFXButton deleteTaskButton;
 
     @FXML
     private TextField taskTitle;
@@ -63,41 +67,74 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
+        deleteTaskButton.setOnAction(event -> {
+            ((VBox) getParent()).getChildren().remove(this);
+            server.deleteTask(this.task);
+            taskList.tasks.remove(this.task);
+        });
+
         taskTitle.setText(task.title);
+
         initDrag();
         initEditTaskTitle();
+
         openTask.setOnAction(event -> displayDialog());
+
+        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
+        if (cssURL != null) {
+            String cssPath = cssURL.toExternalForm();
+            getStylesheets().add(cssPath);
+        } else {
+            System.out.println("Can not load Cardstyle.css");
+        }
     }
 
+
     void initDrag() {
+
+        int[] index = {0};
+        VBox[] orignalParent = new VBox[1];
 
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putString(String.valueOf(task.taskId));
+
+            // clever way to  work around variables in lambda
+            orignalParent[0] = (VBox) getParent();
+            index[0] = ((VBox) getParent()).getChildren().indexOf(this);
+
+            mainCtrl.boardCtrl.getRoot().getChildren().add(this); // find a better way for this
+            setVisible(false);
+
             db.setContent(content);
             event.consume();
         });
 
         setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
-                taskList.tasks.remove(task);
+                if (!event.getDragboard().getString().equals("Same list"))
+                    taskList.tasks.remove(task);
                 server.updateList(taskList);
-                ((VBox) getParent()).getChildren().remove(this);
+            } else {
+                orignalParent[0].getChildren().add(index[0], this);
+                setVisible(true);
             }
+            mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
             event.consume();
         });
     }
 
     void initEditTaskTitle() {
         taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
+
 
     private void handleKeyRelease(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             taskTitle.getParent().requestFocus();
-            task.title = taskTitle.getText();
-            server.updateTask(task);
+            saveTaskTitle();
         }
     }
 
@@ -111,4 +148,17 @@ public class Card extends Pane {
         stage.setScene(new Scene(root));
         stage.show();
     }
+
+    private void handleFocusChange(ObservableValue<? extends Boolean>
+                                           observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskTitle();
+        }
+    }
+
+    private void saveTaskTitle() {
+        task.title = taskTitle.getText();
+        server.updateTask(task);
+    }
+
 }
