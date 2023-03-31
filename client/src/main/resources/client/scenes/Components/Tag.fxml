@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.ColorPicker?>
+<fx:root id="root" prefHeight="20.0" prefWidth="120.0" stylesheets="@/client/styles/tag.css" type="Pane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <Pane fx:id="tagPane" prefHeight="20" prefWidth="85">
+        <MFXTextField fx:id="tagName" id="tagName" layoutX="5" text="This is a ta" floatMode="DISABLED" prefWidth="75" disable="true">
+            <font>
+                <Font name="Roboto" size="13" />
+            </font>
+            <padding>
+                <Insets/>
+            </padding>
+        </MFXTextField>
+    </Pane>
+    <MFXButton fx:id="edit" text="" layoutX="100">
+        <graphic>
+            <ImageView fitHeight="18" fitWidth="18">
+                <Image url="@/client/images/pen.png" />
+            </ImageView>
+        </graphic>
+        <padding>
+            <Insets/>
+        </padding>
+    </MFXButton>
+    <MFXButton fx:id="deleteTag" layoutX="125.0" text="X">
+        <font>
+            <Font name="Roboto Bold" size="18"/>
+        </font>
+        <padding>
+            <Insets/>
+        </padding>
+    </MFXButton>
+
+    <ColorPicker fx:id="colorPicker" layoutX="95" visible="false"/>
+
+    <MFXButton fx:id="saveTag" text="" layoutX="125" visible="false">
+        <graphic>
+            <ImageView fitHeight="20" fitWidth="20">
+                <Image url="@/client/images/save.png" />
+            </ImageView>
+        </graphic>
+        <padding>
+            <Insets/>
+        </padding>
+    </MFXButton>
+</fx:root>

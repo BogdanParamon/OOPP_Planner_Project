@@ -3,7 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
-import io.github.palexdev.materialfx.controls.MFXButton;
+import commons.User;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import jakarta.ws.rs.WebApplicationException;
@@ -14,7 +14,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
@@ -27,8 +29,10 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private User user;
     @FXML
-    private MFXListView<MFXButton> boards;
+    private MFXListView<Text> boards;
 
     @FXML
     private MFXTextField boardTitle;
@@ -65,12 +69,14 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards", ArrayList.class, board -> {
+        server.registerForMessages("/topic/boards/add", ArrayList.class, board -> {
             Platform.runLater(() -> {
-                MFXButton button = new MFXButton((String) board.get(1));
-                button.setOnAction(event
-                        -> switchSceneToBoard(server.getBoardById((long)(int) board.get(0))));
-                boards.getItems().add(button);
+                Text label = new Text((String) board.get(1));
+                label.setFont(new Font("Roboto", 20));
+                label.setWrappingWidth(boards.getWidth());
+                label.setOnMouseClicked(event
+                        -> switchSceneToBoard(server.getBoardById((long) (int) board.get(0))));
+                boards.getItems().add(label);
                 boardTitle.clear();
             });
         });
@@ -80,9 +86,11 @@ public class BoardOverviewCtrl implements Initializable {
         var boardTitlesAndIds = server.getBoardTitlesAndIds();
         boards.getItems().clear();
         boardTitlesAndIds.forEach((aLong, s) -> {
-            MFXButton button = new MFXButton(s);
-            button.setOnAction(event -> switchSceneToBoard(server.getBoardById(aLong)));
-            boards.getItems().add(button);
+            Text label = new Text(s);
+            label.setFont(new Font("Roboto", 20));
+            label.setWrappingWidth(boards.getWidth());
+            label.setOnMouseClicked(event -> switchSceneToBoard(server.getBoardById(aLong)));
+            boards.getItems().add(label);
         });
         subheadingAnimation();
     }
@@ -116,7 +124,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            server.send("/app/boards", board);
+            server.send("/app/boards/add", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -132,7 +140,12 @@ public class BoardOverviewCtrl implements Initializable {
 
 
     public void switchSceneToHome() {
+        server.disconnectWebsocket();
         mainCtrl.showHome();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

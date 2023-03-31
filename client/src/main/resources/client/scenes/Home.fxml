@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.layout.HBox?>
-<?import io.github.palexdev.materialfx.font.MFXFontIcon?>
-<?import javafx.geometry.Insets?>
-<AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.scenes.HomeCtrl">
+
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.HomeCtrl">
     <children>
-        <Text layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER"
-              wrappingWidth="600.0">
+        <Text layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="900.0">
             <font>
-                <Font size="32.0"/>
+                <Font size="50.0" />
             </font>
         </Text>
-        <Text fill="#929394" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="600.0">
+        <Text fill="#929394" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="900.0">
             <font>
-                <Font size="15.0"/>
+                <Font size="20.0" />
             </font>
         </Text>
-        <Text layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!"
-              textAlignment="CENTER" wrappingWidth="600.0">
+        <Text layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please introduce a server address!" textAlignment="CENTER" wrappingWidth="900.0">
             <font>
-                <Font size="20.0"/>
+                <Font size="32.0" />
             </font>
         </Text>
-        <MFXButton layoutX="404.0" layoutY="226.0" mnemonicParsing="false" onAction="#connect" prefHeight="26.0"
-                   prefWidth="76.0" text="Connect"/>
-        <Text fill="#929394" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for chosing Talio!"
-              textAlignment="CENTER" wrappingWidth="600.0">
+        <MFXButton buttonType="RAISED" layoutX="599.0" layoutY="329.0" mnemonicParsing="false" onAction="#connect" prefHeight="59.0" prefWidth="105.0" text="Connect">
             <font>
-                <Font size="15.0"/>
+                <Font size="20.0" />
+            </font>
+            <padding>
+                <Insets />
+            </padding>
+        </MFXButton>
+        <Text fill="#929394" layoutY="578.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thanks for choosing Talio!" textAlignment="CENTER" wrappingWidth="900.0">
+            <font>
+                <Font size="25.0" />
             </font>
         </Text>
-        <MFXTextField fx:id="serverPath" floatMode="BORDER" floatingText="Server address" layoutX="121.0"
-                      layoutY="226.0" prefHeight="26.0" prefWidth="260.0" text="localhost:8080"/>
-        <Text fx:id="errorMsg" layoutY="280" layoutX="125" text="Invalid server address" visible="false" fill="red"/>
+        <MFXTextField fx:id="serverPath" floatMode="BORDER" floatingText="Server address" layoutX="203.0" layoutY="329.0" prefHeight="66.0" prefWidth="371.0" text="localhost:8080">
+            <font>
+                <Font name="Roboto" size="25" />
+            </font>
+        </MFXTextField>
+        <Text fx:id="errorMsg" fill="red" layoutX="203.0" layoutY="424.0" text="Invalid server address" visible="false">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Text>
     </children>
 </AnchorPane>

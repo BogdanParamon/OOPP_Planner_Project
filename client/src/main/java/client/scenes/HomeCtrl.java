@@ -84,4 +84,8 @@ public class HomeCtrl implements Initializable {
         mainCtrl.showBoardOverview();
     }
 
+    public void switchSceneToUserOrAdmin() {
+        mainCtrl.showUserOrAdmin();
+    }
+
 }
