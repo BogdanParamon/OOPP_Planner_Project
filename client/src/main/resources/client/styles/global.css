@@ -8,10 +8,6 @@ AnchorPane {
     -fx-background-color: white;
 }
 
-MFXButton {
-    -fx-text-fill: black;
-}
-
 #closeIcon {
     -mfx-color: red;
     -fx-opacity: 0.5;
