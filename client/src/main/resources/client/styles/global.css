@@ -8,10 +8,6 @@ AnchorPane {
     -fx-background-color: white;
 }
 
-MFXButton {
-    -fx-text-fill: black;
-}
-
 Text{
     -fx-font-family: 'Roboto', monospace;
 }

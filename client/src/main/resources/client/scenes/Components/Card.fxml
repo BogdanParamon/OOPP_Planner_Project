@@ -14,29 +14,29 @@
 <fx:root prefHeight="70.0" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
          styleClass="card">
 
-   <children>
+    <children>
 
-      <MFXButton fx:id="deleteTaskButton" layoutX="90.0" layoutY="4.0" text="X">
-         <font>
-            <Font name="Roboto Bold" size="11.0" />
-         </font>
-      </MFXButton>
+        <MFXButton fx:id="deleteTaskButton" layoutX="90.0" layoutY="4.0" text="X">
+            <font>
+                <Font name="Roboto Bold" size="11.0"/>
+            </font>
+        </MFXButton>
 
-      <TextField fx:id="taskTitle" layoutY="19.0" prefWidth="123.0" text="Lectures" />
-      <MFXButton fx:id ="openTask" layoutX="88.0" layoutY="41.0" prefHeight="0.0" prefWidth="0.0" text=" ">
-         <graphic>
-            <Pane>
-               <children>
-                  <ImageView fitHeight="15.0" fitWidth="15.0">
-                     <image>
-                        <Image url="@/client/images/detailed_task_view.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </Pane>
-         </graphic>
-      </MFXButton>
+        <TextField fx:id="taskTitle" layoutY="19.0" prefWidth="123.0" text="Lectures"/>
+        <MFXButton fx:id="openTask" layoutX="88.0" layoutY="41.0" prefHeight="0.0" prefWidth="0.0" text=" ">
+            <graphic>
+                <Pane>
+                    <children>
+                        <ImageView fitHeight="15.0" fitWidth="15.0">
+                            <image>
+                                <Image url="@/client/images/detailed_task_view.png"/>
+                            </image>
+                        </ImageView>
+                    </children>
+                </Pane>
+            </graphic>
+        </MFXButton>
 
-   </children>
+    </children>
 
 </fx:root>
