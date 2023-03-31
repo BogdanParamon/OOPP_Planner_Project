@@ -159,6 +159,15 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
+    public Map<Long, String> getBoardTitlesAndIds() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/titles&ids")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<Map<Long, String>>() {
+                });
+    }
+
     public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
