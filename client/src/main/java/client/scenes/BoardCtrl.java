@@ -218,6 +218,43 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForDragNDrops() {
+        return server.registerForMessages("/topic/tasks/drag/" + board.boardId, Packet.class,
+                packet -> Platform.runLater(() -> {
+                    long taskId = packet.longValue;
+                    long dragFromListId = packet.longValue2;
+                    long dragToListId = packet.longValue3;
+                    int dragToIndex = packet.intValue;
+                    List fromList = null;
+                    List toList = null;
+                    Card draggedCard = null;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == dragFromListId) {
+                            fromList = list;
+                            for (Node cardNode : list.getList().getChildren()) {
+                                Card card = (Card) cardNode;
+                                if (card.getTask().taskId == taskId) {
+                                    draggedCard = card;
+                                    break;
+                                }
+                            }
+                        }
+                        if (taskList.listId == dragToListId) {
+                            toList = list;
+                        }
+                    }
+                    if (fromList != null && toList != null && draggedCard != null) {
+                        fromList.getList().getChildren().remove(draggedCard);
+                        fromList.getTaskList().tasks.remove(draggedCard.getTask());
+                        toList.getList().getChildren().add(dragToIndex, draggedCard);
+                        toList.getTaskList().tasks.add(draggedCard.getTask());
+                        draggedCard.setTaskList(toList.getTaskList());
+                    }
+                }));
+    }
+
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
@@ -257,6 +294,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForBoardRenames());
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForTaskUpdates());
+        subscriptions.add(registerForDragNDrops());
     }
     private void setBoardColors(Board board) {
         root.setStyle(fxBackgroundColor + board.backgroundColor
