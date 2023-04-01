@@ -15,12 +15,7 @@
  */
 package client.utils;
 
-import commons.Board;
-import commons.Subtask;
-import commons.Tag;
-import commons.Task;
-import commons.TaskList;
-import commons.User;
+import commons.*;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -297,6 +292,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
     }
+
     public void disconnectWebsocket() {
         session.disconnect();
     }
