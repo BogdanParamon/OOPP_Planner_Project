@@ -1,9 +1,6 @@
 package server.api;
 
-import commons.Board;
-import commons.Packet;
-import commons.Tag;
-import commons.TaskList;
+import commons.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TagRepository;
+import server.database.UserRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +20,9 @@ import java.util.Map;
 public class BoardController {
 
     private final BoardRepository boardRepository;
+
+    private final UserRepository userRepository;
+
     private final TagRepository tagRepository;
 
 
@@ -29,10 +30,13 @@ public class BoardController {
      * Constructor for the BoardController class
      *
      * @param boardRepository The repository containing Board instances
-     * @param tagRepository  The repository containing Tag instances
+     * @param userRepository  The repository containing User instances
+     * @param tagRepository   The repository containing Tag instances
      */
-    public BoardController(BoardRepository boardRepository, TagRepository tagRepository) {
+    public BoardController(BoardRepository boardRepository, UserRepository userRepository,
+                           TagRepository tagRepository) {
         this.boardRepository = boardRepository;
+        this.userRepository = userRepository;
         this.tagRepository = tagRepository;
     }
 
@@ -79,15 +83,17 @@ public class BoardController {
      * Adds a board to the repository
      *
      * @param board the boards that will get added to the repository
+     * @param userId the Id of the user that gets permission to access board
      * @return A ResponseEntity object that can handle all outcomes of
      * attempted addition to the board repository
      */
     @PostMapping(path = "/add")
-    public ResponseEntity<Board> add(@RequestBody Board board) {
+    public ResponseEntity<Board> add(@RequestBody Board board, @RequestParam long userId) {
         if (board == null || board.title == null || board.title.isEmpty())
             return ResponseEntity.badRequest().build();
-
+        User user = userRepository.findById(userId).get();
         Board saved = boardRepository.save(board);
+        user.boards.add(saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -128,6 +134,17 @@ public class BoardController {
         return ResponseEntity.ok("Successful");
     }
 
+    @MessageMapping("/boards/add/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
+    @Transactional
+    public Packet addMessage(Board board, @DestinationVariable("userId") long userId) {
+        add(board, userId);
+        Packet packet = new Packet();
+        packet.stringValue = board.title;
+        packet.longValue = board.boardId;
+        packet.longValue2 = userId;
+        return packet;
+    }
     @GetMapping(path = "/titles&ids")
     public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
         Map<Long, String> map = new HashMap<>();
@@ -187,15 +204,6 @@ public class BoardController {
         return ResponseEntity.ok(updatedTag);
     }
 
-    @MessageMapping("/boards/add")
-    @SendTo("/topic/boards/add")
-    public Packet addMessage(Board board) {
-        add(board);
-        Packet titleAndId = new Packet();
-        titleAndId.longValue = board.boardId;
-        titleAndId.stringValue = board.title;
-        return titleAndId;
-    }
 
     @MessageMapping("/boards/update")
     @SendTo("/topic/boards/update")
