@@ -1,0 +1,13 @@
+#root{
+    -fx-background-color: transparent;
+}
+
+#tag {
+    -fx-background-radius: 10px;
+}
+
+#tagName {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+}

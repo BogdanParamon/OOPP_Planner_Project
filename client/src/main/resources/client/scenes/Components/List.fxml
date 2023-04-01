@@ -11,10 +11,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root id="root" prefHeight="350" prefWidth="160" stylesheets="@/client/styles/list.css" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
-    <MFXTextField id="title" fx:id="title" alignment="CENTER" floatMode="DISABLED" layoutX="5" prefWidth="150" promptText="Title">
+<fx:root id="root" prefHeight="350" prefWidth="160" stylesheets="@/client/styles/list.css" type="Pane"
+         xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <MFXTextField id="title" fx:id="title" alignment="CENTER" floatMode="DISABLED" layoutX="5" prefWidth="150"
+                  promptText="Title">
         <font>
-            <Font name="Roboto" size="16" />
+            <Font name="Roboto" size="16"/>
         </font>
     </MFXTextField>
 
@@ -24,22 +26,22 @@
                 <MFXButton fx:id="addButton">
                     <graphic>
                         <ImageView fitHeight="30" fitWidth="30">
-                            <Image url="@/client/images/addButton.png" />
+                            <Image url="@/client/images/addButton.png"/>
                         </ImageView>
                     </graphic>
                     <padding>
-                        <Insets />
+                        <Insets/>
                     </padding>
                 </MFXButton>
             </HBox>
             <padding>
-                <Insets bottom="10" left="8.0" right="8.0" top="10" />
+                <Insets bottom="10" left="8.0" right="8.0" top="10"/>
             </padding>
         </VBox>
     </MFXScrollPane>
-   <MFXButton fx:id="deleteTaskListButton" layoutX="125.0" layoutY="5.0" text="X" textFill="#868686">
-      <font>
-         <Font name="Roboto Bold" size="13.0" />
-      </font>
-   </MFXButton>
+    <MFXButton fx:id="deleteTaskListButton" layoutX="125.0" layoutY="5.0" text="X" textFill="#868686">
+        <font>
+            <Font name="Roboto Bold" size="13.0"/>
+        </font>
+    </MFXButton>
 </fx:root>

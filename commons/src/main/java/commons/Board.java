@@ -3,8 +3,11 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -17,9 +20,23 @@ public class Board {
 
     public String title;
 
+    public String backgroundColor;
+
+    public String buttonsBackground;
+
+    public String backgroundColorFont;
+
+    public String buttonsColorFont;
+
+    public String boardColor;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "BoardId")
+    public Set<Tag> tags = new HashSet<>();
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
@@ -28,6 +45,12 @@ public class Board {
      */
     public Board(String title) {
         this.title = title;
+        //default colors
+        this.backgroundColor = "ffffff";
+        this.buttonsBackground = "ddd";
+        this.backgroundColorFont = "Black";
+        this.buttonsColorFont = "Black";
+        this.boardColor = "ddd";
     }
 
     @SuppressWarnings("unused")
@@ -48,7 +71,13 @@ public class Board {
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
         return boardId == board.boardId && Objects.equals(title, board.title)
-                && Objects.equals(lists, board.lists);
+                && Objects.equals(lists, board.lists)
+                && Objects.equals(backgroundColor, board.backgroundColor)
+                && Objects.equals(buttonsBackground, board.buttonsBackground)
+                && Objects.equals(backgroundColorFont, board.backgroundColorFont)
+                && Objects.equals(buttonsColorFont, board.buttonsColorFont)
+                && Objects.equals(boardColor, board.boardColor)
+                && Objects.equals(tags, board.tags);
     }
 
     /**
@@ -59,7 +88,9 @@ public class Board {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(boardId, title, lists);
+        return Objects.hash(boardId, title, backgroundColor
+                , buttonsBackground, lists, backgroundColorFont
+                , buttonsColorFont, boardColor, tags);
     }
 
     /**
@@ -79,5 +110,9 @@ public class Board {
      */
     public void addList(TaskList list) {
         lists.add(list);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
     }
 }

@@ -6,13 +6,24 @@ import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.input.*;
+import javafx.scene.Scene;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Modality;
+
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import javafx.beans.value.ObservableValue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,22 +37,23 @@ public class Card extends Pane {
     private final Task task;
     @FXML
     private MFXButton deleteTaskButton;
-
     @FXML
     private TextField taskTitle;
+    @FXML
+    private MFXButton openTask;
 
     private static long dragFromListId;
     private static long dragToListId;
     private static int dragToIndex;
 
     /**
-     * New Card component
+     * Constructs a new Card instance with the specified parameters.
      *
-     * @param mainCtrl
-     * @param server
-     * @param task
-     * @param taskList
-     * @param board
+     * @param mainCtrl  The MainCtrl instance that manages the main application view.
+     * @param server    The ServerUtils instance for handling server communication.
+     * @param task      The Task instance representing the task to be displayed in the card.
+     * @param taskList  The TaskList instance containing the task.
+     * @param board     The Board instance containing the taskList.
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList, Board board) {
 
@@ -71,6 +83,8 @@ public class Card extends Pane {
 
         initDrag();
         initEditTaskTitle();
+
+        openTask.setOnAction(event -> displayDialog());
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -135,6 +149,17 @@ public class Card extends Pane {
         }
     }
 
+    void displayDialog() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initStyle(StageStyle.DECORATED);
+        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
+
+        AnchorPane root = detailedTask;
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
     private void handleFocusChange(ObservableValue<? extends Boolean>
                                            observable, Boolean oldValue, Boolean newValue) {
         if (!newValue) {
@@ -163,24 +188,8 @@ public class Card extends Pane {
         this.taskList = taskList;
     }
 
-    public static long getDragFromListId() {
-        return dragFromListId;
-    }
-
-    public static void setDragFromListId(long dragFromListId) {
-        Card.dragFromListId = dragFromListId;
-    }
-
-    public static long getDragToListId() {
-        return dragToListId;
-    }
-
     public static void setDragToListId(long dragToListId) {
         Card.dragToListId = dragToListId;
-    }
-
-    public static int getDragToIndex() {
-        return dragToIndex;
     }
 
     public static void setDragToIndex(int dragToIndex) {

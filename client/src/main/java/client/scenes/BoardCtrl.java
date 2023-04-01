@@ -6,19 +6,24 @@ import commons.Board;
 import commons.Packet;
 import commons.Task;
 import commons.TaskList;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import org.springframework.messaging.simp.stomp.StompSession;
-import jakarta.ws.rs.WebApplicationException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+
 import java.net.URL;
 import java.util.*;
 
@@ -26,6 +31,7 @@ public class BoardCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final String fxBackgroundColor = "-fx-background-color: #";
     @FXML
     private Text boardName;
     @FXML
@@ -39,7 +45,50 @@ public class BoardCtrl implements Initializable {
     private Button editTitle;
     @FXML
     private Button save;
+    @FXML
+    private Pane customize;
+    @FXML
+    private ColorPicker colorPickerBackground;
+    @FXML
+    private Text txtCust;
+    @FXML
+    private ColorPicker colorPickerBoard;
+    @FXML
+    private ScrollPane boardScrollPane;
+    @FXML
+    private ColorPicker colorPickerButtons;
+    @FXML
+    private VBox addListTaskVBox;
+    @FXML
+    private MFXButton addList;
+    @FXML
+    private MFXButton addTask;
+    @FXML
+    private Pane custimozePane;
+    @FXML
+    private Pane overviewBoardsPane;
+    @FXML
+    private MFXButton btnCustomize;
+    @FXML
+    private MFXButton btnOverviewBoards;
+    @FXML
+    private Text logo;
+    @FXML
+    private ColorPicker colorPickerBackgroundFont;
+    @FXML
+    private ColorPicker colorPickerButtonsFont;
+    @FXML
+    private MFXScrollPane tagsPane;
+    @FXML
+    private Text txtTags;
+
     private Set<StompSession.Subscription> subscriptions;
+
+    @FXML
+    private VBox tagList;
+
+    @FXML
+    private MFXButton addTag;
 
     /**
      * Setup server and main controller
@@ -214,6 +263,7 @@ public class BoardCtrl implements Initializable {
      * Uses showHome method to switch scenes to Home scene
      */
     public void switchToBoardOverviewScene() {
+        customize.setVisible(false);
         subscriptions.forEach(StompSession.Subscription::unsubscribe);
         mainCtrl.showBoardOverview();
     }
@@ -226,6 +276,16 @@ public class BoardCtrl implements Initializable {
             List list = new List(mainCtrl, server, taskList, this.board);
             board_hbox.getChildren().add(list);
         }
+
+        tagList.getChildren().remove(1, tagList.getChildren().size());
+        for (var tag : board.tags) {
+            Tag tagUI = new Tag(mainCtrl, server, tag);
+            tagList.getChildren().add(tagUI);
+        }
+
+        setBoardColors(board);
+        setBoardFontColors(board);
+
         subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
         subscriptions.add(registerForNewTasks());
@@ -235,6 +295,39 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForTaskUpdates());
         subscriptions.add(registerForDragNDrops());
+    }
+    private void setBoardColors(Board board) {
+        root.setStyle(fxBackgroundColor + board.backgroundColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
+        editTitle.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+        save.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+        addListTaskVBox.setStyle(fxBackgroundColor
+                + board.buttonsBackground + "; -fx-background-radius: 10px;");
+        addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
+        addTask.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
+        btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
+        btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
+        overviewBoardsPane.setStyle(fxBackgroundColor
+                + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        custimozePane.setStyle(fxBackgroundColor
+                + board.buttonsBackground + ";-fx-background-radius: 10px;");
+        tagsPane.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+        addTag.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+        //board
+        boardScrollPane.setStyle(fxBackgroundColor
+                + board.boardColor + "; -fx-background-radius: 5px");
+        board_hbox.setStyle(fxBackgroundColor
+                + board.boardColor + "; -fx-background-radius: 1px");
+    }
+
+    private void setBoardFontColors(Board board) {
+        logo.setFill(Paint.valueOf(board.backgroundColorFont));
+        boardName.setFill(Paint.valueOf(board.backgroundColorFont));
+        btnCustomize.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        addTask.setTextFill(Paint.valueOf(board.buttonsColorFont));
+        txtTags.setFill(Paint.valueOf(board.backgroundColorFont));
     }
 
     public void addList() {
@@ -272,8 +365,163 @@ public class BoardCtrl implements Initializable {
         }
     }
 
+    public void updateBoard(Board board) {
+        try {
+            server.send("/app/boards/update", board);
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public void addTag() {
+        String color = String.format("#%06X",
+                new Random(System.currentTimeMillis()).nextInt(0x1000000));
+        commons.Tag tag = new commons.Tag("New Tag", color);
+        tag = server.addTagToBoard(board.boardId, tag);
+        tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
+    }
+
+    public void showCustomize() {
+        if (customize.isVisible()) customize.setVisible(false);
+        else customize.setVisible(true);
+        colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
+        colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
+        colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
+        colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
+        colorPickerBoard.setValue(Color.valueOf(board.boardColor));
+        txtCust.setFill(Paint.valueOf(board.backgroundColor));
+    }
+
+    public void closeCustomize() {
+        customize.setVisible(false);
+    }
+
+    public void applyChanges() {
+        //background color
+        String rootColor = colorPickerBackground.getValue().toString().substring(2, 8);
+        root.setStyle(fxBackgroundColor + rootColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
+        editTitle.setStyle(fxBackgroundColor + rootColor
+                + "; -fx-border-color: #" + rootColor + ";");
+        save.setStyle(fxBackgroundColor + rootColor + ";");
+        this.board.backgroundColor = rootColor;
+        tagsPane.setStyle(fxBackgroundColor + rootColor + ";");
+        addTag.setStyle(fxBackgroundColor + rootColor + ";");
+        txtCust.setFill(Paint.valueOf(rootColor));
+        //board color
+        String boardColor = colorPickerBoard.getValue()
+                .toString().substring(2, 8);
+        boardScrollPane.setStyle(fxBackgroundColor
+                + boardColor + "; -fx-background-radius: 5px");
+        board_hbox.setStyle(fxBackgroundColor
+                + boardColor + "; -fx-background-radius: 1px");
+        this.board.boardColor = boardColor;
+        //button color
+        String buttonColor = colorPickerButtons.getValue().toString().substring(2, 8);
+        addListTaskVBox.setStyle(fxBackgroundColor
+                + buttonColor + "; -fx-background-radius: 10px;");
+        addList.setStyle(fxBackgroundColor + buttonColor + ";");
+        addTask.setStyle(fxBackgroundColor + buttonColor + ";");
+        btnCustomize.setStyle(fxBackgroundColor + buttonColor + ";");
+        btnOverviewBoards.setStyle(fxBackgroundColor + buttonColor + ";");
+        overviewBoardsPane.setStyle(fxBackgroundColor
+                + buttonColor + ";-fx-background-radius: 10px;");
+        custimozePane.setStyle(fxBackgroundColor
+                + buttonColor + ";-fx-background-radius: 10px;");
+        this.board.buttonsBackground = buttonColor;
+
+        applyChangesFont();
+
+        updateBoard(board);
+    }
+
+    public void applyChangesFont() {
+        //background font
+        String backgroundFontColor = colorPickerBackgroundFont
+                .getValue().toString().substring(2, 8);
+        logo.setFill(Paint.valueOf(backgroundFontColor));
+        boardName.setFill(Paint.valueOf(backgroundFontColor));
+        this.board.backgroundColorFont = backgroundFontColor;
+        txtTags.setFill(Paint.valueOf(backgroundFontColor));
+        //buttons font
+        String buttonsFontColor = colorPickerButtonsFont.getValue().toString().substring(2, 8);
+        btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
+        btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
+        addList.setTextFill(Paint.valueOf(buttonsFontColor));
+        addTask.setTextFill(Paint.valueOf(buttonsFontColor));
+        this.board.buttonsColorFont = buttonsFontColor;
+    }
+
+    public void resetBackgroundColor() {
+        this.board.backgroundColor = "ffffff";
+        root.setStyle(fxBackgroundColor + board.backgroundColor
+                + "; -fx-border-color: black; -fx-border-width: 2px;");
+        editTitle.setStyle("-fx-background-color: #ffffff;");
+        save.setStyle("-fx-background-color: #ffffff;");
+        tagsPane.setStyle("-fx-background-color: white;");
+        addTag.setStyle("-fx-background-color: white;");
+        updateBoard(board);
+        colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
+        txtCust.setFill(Paint.valueOf(board.backgroundColor));
+    }
+
+    public void resetBoardColor() {
+        boardScrollPane.setStyle("-fx-background-color: #ddd; -fx-background-radius: 5px");
+        board_hbox.setStyle("-fx-background-color: #ddd; -fx-background-radius: 1px");
+        this.board.boardColor = "ddd";
+        updateBoard(board);
+
+        colorPickerBoard.setValue(Color.valueOf("ddd"));
+    }
+
+    public void resetButtonColor() {
+        this.board.buttonsBackground = "ddd";
+        addListTaskVBox.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
+        String fxBckgroundColorDDD = "-fx-background-color: ddd;";
+        addList.setStyle(fxBckgroundColorDDD);
+        addTask.setStyle(fxBckgroundColorDDD);
+        btnOverviewBoards.setStyle(fxBckgroundColorDDD);
+        btnCustomize.setStyle(fxBckgroundColorDDD);
+        overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
+        custimozePane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
+
+        updateBoard(board);
+        colorPickerButtons.setValue(Color.valueOf("ddd"));
+    }
+
+    public void resetBackgroundFont() {
+        logo.setFill(Paint.valueOf("Black"));
+        boardName.setFill(Paint.valueOf("Black"));
+        txtTags.setFill(Paint.valueOf("Black"));
+        board.backgroundColorFont = "Black";
+
+        updateBoard(board);
+        colorPickerBackgroundFont.setValue(Color.valueOf("Black"));
+    }
+
+    public void resetButtonFont() {
+        btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
+        btnCustomize.setTextFill(Paint.valueOf("Black"));
+        addList.setTextFill(Paint.valueOf("Black"));
+        addTask.setTextFill(Paint.valueOf("Black"));
+        board.buttonsColorFont = "Black";
+
+        updateBoard(board);
+        colorPickerButtonsFont.setValue(Color.valueOf("Black"));
+    }
+
+    public void resetAllColors() {
+        resetBoardColor();
+        resetBackgroundColor();
+        resetButtonColor();
+        resetBackgroundFont();
+        resetButtonFont();
+    }
+    
     public AnchorPane getRoot() {
         return root;
     }
-
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXCheckbox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<fx:root prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: ffffff;" type="AnchorPane"
+         xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MFXCheckbox fx:id="checkbox" layoutX="11.0" layoutY="8.0"/>
+        <MFXButton fx:id="deleteButton" layoutX="218.0" layoutY="4.0" prefHeight="27.0" prefWidth="28.0" text="X"/>
+        <MFXButton fx:id="editButton" layoutX="177.0" layoutY="1.0" prefHeight="33.0" prefWidth="28.0" text="">
+            <graphic>
+                <ImageView fitHeight="24" fitWidth="24">
+                    <Image url="@/client/images/pen.png"/>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+    </children>
+</fx:root>

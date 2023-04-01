@@ -2,6 +2,7 @@ package server.api;
 
 import commons.Board;
 import commons.Packet;
+import commons.Tag;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -10,6 +11,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
+import server.database.TagRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,15 +20,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
+
     private final BoardRepository boardRepository;
+    private final TagRepository tagRepository;
+
 
     /**
      * Constructor for the BoardController class
      *
      * @param boardRepository The repository containing Board instances
+     * @param tagRepository  The repository containing Tag instances
      */
-    public BoardController(BoardRepository boardRepository) {
+    public BoardController(BoardRepository boardRepository, TagRepository tagRepository) {
         this.boardRepository = boardRepository;
+        this.tagRepository = tagRepository;
     }
 
     /**
@@ -141,6 +148,45 @@ public class BoardController {
         return ResponseEntity.ok(updatedBoard);
     }
 
+    @PostMapping(path = {"/addTag"})
+    public ResponseEntity<Tag> addTag(@RequestParam long boardId, @RequestBody Tag tag) {
+        if (!boardRepository.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Tag saved = tagRepository.save(tag);
+        Board board = boardRepository.findById(boardId).get();
+        board.addTag(saved);
+        boardRepository.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping(path = {"/getTagById/{tagId}"})
+    public ResponseEntity<Tag> getTag(@PathVariable("tagId") long tagId) {
+        if (!tagRepository.existsById(tagId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Tag tag = tagRepository.findById(tagId).get();
+        return ResponseEntity.ok(tag);
+    }
+
+    @DeleteMapping(path = {"/deleteTag"})
+    public ResponseEntity<Tag> deleteTag(@RequestParam long tagId) {
+        if (!tagRepository.existsById(tagId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        tagRepository.deleteById(tagId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(path = {"/updateTag"})
+    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag) {
+        if (tag == null || !tagRepository.existsById(tag.tagId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Tag updatedTag = tagRepository.save(tag);
+        return ResponseEntity.ok(updatedTag);
+    }
+
     @MessageMapping("/boards/add")
     @SendTo("/topic/boards/add")
     public Packet addMessage(Board board) {
@@ -149,6 +195,16 @@ public class BoardController {
         titleAndId.longValue = board.boardId;
         titleAndId.stringValue = board.title;
         return titleAndId;
+    }
+
+    @MessageMapping("/boards/update")
+    @SendTo("/topic/boards/update")
+    public Packet updateMessage(Board board) {
+        updateBoard(board);
+        Packet packet = new Packet();
+        packet.longValue = board.boardId;
+        packet.board = board;
+        return packet;
     }
 
     @MessageMapping("/boards/rename/{boardId}")
