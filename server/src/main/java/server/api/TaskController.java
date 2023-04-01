@@ -5,6 +5,7 @@ import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -129,13 +130,17 @@ public class TaskController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Task> delete(@RequestParam long taskId, @RequestParam long taskListId) {
+        System.out.println("Deleting" + taskId + " " + taskListId);
         if (!taskRepository.existsById(taskId) || taskId < 0
                 || !taskListRepository.existsById(taskListId) || taskListId < 0) {
             return ResponseEntity.badRequest().build();
         }
         TaskList taskList = taskListRepository.findById(taskListId).get();
         Task task = taskRepository.findById(taskId).get();
+
         if (taskList.tasks.remove(task)) {
+            System.out.println("Deletiong");
+            taskRepository.deleteTaskTags(taskId);
             taskRepository.deleteById(taskId);
         }
         taskListRepository.save(taskList);

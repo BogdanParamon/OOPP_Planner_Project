@@ -218,4 +218,35 @@ public class BoardController {
         boardIdAndNewTitle.stringValue = newTitle;
         return boardIdAndNewTitle;
     }
+
+    @MessageMapping("/boards/addTag/{boardId}")
+    @SendTo("/topic/boards/addTag/{boardId}")
+    @Transactional
+    public Packet addMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        addTag(boardId, tag);
+        Packet packet = new Packet();
+        packet.tag = tag;
+        return packet;
+    }
+
+    @MessageMapping("/boards/updateTag/{boardId}")
+    @SendTo("/topic/boards/updateTag/{boardId}")
+    @Transactional
+    public Packet updateMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        updateTag(tag);
+        Packet packet = new Packet();
+        packet.tag = tag;
+        return packet;
+    }
+
+    @MessageMapping("/boards/deleteTag/{boardId}")
+    @SendTo("/topic/boards/deleteTag/{boardId}")
+    @Transactional
+    public Packet deleteMessage(long tagId) {
+        deleteTag(tagId);
+        Packet packet = new Packet();
+        packet.longValue = tagId;
+        return packet;
+    }
+
 }

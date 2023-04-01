@@ -70,8 +70,9 @@ public class Tag extends Pane {
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString("Tag:" + tag.tagId);
+            content.putString(String.valueOf(tag.tagId));
             db.setContent(content);
+            db.setDragView(tagPane.snapshot(null, null));
             event.consume();
         });
     }

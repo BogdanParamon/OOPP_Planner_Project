@@ -205,6 +205,7 @@ public class BoardCtrl implements Initializable {
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
                             for (Node cardNode : list.getList().getChildren()) {
+                                if (!(cardNode instanceof Card)) continue;
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
                                     list.getList().getChildren().remove(card);
@@ -254,6 +255,7 @@ public class BoardCtrl implements Initializable {
                     }
                 }));
     }
+
 
     public void switchToAddTask() {
         mainCtrl.showAddTask();
