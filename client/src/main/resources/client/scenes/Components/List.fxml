@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
@@ -12,18 +11,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <fx:root id="root" prefHeight="350" prefWidth="160" stylesheets="@/client/styles/list.css" type="Pane"
-         xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
-    <MFXTextField floatMode="DISABLED" promptText="Title" fx:id="title" id="title" prefWidth="150" layoutX="5"
-                  alignment="CENTER">
+         xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <MFXTextField id="title" fx:id="title" alignment="CENTER" floatMode="DISABLED" layoutX="5" prefWidth="150"
+                  promptText="Title">
         <font>
             <Font name="Roboto" size="16"/>
         </font>
     </MFXTextField>
 
     <MFXScrollPane id="ScrollList" layoutX="5" layoutY="50" prefHeight="300" prefWidth="150" vbarPolicy="NEVER">
-        <VBox fx:id="list" alignment="CENTER" layoutY="12.0" prefWidth="140">
+        <VBox fx:id="list" alignment="CENTER" layoutY="12.0" prefWidth="140" spacing="10">
             <HBox fx:id="addButtonWrapper">
                 <MFXButton fx:id="addButton">
                     <graphic>
@@ -41,4 +39,9 @@
             </padding>
         </VBox>
     </MFXScrollPane>
+    <MFXButton fx:id="deleteTaskListButton" layoutX="125.0" layoutY="5.0" text="X" textFill="#868686">
+        <font>
+            <Font name="Roboto Bold" size="13.0"/>
+        </font>
+    </MFXButton>
 </fx:root>

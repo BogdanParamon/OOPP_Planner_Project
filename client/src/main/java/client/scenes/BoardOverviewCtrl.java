@@ -3,7 +3,8 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
-import io.github.palexdev.materialfx.controls.MFXButton;
+import commons.Packet;
+import commons.User;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import jakarta.ws.rs.WebApplicationException;
@@ -15,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
@@ -26,15 +28,18 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private User user;
     @FXML
-    private MFXListView<MFXButton> boards;
+    private MFXListView<Text> boards;
 
     @FXML
     private MFXTextField boardTitle;
     @FXML
     private Text subheading;
 
-    @FXML private AnchorPane root;
+    @FXML
+    private AnchorPane root;
 
     private int index = 0;
 
@@ -57,29 +62,35 @@ public class BoardOverviewCtrl implements Initializable {
      * @param bundle The resources used to localize the root object, or {@code null} if
      *               the root object was not localized.
      */
+    @Override
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
     }
 
-    public void registerForBoardUpdates() {
-        server.registerForMessages("/topic/boards", Board.class, board -> {
+    public void registerForNewBoards() {
+        server.registerForMessages("/topic/boards/add", Packet.class, boardIdAndTitle -> {
             Platform.runLater(() -> {
-                MFXButton button = new MFXButton(board.title);
-                button.setOnAction(event -> switchSceneToBoard(board));
-                boards.getItems().add(button);
+                Text label = new Text((String) boardIdAndTitle.stringValue);
+                label.setFont(new Font("Roboto", 20));
+                label.setWrappingWidth(boards.getWidth());
+                label.setOnMouseClicked(event
+                        -> switchSceneToBoard(server.getBoardById(boardIdAndTitle.longValue)));
+                boards.getItems().add(label);
                 boardTitle.clear();
             });
         });
     }
 
     public void load() {
-        var boardEntities = server.getBoards();
+        var boardTitlesAndIds = server.getBoardTitlesAndIds();
         boards.getItems().clear();
-        for (var i : boardEntities) {
-            MFXButton button = new MFXButton(i.title);
-            button.setOnAction(event -> switchSceneToBoard(i));
-            boards.getItems().add(button);
-        }
+        boardTitlesAndIds.forEach((aLong, s) -> {
+            Text label = new Text(s);
+            label.setFont(new Font("Roboto", 20));
+            label.setWrappingWidth(boards.getWidth());
+            label.setOnMouseClicked(event -> switchSceneToBoard(server.getBoardById(aLong)));
+            boards.getItems().add(label);
+        });
         subheadingAnimation();
     }
 
@@ -112,7 +123,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void addBoard() {
         try {
             Board board = new Board(boardTitle.getText());
-            server.send("/app/boards", board);
+            server.send("/app/boards/add", board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -128,7 +139,12 @@ public class BoardOverviewCtrl implements Initializable {
 
 
     public void switchSceneToHome() {
+        server.disconnectWebsocket();
         mainCtrl.showHome();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

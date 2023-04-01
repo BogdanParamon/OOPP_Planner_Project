@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Text?>
-
-<fx:root prefHeight="70.0" style="-fx-background-radius: 10px; -fx-background-color: white; -fx-border-color: ddd; -fx-border-radius: 10px" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Text fx:id="title" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="100.0" text="Lectures" />
-   </children>
-
+<?import javafx.scene.text.Font?>
+<fx:root prefHeight="70.0" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+         styleClass="card">
+    <children>
+        <MFXButton fx:id="deleteTaskButton" layoutX="110.0" layoutY="4.0" text="X">
+            <font>
+                <Font name="Roboto Bold" size="11.0"/>
+            </font>
+            <padding>
+                <Insets/>
+            </padding>
+        </MFXButton>
+        <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" text="Lectures"/>
+        <MFXButton fx:id="openTask" layoutX="88.0" layoutY="41.0" prefHeight="0.0" prefWidth="0.0" text=" ">
+            <graphic>
+                <Pane>
+                    <children>
+                        <ImageView fitHeight="15.0" fitWidth="15.0">
+                            <image>
+                                <Image url="@/client/images/detailed_task_view.png"/>
+                            </image>
+                        </ImageView>
+                    </children>
+                </Pane>
+            </graphic>
+        </MFXButton>
+    </children>
 </fx:root>

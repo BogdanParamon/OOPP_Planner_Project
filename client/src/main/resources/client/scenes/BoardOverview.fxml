@@ -8,27 +8,65 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id = "root" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: fff;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: fff;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <children>
-      <Text layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="600">
+      <Text layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="900">
          <font>
-            <Font size="32"> </Font>
+            <Font size="50"> </Font>
          </font>
       </Text>
-      <Text id="subheading" fx:id="subheading" fill="#929394" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" textAlignment="CENTER" wrappingWidth="600.0" />
-      <MFXListView fx:id="boards" layoutX="81.0" layoutY="166.0" prefHeight="138.0" prefWidth="134.0" />
-      <MFXButton buttonType="RAISED" layoutX="261.0" layoutY="336.0" onAction="#switchSceneToHome" text="Change server" />
-      <Text layoutX="68.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you already have a board?" />
-      <Text fill="#727272" layoutX="116.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chose One!" />
-      <Text layoutX="326.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you want to create a new board?" />
-      <Text fill="#727272" layoutX="385.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add one now!" />
-      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatMode="BORDER" floatingText="Board Name" layoutX="313.0" layoutY="177.0" prefHeight="39.0" prefWidth="218.0" />
-      <MFXPasswordField borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="314.0" layoutY="232.0" prefHeight="39.0" prefWidth="218.0" style="-fx-wrap-text: black" />
-      <MFXButton buttonType="RAISED" layoutX="433.0" layoutY="288.0" text="Create Board" onAction="#addBoard">
+      <Text id="subheading" fx:id="subheading" fill="#929394" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" textAlignment="CENTER" wrappingWidth="900.0">
+            <font>
+                <Font size="20.0" />
+            </font>
+      </Text>
+      <MFXListView fx:id="boards" layoutX="129.0" layoutY="230.0" prefHeight="258.0" prefWidth="219.0"/>
+      <Text layoutX="120.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you already have a board?">
+            <font>
+                <Font size="18.0" />
+            </font>
+      </Text>
+      <Text fill="#727272" layoutX="180.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose One!">
+            <font>
+                <Font size="18.0" />
+            </font>
+      </Text>
+      <Text layoutX="502.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you want to create a new board?">
+            <font>
+                <Font size="18.0" />
+            </font>
+      </Text>
+      <Text fill="#727272" layoutX="592.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add one now!">
+            <font>
+                <Font size="18.0" />
+            </font>
+      </Text>
+      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatMode="BORDER" floatingText="Board Name" layoutX="502.0" layoutY="261.0" prefHeight="57.0" prefWidth="305.0">
+            <font>
+                <Font name="Roboto" size="20.0" />
+            </font>
+      </MFXTextField>
+      <MFXPasswordField borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="501.0" layoutY="346.0" prefHeight="57.0" prefWidth="305.0" style="-fx-wrap-text: black">
+            <font>
+                <Font name="Roboto" size="20.0" />
+            </font>
+      </MFXPasswordField>
+      <MFXButton buttonType="RAISED" layoutX="679.0" layoutY="446.0" onAction="#addBoard" text="Create Board">
               <font>
-
+                    <Font name="Roboto" size="20.0" />
               </font>
       </MFXButton>
-      <MFXButton buttonType="RAISED" layoutX="300.0" layoutY="288.0" text="Delete all boards" onAction="#deleteAll"/>
+      <MFXButton buttonType="RAISED" layoutX="468.0" layoutY="446.0" onAction="#deleteAll" prefHeight="43.0" prefWidth="186.0" text="Delete all boards">
+                <font>
+                        <Font name="Roboto" size="20.0" />
+                </font>
+      </MFXButton>
+       <MFXButton buttonType="RAISED" layoutX="369.0" layoutY="535.0" onAction="#switchSceneToHome" text="Change server">
+                <font>
+                        <Font name="Roboto" size="20.0" />
+                </font>
+       </MFXButton>
+
    </children>
 </AnchorPane>

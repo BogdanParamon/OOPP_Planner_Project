@@ -1,8 +1,13 @@
 package server.api;
 
 import commons.Board;
+import commons.Packet;
 import commons.TaskList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.TaskListRepository;
@@ -64,11 +69,11 @@ public class TaskListController {
                 || list.title.isEmpty() ||  ! boardRepository.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-        Board parentBoard = boardRepository.findById(boardId).get();
-        parentBoard.lists.add(list);
-        boardRepository.save(parentBoard);
         TaskList saved = taskListRepository.save(list);
-        return ResponseEntity.ok(saved);
+        Board parentBoard = boardRepository.findById(boardId).get();
+        parentBoard.lists.add(saved);
+        boardRepository.save(parentBoard);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -95,12 +100,48 @@ public class TaskListController {
      * @return a response entity object of type TaskList that confirms to the client that
      * the operation was successful
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<TaskList> updateList(@RequestBody TaskList taskList) {
         if (taskList == null || !taskListRepository.existsById(taskList.listId)) {
             return ResponseEntity.badRequest().build();
         }
         TaskList updatedList = taskListRepository.save(taskList);
         return ResponseEntity.ok(updatedList);
+    }
+
+    @PutMapping("/rename")
+    public ResponseEntity<TaskList> renameList(@RequestParam long listId,
+                                               @RequestBody String newTitle) {
+        if (newTitle == null || !taskListRepository.existsById(listId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        TaskList taskList = taskListRepository.findById(listId).get();
+        taskList.title = newTitle;
+        TaskList updatedList = taskListRepository.save(taskList);
+        return ResponseEntity.ok(updatedList);
+    }
+
+    @MessageMapping("/taskLists/add/{boardId}")
+    @SendTo("/topic/taskLists/add/{boardId}")
+    @Transactional
+    public TaskList addMessage(TaskList taskList, @DestinationVariable("boardId") long boardId) {
+        add(taskList, boardId);
+        return taskList;
+    }
+
+    @MessageMapping("/taskLists/rename/{boardId}")
+    @SendTo("/topic/taskLists/rename/{boardId}")
+    @Transactional
+    public Packet renameMessage(Packet listIdAndNewTitle) {
+        renameList(listIdAndNewTitle.longValue, listIdAndNewTitle.stringValue);
+        return listIdAndNewTitle;
+    }
+
+    @MessageMapping("/taskLists/delete/{boardId}")
+    @SendTo("/topic/taskLists/delete/{boardId}")
+    @Transactional
+    public Long deleteMessage(Long listId) {
+        delete(listId);
+        return listId;
     }
 }

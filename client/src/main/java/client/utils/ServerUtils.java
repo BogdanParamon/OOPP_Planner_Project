@@ -16,11 +16,14 @@
 package client.utils;
 
 import commons.Board;
+import commons.Subtask;
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -32,6 +35,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -66,9 +70,10 @@ public class ServerUtils {
     }
 
 
-    public Task addTask(Task task) {
+    public Task addTask(Task task, long taskListId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/add")
+                .queryParam("taskListId", taskListId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(task, APPLICATION_JSON), Task.class);
@@ -93,7 +98,7 @@ public class ServerUtils {
                 });
     }
 
-    public Task updateTask(Long id, Task task) {
+    public Task updateTask(Task task) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/update")
                 .request(APPLICATION_JSON)
@@ -127,7 +132,7 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
     }
 
-    public TaskList updateList(long id, TaskList taskList) {
+    public TaskList updateList(TaskList taskList) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/taskLists/update")
                 .request(APPLICATION_JSON)
@@ -138,7 +143,7 @@ public class ServerUtils {
     public List<TaskList> getListsByBoardId(long boardId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/boards/{boardId}/taskLists")
-                .resolveTemplate("boardId",boardId)
+                .resolveTemplate("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<TaskList>>() {
@@ -151,6 +156,15 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Board.class);
+    }
+
+    public Map<Long, String> getBoardTitlesAndIds() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/titles&ids")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<Map<Long, String>>() {
+                });
     }
 
     public StompSession connectWebsocket() {
@@ -168,8 +182,9 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
-    public <T> void registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
+    public <T> StompSession.Subscription registerForMessages(String dest, Class<T> type,
+                                                             Consumer<T> consumer) {
+        return session.subscribe(dest, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
                 return type;
@@ -192,6 +207,79 @@ public class ServerUtils {
                 .target(SERVER).path("api/boards/deleteAll")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity("", APPLICATION_JSON), String.class);
+                .delete();
+    }
+
+
+    public void deleteTask(Task task) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/delete/")
+                .queryParam("taskId", task.taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Response deleteTaskList(TaskList taskList) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/taskLists/delete/")
+                .queryParam("id", taskList.listId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Task getTaskById(long taskId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/tasks/" + taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Task.class);
+    }
+
+    public Subtask addSubtask(long taskId, Subtask subtask) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/subtasks/add")
+                .queryParam("taskId", taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    public Tag addTagToBoard(long boardId, commons.Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/addTag")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+
+    public void removeTag(long tagId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/deleteTag")
+                .queryParam("tagId", tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public Tag getTagById(long tagId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/getTagById/" + tagId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Tag.class);
+    }
+
+    public Tag updateTag(Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/updateTag")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+    public void disconnectWebsocket() {
+        session.disconnect();
     }
 }
