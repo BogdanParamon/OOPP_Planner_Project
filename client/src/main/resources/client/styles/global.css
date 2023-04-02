@@ -9,7 +9,7 @@ AnchorPane {
 }
 
 Text{
-    -fx-font-family: 'Impact', monospace;
+    -fx-font-family: 'Roboto', monospace;
 }
 
 TextField {
