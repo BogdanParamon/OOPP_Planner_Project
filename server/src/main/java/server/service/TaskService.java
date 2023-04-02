@@ -26,7 +26,7 @@ public class TaskService {
 
     public TaskService(TaskRepository taskRepository,
                        TaskListRepository taskListRepository,
-                       TagRepository tagRepository){
+                       TagRepository tagRepository) {
         this.taskRepository = taskRepository;
         this.taskListRepository = taskListRepository;
         this.tagRepository = tagRepository;

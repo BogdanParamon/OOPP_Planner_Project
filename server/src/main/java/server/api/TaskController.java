@@ -107,7 +107,8 @@ public class TaskController {
                                          @RequestParam long dragToListId,
                                          @RequestParam int dragToIndex) {
         try {
-            return ResponseEntity.ok(taskService.dragTask(taskId, dragFromListId, dragToListId, dragToIndex));
+            return ResponseEntity.ok(taskService.dragTask(taskId,
+                    dragFromListId, dragToListId, dragToIndex));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
