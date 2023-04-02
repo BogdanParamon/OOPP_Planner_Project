@@ -122,12 +122,15 @@ public class BoardCtrl implements Initializable {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
-                    listUI.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+                    listUI.getScrollPane().setStyle(fxBackgroundColor
+                            + board.listsColor + "; -fx-background-radius: 10px;");
                     listUI.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
                     listUI.getTitle().setStyle(fxBackgroundColor + board.listsColor
-                            + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+                            + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                            " -fx-border-color: transparent;");
                     listUI.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
-                    listUI.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+                    listUI.getDeleteTaskListButton().
+                            setStyle(fxBackgroundColor + board.listsColor + ";");
                     board_hbox.getChildren().add(listUI);
                 }));
     }
@@ -253,7 +256,8 @@ public class BoardCtrl implements Initializable {
                     + board.listsColor + "; -fx-background-radius: 10px;");
             list.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
             list.getTitle().setStyle(fxBackgroundColor + board.listsColor
-                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
             list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
             list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
             board_hbox.getChildren().add(list);
@@ -428,10 +432,12 @@ public class BoardCtrl implements Initializable {
         board.listsFontColor = colorPickerListsFont.getValue().toString().substring(2, 8);
         for (Node node : board_hbox.getChildren()) {
             List list = (List) node;
-            list.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
             list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
             list.getTitle().setStyle(fxBackgroundColor + board.listsColor
-                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
             list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
             list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
         }
@@ -533,10 +539,12 @@ public class BoardCtrl implements Initializable {
         board.listsColor = "ffffff";
         for (Node node : board_hbox.getChildren()) {
             List list = (List) node;
-            list.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
             list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
             list.getTitle().setStyle(fxBackgroundColor + "ffffff"
-                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
             list.getDeleteTaskListButton().setStyle(fxBackgroundColor + "ffffff;");
         }
 
