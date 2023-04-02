@@ -20,7 +20,8 @@ public class BoardService {
 
     private final TagRepository tagRepository;
 
-    public BoardService(BoardRepository boardRepository, UserRepository userRepository, TagRepository tagRepository) {
+    public BoardService(BoardRepository boardRepository, UserRepository userRepository,
+                        TagRepository tagRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
