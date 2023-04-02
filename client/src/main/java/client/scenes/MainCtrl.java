@@ -21,6 +21,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -43,6 +44,9 @@ public class MainCtrl {
 
     protected Scene userOrAdmin;
     protected UserOrAdminCtrl userOrAdminCtrl;
+
+    protected ShortcutsCtrl shortcutsCtrl;
+    protected Scene shortcuts;
     private double xOffset, yOffset;
 
     /**
@@ -55,6 +59,7 @@ public class MainCtrl {
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param detailedTask  allows user to see details of a task
      * @param userOrAdmin   allow user to pick between user view and admin view
+     * @param shortcuts
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,
@@ -62,7 +67,8 @@ public class MainCtrl {
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
                            Pair<DetailedTaskCtrl, Parent> detailedTask,
-                           Pair<UserOrAdminCtrl, Parent> userOrAdmin) {
+                           Pair<UserOrAdminCtrl, Parent> userOrAdmin,
+                           Pair<ShortcutsCtrl, Parent> shortcuts) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -83,8 +89,36 @@ public class MainCtrl {
         this.userOrAdminCtrl = userOrAdmin.getKey();
         this.userOrAdmin = new Scene(userOrAdmin.getValue());
 
+        this.shortcutsCtrl = shortcuts.getKey();
+        this.shortcuts = new Scene(shortcuts.getValue());
+
         primaryStage.setScene(this.home);
         primaryStage.show();
+
+        registerKeyEventHandler(this.home);
+        registerKeyEventHandler(this.boardOverview);
+        registerKeyEventHandler(this.board);
+        registerKeyEventHandler(this.addTask);
+        registerKeyEventHandler(this.detailedTask);
+        registerKeyEventHandler(this.userOrAdmin);
+    }
+
+    private void registerKeyEventHandler(Scene scene) {
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCharacter().equals("?")) {
+                toggleShortcutsScene();
+            }
+        });
+    }
+
+    public void toggleShortcutsScene() {
+        if (!shortcutsCtrl.isShortcutsVisible()) {
+            primaryStage.setTitle("Shortcuts");
+            primaryStage.setScene(shortcuts);
+            shortcutsCtrl.showShortcuts();
+        } else {
+            shortcutsCtrl.hideShortcuts();
+        }
     }
 
     /**

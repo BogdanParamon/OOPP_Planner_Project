@@ -64,12 +64,13 @@ public class Main extends Application {
         var detailedTask =
                 FXML.load(DetailedTaskCtrl.class, "client", "scenes", "DetailedTask.fxml");
         var userOrAdmin = FXML.load(UserOrAdminCtrl.class, "client", "scenes", "UserOrAdmin.fxml");
+        var shortcuts = FXML.load(ShortcutsCtrl.class, "client", "scenes", "Shortcuts.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask,
-                detailedTask, userOrAdmin);
+                detailedTask, userOrAdmin, shortcuts);
     }
 }
