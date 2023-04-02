@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Board;
+import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -32,16 +33,18 @@ public class Card extends Pane {
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final Board board;
-    private final TaskList taskList;
+    private TaskList taskList;
     private final Task task;
     @FXML
     private MFXButton deleteTaskButton;
-
     @FXML
     private TextField taskTitle;
-
     @FXML
     private MFXButton openTask;
+
+    private static long dragFromListId;
+    private static long dragToListId;
+    private static int dragToIndex;
 
     /**
      * Constructs a new Card instance with the specified parameters.
@@ -105,6 +108,7 @@ public class Card extends Pane {
             // clever way to  work around variables in lambda
             orignalParent[0] = (VBox) getParent();
             index[0] = ((VBox) getParent()).getChildren().indexOf(this);
+            dragFromListId = taskList.listId;
 
             mainCtrl.boardCtrl.getRoot().getChildren().add(this); // find a better way for this
             setVisible(false);
@@ -114,15 +118,20 @@ public class Card extends Pane {
         });
 
         setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.MOVE) {
-                if (!event.getDragboard().getString().equals("Same list"))
-                    taskList.tasks.remove(task);
-                server.updateList(taskList);
-            } else {
-                orignalParent[0].getChildren().add(index[0], this);
-                setVisible(true);
+            if (event.getTransferMode() == TransferMode.MOVE
+                    && !(dragFromListId == dragToListId && index[0] == dragToIndex)) {
+                Packet packet = new Packet();
+                packet.longValue = task.taskId;
+                packet.longValue2 = dragFromListId;
+                packet.longValue3 = dragToListId;
+                packet.intValue = dragToIndex;
+                server.send("/app/tasks/drag/" + board.boardId, packet);
             }
+            orignalParent[0].getChildren().add(index[0], this);
+            setVisible(true);
             mainCtrl.boardCtrl.getRoot().getChildren().remove(this);
+            dragFromListId = 0;
+            dragToListId = 0;
             event.consume();
         });
     }
@@ -169,5 +178,21 @@ public class Card extends Pane {
 
     public TextField getTaskTitle() {
         return taskTitle;
+    }
+
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
+    }
+
+    public static void setDragToListId(long dragToListId) {
+        Card.dragToListId = dragToListId;
+    }
+
+    public static void setDragToIndex(int dragToIndex) {
+        Card.dragToIndex = dragToIndex;
     }
 }

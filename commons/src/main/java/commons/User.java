@@ -16,8 +16,12 @@ public class User {
 
     public String userName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "UserID")
+    @ManyToMany
+    @JoinTable(
+            name = "registration",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id")
+    )
     public List<Board> boards = new ArrayList<>();
 
     public User(String userName) {

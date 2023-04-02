@@ -142,6 +142,26 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/drag")
+    public ResponseEntity<Task> dragTask(@RequestParam long taskId,
+                                         @RequestParam long dragFromListId,
+                                         @RequestParam long dragToListId,
+                                         @RequestParam int dragToIndex) {
+        if (!taskRepository.existsById(taskId) || !taskListRepository.existsById(dragFromListId)
+                || !taskListRepository.existsById(dragToListId) || dragToIndex < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        TaskList taskList1 = taskListRepository.findById(dragFromListId).get();
+        TaskList taskList2 = taskListRepository.findById(dragToListId).get();
+        Task task = taskRepository.findById(taskId).get();
+        if (taskList1.tasks.remove(task)) {
+            taskList2.tasks.add(dragToIndex, task);
+            taskListRepository.save(taskList1);
+            taskListRepository.save(taskList2);
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping(path = {"/addTag"})
     public ResponseEntity<Task> addTag(@RequestParam long tagId, @RequestParam long taskId) {
         if (!tagRepository.existsById(tagId) || !taskRepository.existsById(taskId)) {
@@ -189,6 +209,18 @@ public class TaskController {
         Packet packet = new Packet();
         packet.longValue = listId;
         packet.longValue2 = taskId;
+        return packet;
+    }
+
+    @MessageMapping("/tasks/drag/{boardId}")
+    @SendTo("/topic/tasks/drag/{boardId}")
+    @Transactional
+    public Packet dragMessage(Packet packet, @DestinationVariable("boardId") long boardId) {
+        long taskId = packet.longValue;
+        long dragFromListId = packet.longValue2;
+        long dragToListId = packet.longValue3;
+        int dragToIndex = packet.intValue;
+        dragTask(taskId, dragFromListId, dragToListId, dragToIndex);
         return packet;
     }
 }

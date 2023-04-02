@@ -127,7 +127,7 @@
                             <Font name="Roboto" size="20" />
                         </font>
                     </Text>
-                    <Pane prefWidth="50" />
+                    <Pane prefWidth="65"/>
 
                     <MFXButton fx:id="addTag" onAction="#addTag" style="-fx-background-color: white;" text="">
                         <graphic>
