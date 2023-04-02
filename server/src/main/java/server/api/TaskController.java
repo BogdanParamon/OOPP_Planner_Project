@@ -228,5 +228,15 @@ public class TaskController {
         dragTask(taskId, dragFromListId, dragToListId, dragToIndex);
         return packet;
     }
+
+    @MessageMapping("/tasks/addTag/{boardId}/{tagId}")
+    @SendTo("/topic/tasks/addTag/{boardId}")
+    @Transactional
+    public Tag addTagMessage(Tag tag, @DestinationVariable("boardId") long boardId,
+                             @DestinationVariable("tagId") long tagId) {
+        addTag(tag.tagId, tagId);
+        return tag;
+    }
+
 }
 

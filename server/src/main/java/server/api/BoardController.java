@@ -174,6 +174,7 @@ public class BoardController {
         if (!tagRepository.existsById(tagId)) {
             return ResponseEntity.badRequest().build();
         }
+        tagRepository.deleteTaskTags(tagId);
         tagRepository.deleteById(tagId);
         return ResponseEntity.ok().build();
     }
@@ -222,31 +223,25 @@ public class BoardController {
     @MessageMapping("/boards/addTag/{boardId}")
     @SendTo("/topic/boards/addTag/{boardId}")
     @Transactional
-    public Packet addMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+    public Tag addMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
         addTag(boardId, tag);
-        Packet packet = new Packet();
-        packet.tag = tag;
-        return packet;
+        return tag;
     }
 
     @MessageMapping("/boards/updateTag/{boardId}")
     @SendTo("/topic/boards/updateTag/{boardId}")
     @Transactional
-    public Packet updateMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+    public Tag updateMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
         updateTag(tag);
-        Packet packet = new Packet();
-        packet.tag = tag;
-        return packet;
+        return tag;
     }
 
     @MessageMapping("/boards/deleteTag/{boardId}")
     @SendTo("/topic/boards/deleteTag/{boardId}")
     @Transactional
-    public Packet deleteMessage(long tagId) {
+    public Long deleteMessage(long tagId) {
         deleteTag(tagId);
-        Packet packet = new Packet();
-        packet.longValue = tagId;
-        return packet;
+        return tagId;
     }
 
 }

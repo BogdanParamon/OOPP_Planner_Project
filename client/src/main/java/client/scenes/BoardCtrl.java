@@ -26,6 +26,7 @@ import javafx.stage.Modality;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class BoardCtrl implements Initializable {
 
@@ -256,14 +257,81 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForNewTags() {
+        return server.registerForMessages("/topic/boards/addTag/" + board.boardId, commons.Tag.class,
+                tag -> Platform.runLater(() -> {
+                    board.tags.add(tag);
+                    Tag tagUI = new Tag(mainCtrl, server, tag, board);
+                    tagList.getChildren().add(1, tagUI);
+                }));
+    }
+
+    public StompSession.Subscription registerForTagUpdates() {
+        return server.registerForMessages("/topic/boards/updateTag/" + board.boardId, commons.Tag.class,
+                tag -> Platform.runLater(() -> {
+                    System.out.println("tag updated: " + tag);
+                    board.tags.removeIf(t -> t.tagId == tag.tagId);
+                    board.tags.add(tag);
+                    int index = 0;
+                    for (int i = 0; i < tagList.getChildren().size(); i++) {
+                        if (tagList.getChildren().get(i) instanceof Tag) {
+                            Tag tagUI = (Tag) tagList.getChildren().get(i);
+                            if (tagUI.tag.tagId == tag.tagId) {
+                                tagList.getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                            }
+                            break;
+                        }
+                    }
+
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        for (Node cardNode : list.getList().getChildren()) {
+                            if (!(cardNode instanceof Card)) continue;
+                            Card card = (Card) cardNode;
+                            card.updateTag(tag);
+                        }
+                    }
+
+
+                }));
+    }
+
+    public StompSession.Subscription registerForTagDeletes() {
+        return server.registerForMessages("/topic/boards/deleteTag/" + board.boardId, Long.class,
+                tagId -> Platform.runLater(() -> {
+                    board.tags.removeIf(t -> t.tagId == tagId);
+                    for (int i = 0; i < tagList.getChildren().size(); i++) {
+                        if (tagList.getChildren().get(i) instanceof Tag) {
+                            Tag tagUI = (Tag) tagList.getChildren().get(i);
+                            if (tagUI.tag.tagId == tagId) {
+                                tagList.getChildren().remove(i);
+                                break;
+                            }
+                        }
+                    }
+
+                    for (var list : board.lists) {
+                        for (var task : list.tasks) {
+                            task.tags.removeIf(t -> t.tagId == tagId);
+                        }
+                    }
+
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        for (Node cardNode : list.getList().getChildren()) {
+                            if (!(cardNode instanceof Card)) continue;
+                            Card card = (Card) cardNode;
+                            card.removeTag(tagId);
+                        }
+                    }
+                }));
+    }
+
 
     public void switchToAddTask() {
         mainCtrl.showAddTask();
     }
 
-    /**
-     * Uses showHome method to switch scenes to Home scene
-     */
     public void switchToBoardOverviewScene() {
         customize.setVisible(false);
         subscriptions.forEach(StompSession.Subscription::unsubscribe);
@@ -281,7 +349,7 @@ public class BoardCtrl implements Initializable {
 
         tagList.getChildren().remove(1, tagList.getChildren().size());
         for (var tag : board.tags) {
-            Tag tagUI = new Tag(mainCtrl, server, tag);
+            Tag tagUI = new Tag(mainCtrl, server, tag, board);
             tagList.getChildren().add(tagUI);
         }
 
@@ -297,6 +365,9 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForTaskUpdates());
         subscriptions.add(registerForDragNDrops());
+        subscriptions.add(registerForNewTags());
+        subscriptions.add(registerForTagUpdates());
+        subscriptions.add(registerForTagDeletes());
     }
     private void setBoardColors(Board board) {
         root.setStyle(fxBackgroundColor + board.backgroundColor
@@ -382,8 +453,7 @@ public class BoardCtrl implements Initializable {
         String color = String.format("#%06X",
                 new Random(System.currentTimeMillis()).nextInt(0x1000000));
         commons.Tag tag = new commons.Tag("New Tag", color);
-        tag = server.addTagToBoard(board.boardId, tag);
-        tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
+        server.send("/app/boards/addTag/" + board.boardId, tag);
     }
 
     public void showCustomize() {

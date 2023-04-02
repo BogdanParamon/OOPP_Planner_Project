@@ -9,6 +9,7 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
@@ -93,6 +94,8 @@ public class Card extends Pane {
             System.out.println("Can not load Cardstyle.css");
         }
     }
+
+
 
 
     void initDrag() {
@@ -196,16 +199,30 @@ public class Card extends Pane {
 
     public void addTag(commons.Tag tag, boolean newTag) {
         Pane pane = new Pane();
+        pane.setId(String.valueOf(tag.tagId));
         pane.setPrefSize(20, 7);
         pane.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
 
         if (newTag) {
             task.addTag(tag);
-            task = server.updateTask(task);
+            server.send("/app/tasks/addTag/" + board.boardId + "/" + task.taskId, tag);
         }
         tags.add(pane, col, row);
         col = (col + 1) % 4;
         if (col == 0) row++;
+    }
+
+    public void removeTag(long tagId) {
+        task.tags.removeIf(tag -> tag.tagId == tagId);
+        tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
+    }
+
+    public void updateTag(commons.Tag tag) {
+        for (Node node : tags.getChildren()) {
+            if (node.getId().equals(String.valueOf(tag.tagId))) {
+                node.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
+            }
+        }
     }
 
     public Task getTask() {
