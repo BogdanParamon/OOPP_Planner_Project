@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.Packet;
+import commons.Subtask;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -213,6 +214,32 @@ public class BoardCtrl implements Initializable {
                                 }
                             }
                             break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForNewSubtasks() {
+        return server.registerForMessages("/topic/subtasks/add/" + board.boardId, Packet.class,
+                taskIdlistIdAndSubtask -> Platform.runLater(() -> {
+                    long taskId = taskIdlistIdAndSubtask.longValue;
+                    long listId = taskIdlistIdAndSubtask.longValue2;
+                    Subtask subtask = taskIdlistIdAndSubtask.subtask;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node node1 : list.getList().getChildren()){
+                                Card card = (Card) node1;
+                                Task task = card.getTask();
+                                if(task.taskId == taskId){
+                                    task.subtasks.add(0, subtask);
+                                    client.scenes.Subtask UISubtask =
+                                            new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+                                    card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }));

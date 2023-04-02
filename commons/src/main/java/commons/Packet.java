@@ -10,6 +10,7 @@ public class Packet {
     public Task task;
     public TaskList taskList;
     public Board board;
+    public Subtask subtask;
 
     public Packet() { }
 

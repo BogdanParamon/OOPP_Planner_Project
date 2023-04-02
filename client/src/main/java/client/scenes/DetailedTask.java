@@ -2,8 +2,10 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import commons.Subtask;
 import commons.Task;
+import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +21,9 @@ public class DetailedTask extends AnchorPane {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final Board board;
+    private final TaskList taskList;
+    private final Task task;
 
     @FXML
     private VBox tasks_vbox;
@@ -35,19 +40,19 @@ public class DetailedTask extends AnchorPane {
     @FXML
     private MFXButton addSubtaskButton;
 
-    private final Task task;
-
     /**
      * Setup server and main controller
      * @param mainCtrl the main controller
      * @param server server to connect to
      * @param task the task related to the detailed view
      */
-    @Inject
-    public DetailedTask(MainCtrl mainCtrl, ServerUtils server, Task task) {
+    public DetailedTask(MainCtrl mainCtrl, ServerUtils server, Board board,
+                        TaskList taskList, Task task) {
 
         this.mainCtrl = mainCtrl;
         this.server = server;
+        this.board = board;
+        this.taskList = taskList;
         this.task = task;
 
         FXMLLoader loader =
@@ -64,8 +69,8 @@ public class DetailedTask extends AnchorPane {
         }
 
         for (Subtask subtask : this.task.subtasks) {
-            client.scenes.Subtask subtaskUI =
-                    new client.scenes.Subtask(mainCtrl, server, task, subtask);
+             client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
             tasks_vbox.getChildren().add(0, subtaskUI);
         }
 
@@ -77,14 +82,16 @@ public class DetailedTask extends AnchorPane {
     }
 
     public void addSubtask() {
-        Subtask subtask =
-                server.addSubtask(task.taskId, new Subtask("New Subtask"));
-        task.subtasks.add(0, subtask);
-        client.scenes.Subtask subtaskUI =
-                new client.scenes.Subtask(mainCtrl, server, task, subtask);
-        tasks_vbox.getChildren().add(0, subtaskUI);
+        Subtask subtask = new Subtask("New Subtask");
+        server.send("/app/subtasks/add/" + board.boardId + "/" + taskList.listId + "/" + task.taskId, subtask);
+//                server.addSubtask(task.taskId, new Subtask());
+//        task.subtasks.add(0, subtask);
+//        client.scenes.Subtask subtaskUI =
+//                new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+//        tasks_vbox.getChildren().add(0, subtaskUI);
     }
 
-
-
+    public VBox getTasks_vbox() {
+        return tasks_vbox;
+    }
 }

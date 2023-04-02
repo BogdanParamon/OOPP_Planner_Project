@@ -186,4 +186,6 @@ public class List extends Pane {
         listIdAndNewTitle.stringValue = title.getText();
         server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
+
+
 }

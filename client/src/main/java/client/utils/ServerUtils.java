@@ -210,7 +210,6 @@ public class ServerUtils {
                 .delete();
     }
 
-
     public void deleteTask(Task task) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/delete/")
@@ -281,5 +280,13 @@ public class ServerUtils {
     }
     public void disconnectWebsocket() {
         session.disconnect();
+    }
+
+    public Subtask updateSubtask(Subtask subtask){
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/subtasks/update")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 }

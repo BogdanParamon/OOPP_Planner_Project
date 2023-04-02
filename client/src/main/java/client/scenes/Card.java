@@ -34,6 +34,7 @@ public class Card extends Pane {
     private final Board board;
     private final TaskList taskList;
     private final Task task;
+    private DetailedTask detailedTask;
     @FXML
     private MFXButton deleteTaskButton;
 
@@ -42,6 +43,7 @@ public class Card extends Pane {
 
     @FXML
     private MFXButton openTask;
+
 
     /**
      * Constructs a new Card instance with the specified parameters.
@@ -71,6 +73,8 @@ public class Card extends Pane {
             System.out.println("Error");
             throw new RuntimeException(e);
         }
+
+        detailedTask = new DetailedTask(mainCtrl, server, board, taskList, task);
 
         deleteTaskButton.setOnAction(event -> {
             server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
@@ -144,10 +148,10 @@ public class Card extends Pane {
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initStyle(StageStyle.DECORATED);
-        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
 
         AnchorPane root = detailedTask;
         stage.setScene(new Scene(root));
+        stage.setResizable(false);
         stage.show();
     }
 
@@ -169,5 +173,9 @@ public class Card extends Pane {
 
     public TextField getTaskTitle() {
         return taskTitle;
+    }
+
+    public DetailedTask getDetailedTask() {
+        return detailedTask;
     }
 }
