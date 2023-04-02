@@ -5,7 +5,6 @@ import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,7 +15,8 @@ import server.database.TagRepository;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -36,7 +36,7 @@ public class TaskController {
      *
      * @param taskRepository     The TaskRepository object to be used for database access.
      * @param taskListRepository The TaskListRepository object to be used for database access.
-     * @param tagRepository     The TagRepository object to be used for database access.
+     * @param tagRepository      The TagRepository object to be used for database access.
      */
 
     public TaskController(TaskRepository taskRepository,
@@ -48,8 +48,9 @@ public class TaskController {
 
     /**
      * Endpoint for adding a new task.
+     *
      * @param taskListId taskList to be added to
-     * @param task The Task object to be added to the database.
+     * @param task       The Task object to be added to the database.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
 
@@ -68,6 +69,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting a task by its ID.
+     *
      * @param id The ID of the Task to be retrieved.
      * @return ResponseEntity with the Task object if found or a not found status code.
      */
@@ -79,6 +81,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting all tasks.
+     *
      * @return ResponseEntity with a list of all Task objects.
      */
     @GetMapping(path = {"", "/"})
@@ -88,6 +91,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting all tasks sorted by the specified attribute.
+     *
      * @param sortBy The attribute to sort the tasks by (optional).
      * @return ResponseEntity with a list of Task objects sorted by the specified attribute.
      */
@@ -107,6 +111,7 @@ public class TaskController {
 
     /**
      * Endpoint for updating a task by its ID.
+     *
      * @param task The Task object containing the updated information.
      * @return ResponseEntity with the updated Task object or a not found status code.
      */
@@ -123,7 +128,7 @@ public class TaskController {
     /**
      * Endpoint for deleting a task by ID.
      *
-     * @param taskId The ID of the Task to be deleted.
+     * @param taskId     The ID of the Task to be deleted.
      * @param taskListId The ID of the TaskList in which the task is.
      * @return ResponseEntity with the status code whether it's success or failure.
      */

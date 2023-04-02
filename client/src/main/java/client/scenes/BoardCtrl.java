@@ -21,12 +21,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
-import org.springframework.messaging.simp.stomp.StompSession;
 import javafx.stage.Modality;
+import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class BoardCtrl implements Initializable {
 
@@ -258,7 +260,8 @@ public class BoardCtrl implements Initializable {
     }
 
     public StompSession.Subscription registerForNewTags() {
-        return server.registerForMessages("/topic/boards/addTag/" + board.boardId, commons.Tag.class,
+        return server.registerForMessages("/topic/boards/addTag/" + board.boardId,
+                commons.Tag.class,
                 tag -> Platform.runLater(() -> {
                     board.tags.add(tag);
                     Tag tagUI = new Tag(mainCtrl, server, tag, board);
@@ -267,7 +270,8 @@ public class BoardCtrl implements Initializable {
     }
 
     public StompSession.Subscription registerForTagUpdates() {
-        return server.registerForMessages("/topic/boards/updateTag/" + board.boardId, commons.Tag.class,
+        return server.registerForMessages("/topic/boards/updateTag/" + board.boardId,
+                commons.Tag.class,
                 tag -> Platform.runLater(() -> {
                     System.out.println("tag updated: " + tag);
                     board.tags.removeIf(t -> t.tagId == tag.tagId);
@@ -369,6 +373,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
     }
+
     private void setBoardColors(Board board) {
         root.setStyle(fxBackgroundColor + board.backgroundColor
                 + "; -fx-border-color: black; -fx-border-width: 2px;");
@@ -592,7 +597,7 @@ public class BoardCtrl implements Initializable {
         resetBackgroundFont();
         resetButtonFont();
     }
-    
+
     public AnchorPane getRoot() {
         return root;
     }
