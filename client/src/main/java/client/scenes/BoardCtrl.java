@@ -81,6 +81,12 @@ public class BoardCtrl implements Initializable {
     private MFXScrollPane tagsPane;
     @FXML
     private Text txtTags;
+    @FXML
+    private ColorPicker colorPickerListsColor;
+    @FXML
+    private ColorPicker colorPickerListsFont;
+    @FXML
+    private HBox tags_hbox;
 
     private Set<StompSession.Subscription> subscriptions;
 
@@ -116,6 +122,12 @@ public class BoardCtrl implements Initializable {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
+                    listUI.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+                    listUI.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+                    listUI.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                            + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+                    listUI.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+                    listUI.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
                     board_hbox.getChildren().add(listUI);
                 }));
     }
@@ -237,12 +249,22 @@ public class BoardCtrl implements Initializable {
         board_hbox.getChildren().clear();
         for (var taskList : board.lists) {
             List list = new List(mainCtrl, server, taskList, this.board);
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+            list.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
             board_hbox.getChildren().add(list);
         }
 
         tagList.getChildren().remove(1, tagList.getChildren().size());
         for (var tag : board.tags) {
             Tag tagUI = new Tag(mainCtrl, server, tag);
+            tagUI.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+            tagUI.edit.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+            tagUI.saveTag.setStyle(fxBackgroundColor + board.backgroundColor + ";");
             tagList.getChildren().add(tagUI);
         }
 
@@ -258,6 +280,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForTaskUpdates());
     }
+
     private void setBoardColors(Board board) {
         root.setStyle(fxBackgroundColor + board.backgroundColor
                 + "; -fx-border-color: black; -fx-border-width: 2px;");
@@ -343,7 +366,11 @@ public class BoardCtrl implements Initializable {
                 new Random(System.currentTimeMillis()).nextInt(0x1000000));
         commons.Tag tag = new commons.Tag("New Tag", color);
         tag = server.addTagToBoard(board.boardId, tag);
-        tagList.getChildren().add(1, new Tag(mainCtrl, server, tag));
+        Tag newTag = new Tag(mainCtrl, server, tag);
+        newTag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        newTag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        newTag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+        tagList.getChildren().add(1, newTag);
     }
 
     public void showCustomize() {
@@ -354,6 +381,8 @@ public class BoardCtrl implements Initializable {
         colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
         colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
         colorPickerBoard.setValue(Color.valueOf(board.boardColor));
+        colorPickerListsColor.setValue(Color.valueOf(board.listsColor));
+        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
     }
 
@@ -394,6 +423,25 @@ public class BoardCtrl implements Initializable {
         custimozePane.setStyle(fxBackgroundColor
                 + buttonColor + ";-fx-background-radius: 10px;");
         this.board.buttonsBackground = buttonColor;
+        //lists color
+        board.listsColor = colorPickerListsColor.getValue().toString().substring(2, 8);
+        board.listsFontColor = colorPickerListsFont.getValue().toString().substring(2, 8);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
+            list.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+        }
+
+        for (int i = 1; i < tagList.getChildren().size(); ++i) {
+            Tag tag = (Tag) tagList.getChildren().get(i);
+            tag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        }
 
         applyChangesFont();
 
@@ -428,6 +476,12 @@ public class BoardCtrl implements Initializable {
         updateBoard(board);
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
+        for (int i = 1; i < tagList.getChildren().size(); ++i) {
+            Tag tag = (Tag) tagList.getChildren().get(i);
+            tag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        }
     }
 
     public void resetBoardColor() {
@@ -475,14 +529,42 @@ public class BoardCtrl implements Initializable {
         colorPickerButtonsFont.setValue(Color.valueOf("Black"));
     }
 
+    public void resetListsColor() {
+        board.listsColor = "ffffff";
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getScrollPane().setStyle(fxBackgroundColor + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
+            list.getTitle().setStyle(fxBackgroundColor + "ffffff"
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-border-color: transparent;");
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + "ffffff;");
+        }
+
+        updateBoard(board);
+        colorPickerListsColor.setValue(Color.valueOf("ffffff"));
+    }
+
+    public void resetListsFont() {
+        board.listsFontColor = "000000";
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+        }
+
+        updateBoard(board);
+        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
+    }
+
     public void resetAllColors() {
         resetBoardColor();
         resetBackgroundColor();
         resetButtonColor();
         resetBackgroundFont();
         resetButtonFont();
+        resetListsColor();
+        resetListsFont();
     }
-    
+
     public AnchorPane getRoot() {
         return root;
     }

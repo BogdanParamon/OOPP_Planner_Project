@@ -30,6 +30,10 @@ public class Board {
 
     public String boardColor;
 
+    public String listsColor;
+
+    public String listsFontColor;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
@@ -51,6 +55,8 @@ public class Board {
         this.backgroundColorFont = "Black";
         this.buttonsColorFont = "Black";
         this.boardColor = "ddd";
+        this.listsColor = "ffffff";
+        this.listsFontColor = "000000";
     }
 
     @SuppressWarnings("unused")
@@ -77,7 +83,9 @@ public class Board {
                 && Objects.equals(backgroundColorFont, board.backgroundColorFont)
                 && Objects.equals(buttonsColorFont, board.buttonsColorFont)
                 && Objects.equals(boardColor, board.boardColor)
-                && Objects.equals(tags, board.tags);
+                && Objects.equals(tags, board.tags)
+                && Objects.equals(listsColor, board.listsColor)
+                && Objects.equals(listsFontColor, board.listsFontColor);
     }
 
     /**
@@ -90,7 +98,7 @@ public class Board {
     public int hashCode() {
         return Objects.hash(boardId, title, backgroundColor
                 , buttonsBackground, lists, backgroundColorFont
-                , buttonsColorFont, boardColor, tags);
+                , buttonsColorFont, boardColor, tags, listsColor, listsFontColor);
     }
 
     /**
