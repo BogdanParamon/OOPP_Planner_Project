@@ -232,12 +232,12 @@ public class TaskController {
         return packet;
     }
 
-    @MessageMapping("/tasks/addTag/{boardId}/{tagId}")
-    @SendTo("/topic/tasks/addTag/{boardId}")
+    @MessageMapping("/tasks/addTag/{taskId}")
+    @SendTo("/topic/tasks/addTag/{taskId}")
     @Transactional
-    public Tag addTagMessage(Tag tag, @DestinationVariable("boardId") long boardId,
-                             @DestinationVariable("tagId") long tagId) {
-        addTag(tag.tagId, tagId);
+    public Tag addTagMessage(Tag tag, @DestinationVariable("taskId") long taskId) {
+        System.out.println(tag.tagId + " " + taskId);
+        addTag(tag.tagId, taskId);
         return tag;
     }
 

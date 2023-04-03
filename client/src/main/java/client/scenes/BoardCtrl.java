@@ -281,9 +281,10 @@ public class BoardCtrl implements Initializable {
                         if (tagList.getChildren().get(i) instanceof Tag) {
                             Tag tagUI = (Tag) tagList.getChildren().get(i);
                             if (tagUI.tag.tagId == tag.tagId) {
+                                System.out.println(i);
                                 tagList.getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                                break;
                             }
-                            break;
                         }
                     }
 

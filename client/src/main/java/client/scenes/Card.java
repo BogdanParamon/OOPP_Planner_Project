@@ -6,6 +6,7 @@ import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
 import java.net.URL;
@@ -84,6 +86,8 @@ public class Card extends Pane {
         initDrag();
         initEditTaskTitle();
 
+        registerForAddTagMessages();
+
         openTask.setOnAction(event -> displayDialog());
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
@@ -95,6 +99,13 @@ public class Card extends Pane {
         }
     }
 
+    public StompSession.Subscription registerForAddTagMessages() {
+        return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
+                tag -> {
+                    Platform.runLater(() -> addTag( tag, true)
+                    );
+                });
+    }
 
 
 
@@ -132,8 +143,9 @@ public class Card extends Pane {
 
             Dragboard db = event.getDragboard();
             long tagId = Long.parseLong(db.getString());
-            if (!task.tags.contains(server.getTagById(tagId))) {
-                addTag(server.getTagById(tagId), true);
+            commons.Tag tag = server.getTagById(tagId);
+            if (!task.tags.contains(tag)) {
+                server.send("/app/tasks/addTag/" + task.taskId, tag);
             }
             event.setDropCompleted(true);
         });
@@ -205,7 +217,6 @@ public class Card extends Pane {
 
         if (newTag) {
             task.addTag(tag);
-            server.send("/app/tasks/addTag/" + board.boardId + "/" + task.taskId, tag);
         }
         tags.add(pane, col, row);
         col = (col + 1) % 4;
