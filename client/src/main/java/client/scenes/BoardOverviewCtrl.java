@@ -117,6 +117,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void switchSceneToBoard(Board board) {
         mainCtrl.boardCtrl.setBoard(board);
+        mainCtrl.boardCtrl.setAdminMode(false);
         mainCtrl.showBoard();
     }
 

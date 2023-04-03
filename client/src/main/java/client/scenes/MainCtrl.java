@@ -41,6 +41,8 @@ public class MainCtrl {
 
     protected Scene userOrAdmin;
     protected UserOrAdminCtrl userOrAdminCtrl;
+    protected AdminOverviewCtrl adminOverviewCtrl;
+    protected Scene adminOverview;
     private double xOffset, yOffset;
 
     /**
@@ -52,13 +54,15 @@ public class MainCtrl {
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param userOrAdmin   allow user to pick between user view and admin view
+     * @param adminOverview board overview with admin privileges
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<UserOrAdminCtrl, Parent> userOrAdmin) {
+                           Pair<UserOrAdminCtrl, Parent> userOrAdmin,
+                           Pair<AdminOverviewCtrl, Parent> adminOverview) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -75,6 +79,9 @@ public class MainCtrl {
 
         this.userOrAdminCtrl = userOrAdmin.getKey();
         this.userOrAdmin = new Scene(userOrAdmin.getValue());
+
+        this.adminOverviewCtrl = adminOverview.getKey();
+        this.adminOverview = new Scene(adminOverview.getValue());
 
         primaryStage.setScene(this.home);
         primaryStage.show();
@@ -114,6 +121,12 @@ public class MainCtrl {
     public void showUserOrAdmin() {
         primaryStage.setTitle("Select mode");
         primaryStage.setScene(userOrAdmin);
+    }
+
+    public void showAdminOverview() {
+        primaryStage.setTitle("Admin Board Overview");
+        primaryStage.setScene(adminOverview);
+        adminOverviewCtrl.load();
     }
 
     /**

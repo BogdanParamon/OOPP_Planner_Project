@@ -30,7 +30,7 @@ public class UserOrAdminCtrl implements Initializable {
     @FXML
     private MFXPasswordField passwordField;
 
-    private boolean mode; // 0 -> user, 1 -> admin
+    private boolean adminMode; // 0 -> user, 1 -> admin
 
     @Inject
     public UserOrAdminCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -43,23 +43,34 @@ public class UserOrAdminCtrl implements Initializable {
         mainCtrl.initHeader(root);
         nameField.setVisible(true);
         passwordField.setVisible(false);
-        mode = false;
-        button.setOnAction(
-                event -> switchSceneToBoardOverview(server.connectToUser(nameField.getText())));
+        adminMode = false;
+        button.setOnAction(event -> confirm());
     }
 
 
     public void view() {
-        if (mode == false) {
-            mode = true;
+        if (!adminMode) {
+            adminMode = true;
             nameField.setVisible(false);
             passwordField.setVisible(true);
             viewButton.setText("User view");
         } else {
-            mode = false;
+            adminMode = false;
             nameField.setVisible(true);
             passwordField.setVisible(false);
             viewButton.setText("Admin view");
+        }
+    }
+
+    public void confirm() {
+        if (!adminMode) {
+            switchSceneToBoardOverview(server.connectToUser(nameField.getText()));
+        } else {
+            if (passwordField.getText().equals("admin")) {
+                switchSceneToAdminOverview();
+            } else {
+                passwordField.clear();
+            }
         }
     }
 
@@ -69,4 +80,7 @@ public class UserOrAdminCtrl implements Initializable {
         mainCtrl.showBoardOverview();
     }
 
+    public void switchSceneToAdminOverview() {
+        mainCtrl.showAdminOverview();
+    }
 }

@@ -87,10 +87,12 @@ public class BoardController {
      * @return successful if board exists
      */
     @DeleteMapping(path = "/delete")
+    @Transactional
     public ResponseEntity<String> delete(@RequestParam long boardId) {
         try {
             return ResponseEntity.ok(boardService.delete(boardId));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }

@@ -55,6 +55,7 @@ public class BoardService {
         if (!boardRepository.existsById(boardId))
             throw new IllegalArgumentException();
 
+        boardRepository.deleteBoardUserConnection(boardId);
         boardRepository.deleteById(boardId);
         return "Successful";
     }

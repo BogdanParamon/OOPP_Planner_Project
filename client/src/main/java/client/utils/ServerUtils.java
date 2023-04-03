@@ -215,6 +215,14 @@ public class ServerUtils {
                 .delete();
     }
 
+    public void deleteBoardById(long boardId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/delete")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
 
     public void deleteTask(Task task) {
         ClientBuilder.newClient(new ClientConfig())
