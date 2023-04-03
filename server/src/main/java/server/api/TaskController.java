@@ -135,7 +135,6 @@ public class TaskController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Task> delete(@RequestParam long taskId, @RequestParam long taskListId) {
-        System.out.println("Deleting" + taskId + " " + taskListId);
         if (!taskRepository.existsById(taskId) || taskId < 0
                 || !taskListRepository.existsById(taskListId) || taskListId < 0) {
             return ResponseEntity.badRequest().build();
@@ -144,7 +143,6 @@ public class TaskController {
         Task task = taskRepository.findById(taskId).get();
 
         if (taskList.tasks.remove(task)) {
-            System.out.println("Deletiong");
             taskRepository.deleteTaskTags(taskId);
             taskRepository.deleteById(taskId);
         }
