@@ -36,23 +36,20 @@ public class SubtaskController {
         return ResponseEntity.ok(savedSubtask);
     }
 
-//    @PutMapping(path = "/update")
-//    public ResponseEntity<Subtask> updateSubtask(@RequestBody Subtask subtask) {
-//        if (subtask == null || !subtaskRepository.existsById(subtask.subTaskId)) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        Subtask updatedSubtask =  subtaskRepository.save(subtask);
-//        return ResponseEntity.ok(updatedSubtask);
-//    }
-
-    @PutMapping("/rename")
-    public ResponseEntity<Subtask> updateSubtaskText(@RequestParam long subtaskID,
-                                             @RequestBody String updatedSubtaskText) {
-        if (updatedSubtaskText == null || !subtaskRepository.existsById(subtaskID)) {
+    @PutMapping(path = "/status")
+    public ResponseEntity<Subtask> updateStatus(@RequestBody Subtask subtask) {
+        if (subtask == null || !subtaskRepository.existsById(subtask.subTaskId)) {
             return ResponseEntity.badRequest().build();
         }
-        Subtask subtask = subtaskRepository.findById(subtaskID).get();
-        subtask.subtaskText = updatedSubtaskText;
+        Subtask updatedSubtask =  subtaskRepository.save(subtask);
+        return ResponseEntity.ok(updatedSubtask);
+    }
+
+    @PutMapping("/rename")
+    public ResponseEntity<Subtask> rename(@RequestParam Subtask subtask) {
+        if (subtask == null || !subtaskRepository.existsById(subtask.subTaskId)) {
+            return ResponseEntity.badRequest().build();
+        }
         Subtask updatedSubtask = subtaskRepository.save(subtask);
         return ResponseEntity.ok(updatedSubtask);
     }
@@ -86,26 +83,45 @@ public class SubtaskController {
         return packet;
     }
 
-    @MessageMapping("/subtasks/rename/{subTaskId}")
-    @SendTo("/topic/subtasks/rename/{subTaskId}")
+    @MessageMapping("/subtasks/rename/{boardId}/{listId}/{taskId}")
+    @SendTo("/topic/subtasks/rename/{boardId}")
     @Transactional
-    public Packet renameMessage(String updatedText,
-                                @DestinationVariable("subTaskId") long subtaskId) {
-        updateSubtaskText(subtaskId, updatedText);
-        Packet subtaskIdAndNewText = new Packet();
-        subtaskIdAndNewText.stringValue = updatedText;
-        subtaskIdAndNewText.longValue = subtaskId;
-        return subtaskIdAndNewText;
-    }
-
-    @MessageMapping("/subtasks/delete/{taskId}")
-    @SendTo("/topic/subtasks/delete/{taskId}")
-    @Transactional
-    public Packet deleteMessage(Long subtaskId, @DestinationVariable("taskId") long taskId) {
-        delete(subtaskId, taskId);
+    public Packet renameMessage(Subtask subtask, @DestinationVariable("boardId") long boardId,
+                                @DestinationVariable("listId") long listId,
+                                @DestinationVariable("taskId") long taskId) {
+        rename(subtask);
         Packet packet = new Packet();
         packet.longValue = taskId;
-        packet.longValue2 = subtaskId;
+        packet.longValue2 = listId;
+        packet.subtask = subtask;
+        return packet;
+    }
+
+    @MessageMapping("/subtasks/delete/{boardId}/{listId}/{taskId}")
+    @SendTo("/topic/subtasks/delete/{boardId}")
+    @Transactional
+    public Packet deleteMessage(Long subtaskId, @DestinationVariable("boardId") long boardId,
+                                @DestinationVariable("listId") long listId,
+                                @DestinationVariable("taskId") long taskId) {
+        delete(subtaskId, taskId);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.longValue2 = taskId;
+        packet.longValue3 = subtaskId;
+        return packet;
+    }
+
+    @MessageMapping("/subtasks/status/{boardId}/{listId}/{taskId}")
+    @SendTo("/topic/subtasks/status/{boardId}")
+    @Transactional
+    public Packet statusMessage(Subtask subtask, @DestinationVariable("boardId") long boardId,
+                                @DestinationVariable("listId") long listId,
+                                @DestinationVariable("taskId") long taskId) {
+        updateStatus(subtask);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.longValue2 = taskId;
+        packet.subtask = subtask;
         return packet;
     }
 }

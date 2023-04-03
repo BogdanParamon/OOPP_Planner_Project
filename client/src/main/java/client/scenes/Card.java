@@ -7,20 +7,15 @@ import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Modality;
 
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import javafx.beans.value.ObservableValue;
 
@@ -145,14 +140,7 @@ public class Card extends Pane {
     }
 
     void displayDialog() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initStyle(StageStyle.DECORATED);
-
-        AnchorPane root = detailedTask;
-        stage.setScene(new Scene(root));
-        stage.setResizable(false);
-        stage.show();
+        mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>

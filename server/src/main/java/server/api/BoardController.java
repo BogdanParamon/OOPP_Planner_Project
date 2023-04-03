@@ -24,7 +24,6 @@ public class BoardController {
     private final BoardRepository boardRepository;
     private final TagRepository tagRepository;
 
-
     /**
      * Constructor for the BoardController class
      *

@@ -40,6 +40,9 @@ public class DetailedTask extends AnchorPane {
     @FXML
     private MFXButton addSubtaskButton;
 
+    @FXML
+    private MFXButton doneButton;
+
     /**
      * Setup server and main controller
      * @param mainCtrl the main controller
@@ -77,6 +80,8 @@ public class DetailedTask extends AnchorPane {
         dtvTitle.setText(task.title);
         dtvDescription.setText("Add description");
 
+        doneButton.setOnAction(event -> stopDisplayingDialog());
+
         addSubtaskButton.setOnAction(event -> addSubtask());
 
     }
@@ -93,5 +98,9 @@ public class DetailedTask extends AnchorPane {
 
     public VBox getTasks_vbox() {
         return tasks_vbox;
+    }
+
+    void stopDisplayingDialog() {
+        mainCtrl.boardCtrl.stopDisplayingDialog(this);
     }
 }
