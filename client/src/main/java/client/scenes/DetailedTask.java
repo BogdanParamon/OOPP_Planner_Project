@@ -1,7 +1,6 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import com.google.inject.Inject;
 import commons.Board;
 import commons.Subtask;
 import commons.Task;
@@ -47,6 +46,8 @@ public class DetailedTask extends AnchorPane {
      * Setup server and main controller
      * @param mainCtrl the main controller
      * @param server server to connect to
+     * @param board the board related to the detailed view
+     * @param taskList the taskList related to the detailed view
      * @param task the task related to the detailed view
      */
     public DetailedTask(MainCtrl mainCtrl, ServerUtils server, Board board,
@@ -72,7 +73,7 @@ public class DetailedTask extends AnchorPane {
         }
 
         for (Subtask subtask : this.task.subtasks) {
-             client.scenes.Subtask subtaskUI =
+            client.scenes.Subtask subtaskUI =
                     new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
             tasks_vbox.getChildren().add(0, subtaskUI);
         }
@@ -88,12 +89,8 @@ public class DetailedTask extends AnchorPane {
 
     public void addSubtask() {
         Subtask subtask = new Subtask("New Subtask");
-        server.send("/app/subtasks/add/" + board.boardId + "/" + taskList.listId + "/" + task.taskId, subtask);
-//                server.addSubtask(task.taskId, new Subtask());
-//        task.subtasks.add(0, subtask);
-//        client.scenes.Subtask subtaskUI =
-//                new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
-//        tasks_vbox.getChildren().add(0, subtaskUI);
+        server.send("/app/subtasks/add/" + board.boardId + "/"
+                + taskList.listId + "/" + task.taskId, subtask);
     }
 
     public VBox getTasks_vbox() {

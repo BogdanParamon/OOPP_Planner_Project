@@ -231,14 +231,16 @@ public class BoardCtrl implements Initializable {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()){
+                            for (Node node1 : list.getList().getChildren()) {
                                 Card card = (Card) node1;
                                 Task task = card.getTask();
-                                if(task.taskId == taskId){
+                                if (task.taskId == taskId) {
                                     task.subtasks.add(0, subtask);
                                     client.scenes.Subtask UISubtask =
-                                            new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
-                                    card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
+                                            new client.scenes.Subtask(mainCtrl,
+                                                    server, board, taskList, task, subtask);
+                                    card.getDetailedTask().
+                                            getTasks_vbox().getChildren().add(0, UISubtask);
                                     break;
                                 }
                             }
@@ -258,14 +260,16 @@ public class BoardCtrl implements Initializable {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()){
+                            for (Node node1 : list.getList().getChildren()) {
                                 Card card = (Card) node1;
                                 Task task = card.getTask();
-                                if(task.taskId == taskId){
-                                    for (Node node2 : card.getDetailedTask().getTasks_vbox().getChildren()){
-                                        client.scenes.Subtask subtaskUI = (client.scenes.Subtask) node2;
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
                                         Subtask subtaskDB = subtaskUI.getSubtask();
-                                        if(subtaskDB.subTaskId == subtask.subTaskId){
+                                        if (subtaskDB.subTaskId == subtask.subTaskId) {
                                             subtaskUI.getCheckbox().setText(subtask.subtaskText);
                                             break;
                                         }
@@ -288,15 +292,18 @@ public class BoardCtrl implements Initializable {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()){
+                            for (Node node1 : list.getList().getChildren()) {
                                 Card card = (Card) node1;
                                 Task task = card.getTask();
-                                if(task.taskId == taskId){
-                                    for (Node node2 : card.getDetailedTask().getTasks_vbox().getChildren()){
-                                        client.scenes.Subtask subtaskUI = (client.scenes.Subtask) node2;
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
                                         Subtask subtaskDB = subtaskUI.getSubtask();
-                                        if(subtaskDB.subTaskId == subtaskId){
-                                            card.getDetailedTask().getTasks_vbox().getChildren().remove(subtaskUI);
+                                        if (subtaskDB.subTaskId == subtaskId) {
+                                            card.getDetailedTask().getTasks_vbox()
+                                                    .getChildren().remove(subtaskUI);
                                             task.subtasks.remove(subtaskDB);
                                             break;
                                         }
@@ -320,14 +327,18 @@ public class BoardCtrl implements Initializable {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
                         if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()){
+                            for (Node node1 : list.getList().getChildren()) {
                                 Card card = (Card) node1;
                                 Task task = card.getTask();
-                                if(task.taskId == taskId){
-                                    for (Node node2 : card.getDetailedTask().getTasks_vbox().getChildren()){
-                                        client.scenes.Subtask subtaskUI = (client.scenes.Subtask) node2;
-                                        if(subtask.subTaskId == subtaskUI.getSubtask().subTaskId){
-                                            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
+                                        if (subtask.subTaskId == subtaskUI
+                                                .getSubtask().subTaskId) {
+                                            subtaskUI.getCheckbox()
+                                                    .setSelected(subtask.subtaskBoolean);
                                         }
                                     }
                                     break;

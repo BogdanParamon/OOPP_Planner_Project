@@ -71,7 +71,7 @@ public class Subtask extends AnchorPane {
         });
 
         checkbox.setOnAction(event -> {
-            if(checkbox.isSelected()){
+            if (checkbox.isSelected()) {
                 subtask.subtaskBoolean = true;
                 server.send("/app/subtasks/status/" + board.boardId + "/"
                         + taskList.listId + "/" + task.taskId, subtask);

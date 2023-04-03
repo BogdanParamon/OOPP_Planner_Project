@@ -282,7 +282,7 @@ public class ServerUtils {
         session.disconnect();
     }
 
-    public Subtask updateSubtask(Subtask subtask){
+    public Subtask updateSubtask(Subtask subtask) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/subtasks/update")
                 .request(APPLICATION_JSON)
