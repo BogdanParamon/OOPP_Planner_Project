@@ -78,6 +78,8 @@ public class List extends Pane {
 
     private void initDrag(MainCtrl mainCtrl, ServerUtils server) {
         setOnDragOver(event -> {
+            if (!event.getGestureSource().getClass().equals(Card.class))
+                return;
             event.acceptTransferModes(TransferMode.MOVE);
             int index = getIndex(event);
 
@@ -102,6 +104,8 @@ public class List extends Pane {
         });
 
         setOnDragDropped(event -> {
+            if (!event.getGestureSource().getClass().equals(Card.class))
+                return;
             int index = getIndex(event);
             list.getChildren().remove(list.getChildren().get(dragIndex));
             Card.setDragToListId(taskList.listId);

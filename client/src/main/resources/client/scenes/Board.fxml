@@ -118,7 +118,7 @@
             </graphic>
         </MFXButton>
         <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0"
-                       style="-fx-background-radius: 10px; -fx-background-color: r;">
+                       style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
             <VBox fx:id="tagList" spacing="10">
                 <HBox>
                     <Text fx:id="txtTags" text="Tags">

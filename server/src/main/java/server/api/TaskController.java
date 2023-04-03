@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Packet;
+import commons.Tag;
 import commons.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.service.TaskService;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
+
     @Autowired
     private TaskService taskService;
 
     /**
      * Endpoint for adding a new task.
+     *
      * @param taskListId taskList to be added to
-     * @param task The Task object to be added to the database.
+     * @param task       The Task object to be added to the database.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
     @PostMapping(path = "/add")
@@ -38,6 +41,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting a task by its ID.
+     *
      * @param id The ID of the Task to be retrieved.
      * @return ResponseEntity with the Task object if found or a not found status code.
      */
@@ -54,6 +58,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting all tasks.
+     *
      * @return ResponseEntity with a list of all Task objects.
      */
     @GetMapping(path = {"", "/"})
@@ -63,6 +68,7 @@ public class TaskController {
 
     /**
      * Endpoint for getting all tasks sorted by the specified attribute.
+     *
      * @param sortBy The attribute to sort the tasks by (optional).
      * @return ResponseEntity with a list of Task objects sorted by the specified attribute.
      */
@@ -74,6 +80,7 @@ public class TaskController {
 
     /**
      * Endpoint for updating a task by its ID.
+     *
      * @param task The Task object containing the updated information.
      * @return ResponseEntity with the updated Task object or a not found status code.
      */
@@ -86,7 +93,7 @@ public class TaskController {
     /**
      * Endpoint for deleting a task by ID.
      *
-     * @param taskId The ID of the Task to be deleted.
+     * @param taskId     The ID of the Task to be deleted.
      * @param taskListId The ID of the TaskList in which the task is.
      * @return ResponseEntity with the status code whether it's success or failure.
      */
@@ -98,7 +105,6 @@ public class TaskController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     @PutMapping("/drag")
@@ -154,5 +160,14 @@ public class TaskController {
     public Packet dragMessage(Packet packet, @DestinationVariable("boardId") long boardId) {
         return taskService.dragMessage(packet, boardId);
     }
+
+    @MessageMapping("/tasks/addTag/{taskId}")
+    @SendTo("/topic/tasks/addTag/{taskId}")
+    @Transactional
+    public Tag addTagMessage(Tag tag, @DestinationVariable("taskId") long taskId) {
+        taskService.addTag(tag.tagId, taskId);
+        return tag;
+    }
+
 }
 
