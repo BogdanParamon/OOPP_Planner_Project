@@ -301,6 +301,14 @@ public class ServerUtils {
                 .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
     }
 
+    public Boolean verifyAdminPassword(String password) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/users/verifyAdmin")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(password, APPLICATION_JSON), Boolean.class);
+    }
+
     public void disconnectWebsocket() {
         session.disconnect();
     }

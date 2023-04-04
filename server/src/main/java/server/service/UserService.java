@@ -7,6 +7,7 @@ import server.database.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -35,5 +36,9 @@ public class UserService {
         for (Board board : user.boards)
             map.put(board.boardId, board.title);
         return map;
+    }
+
+    public Boolean verifyAdminPassword(String password) {
+        return Objects.equals(password, "admin");
     }
 }

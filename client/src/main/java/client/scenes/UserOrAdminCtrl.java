@@ -9,6 +9,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,6 +30,8 @@ public class UserOrAdminCtrl implements Initializable {
     private MFXButton viewButton;
     @FXML
     private MFXPasswordField passwordField;
+    @FXML
+    private Text incorrectPasswordMsg;
 
     private boolean adminMode; // 0 -> user, 1 -> admin
 
@@ -49,6 +52,8 @@ public class UserOrAdminCtrl implements Initializable {
 
 
     public void view() {
+        incorrectPasswordMsg.setVisible(false);
+        mainCtrl.userOrAdmin.getStylesheets().remove("/client/styles/inputerror.css");
         if (!adminMode) {
             adminMode = true;
             nameField.setVisible(false);
@@ -66,9 +71,12 @@ public class UserOrAdminCtrl implements Initializable {
         if (!adminMode) {
             switchSceneToBoardOverview(server.connectToUser(nameField.getText()));
         } else {
-            if (passwordField.getText().equals("admin")) {
+            if (!passwordField.getText().isEmpty()
+                    && server.verifyAdminPassword(passwordField.getText())) {
                 switchSceneToAdminOverview();
             } else {
+                mainCtrl.userOrAdmin.getStylesheets().add("/client/styles/inputerror.css");
+                incorrectPasswordMsg.setVisible(true);
                 passwordField.clear();
             }
         }
@@ -81,6 +89,8 @@ public class UserOrAdminCtrl implements Initializable {
     }
 
     public void switchSceneToAdminOverview() {
+        incorrectPasswordMsg.setVisible(false);
+        mainCtrl.userOrAdmin.getStylesheets().remove("/client/styles/inputerror.css");
         mainCtrl.showAdminOverview();
     }
 }
