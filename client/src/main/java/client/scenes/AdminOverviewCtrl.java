@@ -26,6 +26,12 @@ public class AdminOverviewCtrl implements Initializable {
     @FXML
     private Text subheading;
     @FXML
+    private Text boardIdLabel;
+    @FXML
+    private Text boardTitleLabel;
+    @FXML
+    private Text boardPasswordLabel;
+    @FXML
     private Text boardIdText;
     @FXML
     private Text boardTitleText;
@@ -105,6 +111,10 @@ public class AdminOverviewCtrl implements Initializable {
         boardTitleField.setText(board.title);
         boardPasswordField.setText("Placeholder password");
 
+        boardIdLabel.setVisible(true);
+        boardTitleLabel.setVisible(true);
+        boardPasswordLabel.setVisible(true);
+
         boardIdText.setVisible(true);
         boardTitleText.setVisible(true);
         boardTitleField.setVisible(false);
@@ -179,6 +189,10 @@ public class AdminOverviewCtrl implements Initializable {
     }
 
     public void deselectBoard() {
+        boardIdLabel.setVisible(false);
+        boardTitleLabel.setVisible(false);
+        boardPasswordLabel.setVisible(false);
+
         boardIdText.setVisible(false);
         boardTitleText.setVisible(false);
         boardTitleField.setVisible(false);
