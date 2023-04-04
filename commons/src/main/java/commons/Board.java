@@ -91,9 +91,13 @@ public class Board {
                 && backgroundColorFont.equals(board.backgroundColorFont)
                 && buttonsColorFont.equals(board.buttonsColorFont)
                 && boardColor.equals(board.boardColor) && listsColor.equals(board.listsColor)
-                && listsFontColor.equals(board.listsFontColor) && cardsBackground1.equals(board.cardsBackground1)
-                && cardsBackground2.equals(board.cardsBackground2) && cardsBackground3.equals(board.cardsBackground3) && cardsFont1.equals(board.cardsFont1)
-                && cardsFont2.equals(board.cardsFont2) && cardsFont3.equals(board.cardsFont3) && Objects.equals(lists, board.lists)
+                && listsFontColor.equals(board.listsFontColor)
+                && cardsBackground1.equals(board.cardsBackground1)
+                && cardsBackground2.equals(board.cardsBackground2)
+                && cardsBackground3.equals(board.cardsBackground3)
+                && cardsFont1.equals(board.cardsFont1)
+                && cardsFont2.equals(board.cardsFont2) && cardsFont3.equals(board.cardsFont3)
+                && Objects.equals(lists, board.lists)
                 && Objects.equals(tags, board.tags);
     }
 
@@ -108,7 +112,8 @@ public class Board {
         return Objects.hash(boardId, title, backgroundColor
                 , buttonsBackground, lists, backgroundColorFont
                 , buttonsColorFont, boardColor, tags, listsColor, listsFontColor
-                , cardsBackground1, cardsBackground2, cardsBackground3, cardsFont1, cardsFont2, cardsFont3);
+                , cardsBackground1, cardsBackground2, cardsBackground3,
+                cardsFont1, cardsFont2, cardsFont3);
     }
 
     /**

@@ -325,7 +325,8 @@ public class BoardCtrl implements Initializable {
                             if (tagUI.tag.tagId == tag.tagId) {
                                 System.out.println(i);
                                 Tag newTag = new Tag(mainCtrl, server, tag, board);
-                                newTag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                                newTag.deleteTag.setStyle(fxBackgroundColor
+                                        + board.backgroundColor);
                                 newTag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
                                 newTag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
                                 tagList.getChildren().set(i, newTag);
