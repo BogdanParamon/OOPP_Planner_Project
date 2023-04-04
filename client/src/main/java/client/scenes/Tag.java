@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Board;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
@@ -10,7 +11,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -19,7 +19,9 @@ public class Tag extends Pane {
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
-    private commons.Tag tag;
+    private Board board;
+    public commons.Tag tag;
+
 
     @FXML
     MFXTextField tagName;
@@ -34,11 +36,12 @@ public class Tag extends Pane {
     @FXML
     ColorPicker colorPicker;
 
-    public Tag(MainCtrl mainCtrl, ServerUtils server, commons.Tag tag) {
+    public Tag(MainCtrl mainCtrl, ServerUtils server, commons.Tag tag, Board board) {
 
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.tag = tag;
+        this.board = board;
 
         FXMLLoader loader =
                 new FXMLLoader(getClass().getResource("/client/scenes/Components/Tag.fxml"));
@@ -60,8 +63,7 @@ public class Tag extends Pane {
         colorPicker.setValue(Color.web(tag.getColor()));
 
         deleteTag.setOnAction(event -> {
-            server.removeTag(tag.tagId);
-            ((VBox) getParent()).getChildren().remove(this);
+            server.send("/app/boards/deleteTag/" + board.boardId, tag.tagId);
         });
 
         edit.setOnAction(event -> editTag());
@@ -70,8 +72,9 @@ public class Tag extends Pane {
         setOnDragDetected(event -> {
             Dragboard db = startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString("Tag:" + tag.tagId);
+            content.putString(String.valueOf(tag.tagId));
             db.setContent(content);
+            db.setDragView(tagPane.snapshot(null, null));
             event.consume();
         });
     }
@@ -95,7 +98,7 @@ public class Tag extends Pane {
         tag.setColor("#" + colorPicker.getValue().toString().substring(2, 8));
         setColor(tag.getColor());
         tag.setText(tagName.getText());
-        tag = server.updateTag(tag);
+        server.send("/app/boards/updateTag/" + board.boardId, tag);
     }
 
     public void setColor(String color) {

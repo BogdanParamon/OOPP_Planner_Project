@@ -1,44 +1,27 @@
 package server.api;
 
-import commons.*;
+import commons.Board;
+import commons.Packet;
+import commons.Tag;
+import commons.TaskList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
-import server.database.TagRepository;
-import server.database.UserRepository;
+import server.service.BoardService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
-
-    private final BoardRepository boardRepository;
-
-    private final UserRepository userRepository;
-
-    private final TagRepository tagRepository;
-
-
-    /**
-     * Constructor for the BoardController class
-     *
-     * @param boardRepository The repository containing Board instances
-     * @param userRepository  The repository containing User instances
-     * @param tagRepository   The repository containing Tag instances
-     */
-    public BoardController(BoardRepository boardRepository, UserRepository userRepository,
-                           TagRepository tagRepository) {
-        this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
-        this.tagRepository = tagRepository;
-    }
+    @Autowired
+    private BoardService boardService;
 
     /**
      * Gets all the board instances in the repository
@@ -47,7 +30,7 @@ public class BoardController {
      */
     @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
-        return boardRepository.findAll();
+        return boardService.getAll();
     }
 
     /**
@@ -59,10 +42,10 @@ public class BoardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
-        if (id < 0 || !boardRepository.existsById(id)) {
+        Optional<Board> board = boardService.getByid(id);
+        if (board.isEmpty())
             return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(boardRepository.findById(id).get());
+        return ResponseEntity.ok(board.get());
     }
 
     /**
@@ -73,28 +56,28 @@ public class BoardController {
      */
     @GetMapping("/{boardId}/taskLists")
     public ResponseEntity<List<TaskList>> getListsByBoardId(@PathVariable("boardId") long boardId) {
-        if (boardId < 0 || !boardRepository.existsById(boardId))
+        try {
+            return ResponseEntity.ok(boardService.getListsByBoardId(boardId));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
-        Board parentBoard = boardRepository.findById(boardId).get();
-        return ResponseEntity.ok(parentBoard.lists);
+        }
     }
 
     /**
      * Adds a board to the repository
      *
-     * @param board the boards that will get added to the repository
+     * @param board  the boards that will get added to the repository
      * @param userId the Id of the user that gets permission to access board
      * @return A ResponseEntity object that can handle all outcomes of
      * attempted addition to the board repository
      */
     @PostMapping(path = "/add")
     public ResponseEntity<Board> add(@RequestBody Board board, @RequestParam long userId) {
-        if (board == null || board.title == null || board.title.isEmpty())
+        try {
+            return ResponseEntity.ok(boardService.add(board, userId));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
-        User user = userRepository.findById(userId).get();
-        Board saved = boardRepository.save(board);
-        user.boards.add(saved);
-        return ResponseEntity.ok(saved);
+        }
     }
 
     /**
@@ -104,12 +87,12 @@ public class BoardController {
      * @return successful if board exists
      */
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<Board> delete(@RequestParam long boardId) {
-        if (!boardRepository.existsById(boardId))
+    public ResponseEntity<String> delete(@RequestParam long boardId) {
+        try {
+            return ResponseEntity.ok(boardService.delete(boardId));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
-
-        boardRepository.deleteById(boardId);
-        return ResponseEntity.ok().build();
+        }
     }
 
     /**
@@ -120,99 +103,82 @@ public class BoardController {
      */
     @PutMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
-        if (board == null || !boardRepository.existsById(board.boardId)) {
+        try {
+            return ResponseEntity.ok(boardService.updateBoard(board));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        Board updatedBoard = boardRepository.save(board);
-        return ResponseEntity.ok(updatedBoard);
     }
 
 
     @DeleteMapping(path = "/deleteAll")
     public ResponseEntity<String> deleteAll() {
-        boardRepository.deleteAll();
-        return ResponseEntity.ok("Successful");
+        return ResponseEntity.ok(boardService.deleteAll());
+    }
+
+    @GetMapping(path = "/titles&ids")
+    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
+        return ResponseEntity.ok(boardService.getBoardTitlesAndIds());
+    }
+
+    @PutMapping("/rename")
+    public ResponseEntity<Board> renameBoard(@RequestParam long boardId,
+                                             @RequestBody String newTitle) {
+        try {
+            return ResponseEntity.ok(boardService.renameBoard(boardId, newTitle));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping(path = {"/addTag"})
+    public ResponseEntity<Tag> addTag(@RequestParam long boardId, @RequestBody Tag tag) {
+        try {
+            return ResponseEntity.ok(boardService.addTag(boardId, tag));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = {"/getTagById/{tagId}"})
+    public ResponseEntity<Tag> getTag(@PathVariable("tagId") long tagId) {
+        try {
+            return ResponseEntity.ok(boardService.getTag(tagId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(path = {"/deleteTag"})
+    public ResponseEntity<String> deleteTag(@RequestParam long tagId) {
+        try {
+            return ResponseEntity.ok(boardService.deleteTag(tagId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping(path = {"/updateTag"})
+    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag) {
+        try {
+            return ResponseEntity.ok(boardService.updateTag(tag));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @MessageMapping("/boards/add/{userId}")
     @SendTo("/topic/boards/add/{userId}")
     @Transactional
     public Packet addMessage(Board board, @DestinationVariable("userId") long userId) {
-        add(board, userId);
-        Packet packet = new Packet();
-        packet.stringValue = board.title;
-        packet.longValue = board.boardId;
-        packet.longValue2 = userId;
-        return packet;
-    }
-    @GetMapping(path = "/titles&ids")
-    public ResponseEntity<Map<Long, String>> getBoardTitlesAndIds() {
-        Map<Long, String> map = new HashMap<>();
-        for (Board board : boardRepository.findAll())
-            map.put(board.boardId, board.title);
-        return ResponseEntity.ok(map);
-    }
-
-    @PutMapping("/rename")
-    public ResponseEntity<Board> renameBoard(@RequestParam long boardId,
-                                               @RequestBody String newTitle) {
-        if (newTitle == null || !boardRepository.existsById(boardId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Board board = boardRepository.findById(boardId).get();
-        board.title = newTitle;
-        Board updatedBoard = boardRepository.save(board);
-        return ResponseEntity.ok(updatedBoard);
-    }
-
-    @PostMapping(path = {"/addTag"})
-    public ResponseEntity<Tag> addTag(@RequestParam long boardId, @RequestBody Tag tag) {
-        if (!boardRepository.existsById(boardId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Tag saved = tagRepository.save(tag);
-        Board board = boardRepository.findById(boardId).get();
-        board.addTag(saved);
-        boardRepository.save(board);
-        return ResponseEntity.ok(saved);
-    }
-
-    @GetMapping(path = {"/getTagById/{tagId}"})
-    public ResponseEntity<Tag> getTag(@PathVariable("tagId") long tagId) {
-        if (!tagRepository.existsById(tagId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Tag tag = tagRepository.findById(tagId).get();
-        return ResponseEntity.ok(tag);
-    }
-
-    @DeleteMapping(path = {"/deleteTag"})
-    public ResponseEntity<Tag> deleteTag(@RequestParam long tagId) {
-        if (!tagRepository.existsById(tagId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        tagRepository.deleteById(tagId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping(path = {"/updateTag"})
-    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag) {
-        if (tag == null || !tagRepository.existsById(tag.tagId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Tag updatedTag = tagRepository.save(tag);
-        return ResponseEntity.ok(updatedTag);
+        return boardService.addMessage(board, userId);
     }
 
 
     @MessageMapping("/boards/update")
     @SendTo("/topic/boards/update")
     public Packet updateMessage(Board board) {
-        updateBoard(board);
-        Packet packet = new Packet();
-        packet.longValue = board.boardId;
-        packet.board = board;
-        return packet;
+        return boardService.updateMessage(board);
     }
 
     @MessageMapping("/boards/rename/{boardId}")
@@ -220,10 +186,29 @@ public class BoardController {
     @Transactional
     public Packet renameMessage(String newTitle,
                                 @DestinationVariable("boardId") long boardId) {
-        renameBoard(boardId, newTitle);
-        Packet boardIdAndNewTitle = new Packet();
-        boardIdAndNewTitle.longValue = boardId;
-        boardIdAndNewTitle.stringValue = newTitle;
-        return boardIdAndNewTitle;
+        return boardService.renameMessage(newTitle, boardId);
     }
+
+    @MessageMapping("/boards/addTag/{boardId}")
+    @SendTo("/topic/boards/addTag/{boardId}")
+    @Transactional
+    public Tag addMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        return boardService.addTag(boardId, tag);
+    }
+
+    @MessageMapping("/boards/updateTag/{boardId}")
+    @SendTo("/topic/boards/updateTag/{boardId}")
+    @Transactional
+    public Tag updateMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        return boardService.updateTag(tag);
+    }
+
+    @MessageMapping("/boards/deleteTag/{boardId}")
+    @SendTo("/topic/boards/deleteTag/{boardId}")
+    @Transactional
+    public Long deleteMessage(long tagId) {
+        boardService.deleteTag(tagId);
+        return tagId;
+    }
+
 }

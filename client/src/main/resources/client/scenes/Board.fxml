@@ -119,7 +119,8 @@
                 </ImageView>
             </graphic>
         </MFXButton>
-        <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0" style="-fx-background-radius: 10px; -fx-background-color: r;">
+        <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0"
+                       style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
             <VBox fx:id="tagList" spacing="10">
                 <HBox fx:id="tags_hbox">
                     <Text fx:id="txtTags" text="Tags">

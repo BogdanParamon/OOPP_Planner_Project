@@ -11,6 +11,7 @@ public class Packet {
     public Task task;
     public TaskList taskList;
     public Board board;
+    public Tag tag;
 
     public Packet() { }
 
@@ -22,11 +23,11 @@ public class Packet {
         return longValue == packet.longValue && longValue2 == packet.longValue2
                 && Objects.equals(stringValue, packet.stringValue)
                 && Objects.equals(task, packet.task) && Objects.equals(taskList, packet.taskList)
-                && Objects.equals(board, packet.board);
+                && Objects.equals(board, packet.board) && Objects.equals(tag, packet.tag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(longValue, longValue2, stringValue, task, taskList, board);
+        return Objects.hash(longValue, longValue2, stringValue, task, taskList, board, tag);
     }
 }
