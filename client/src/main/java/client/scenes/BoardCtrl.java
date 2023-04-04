@@ -178,8 +178,10 @@ public class BoardCtrl implements Initializable {
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
                                     card.getTaskTitle().setText(task.title);
-                                    card.getDetailedTask().getDtvDescription().setText(task.description);
-                                    if(!task.description.trim().equals("")) card.showDescriptionImage();
+                                    card.getDetailedTask().getDtvDescription()
+                                            .setText(task.description);
+                                    if (!task.description.trim().equals(""))
+                                        card.showDescriptionImage();
                                     else card.hideDescriptionImage();
                                     card.getDetailedTask().getDtvTitle().setText(task.title);
                                     break;
@@ -197,10 +199,10 @@ public class BoardCtrl implements Initializable {
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
                         if (list.getTaskList().listId == listId) {
-                            for(Node node1 : list.getList().getChildren()){
+                            for (Node node1 : list.getList().getChildren()) {
                                 if (!(node1 instanceof Card)) continue;
                                 Card card = (Card) node1;
-                                if(card.isHasDetailedTaskOpen())
+                                if (card.isHasDetailedTaskOpen())
                                     card.getDetailedTask().stopDisplayingDialog();
                             }
                             board_hbox.getChildren().remove(list);
@@ -224,7 +226,7 @@ public class BoardCtrl implements Initializable {
                                 if (!(cardNode instanceof Card)) continue;
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
-                                    if(card.isHasDetailedTaskOpen())
+                                    if (card.isHasDetailedTaskOpen())
                                         card.getDetailedTask().stopDisplayingDialog();
                                     list.getList().getChildren().remove(card);
                                     list.getTaskList().tasks.remove(card.getTask());
