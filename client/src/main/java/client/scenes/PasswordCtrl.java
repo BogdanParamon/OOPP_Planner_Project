@@ -62,7 +62,8 @@ public class PasswordCtrl implements Initializable {
                     new KeyFrame(millis(0), new KeyValue(passwordField.translateXProperty(), 0)),
                     new KeyFrame(millis(50), new KeyValue(passwordField.translateXProperty(), -10)),
                     new KeyFrame(millis(100), new KeyValue(passwordField.translateXProperty(), 10)),
-                    new KeyFrame(millis(150), new KeyValue(passwordField.translateXProperty(), -10)),
+                    new KeyFrame(millis(150),
+                            new KeyValue(passwordField.translateXProperty(), -10)),
                     new KeyFrame(millis(200), new KeyValue(passwordField.translateXProperty(), 0))
             );
             timeline.setCycleCount(1);
