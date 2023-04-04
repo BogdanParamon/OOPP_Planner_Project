@@ -15,11 +15,13 @@
  */
 package client.utils;
 
-import commons.*;
+import commons.Board;
+import commons.Subtask;
+import commons.Tag;
+import commons.User;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -31,7 +33,6 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -55,7 +56,7 @@ public class ServerUtils {
 
     public boolean validServer() {
         String regex = "^(http)://[a-zA-Z0-9-_.]+(:[0-9]+)?/?$";
-        if  (!SERVER.matches(regex)) return false;
+        if (!SERVER.matches(regex)) return false;
         try {
             String resp = ClientBuilder.newClient(new ClientConfig())
                     .property(ClientProperties.CONNECT_TIMEOUT, 500)
@@ -76,6 +77,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(Board.class);
     }
+
     public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
@@ -152,6 +154,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);
     }
+
     public void disconnectWebsocket() {
         session.disconnect();
     }
