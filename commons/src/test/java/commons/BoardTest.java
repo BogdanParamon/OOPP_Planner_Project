@@ -8,30 +8,30 @@ public class BoardTest {
 
     @Test
     public void checkConstructor() {
-        var b = new Board("BoardTitle");
+        var b = new Board("BoardTitle","a");
         assertEquals("BoardTitle", b.title);
         assertNotNull(b.lists);
     }
 
     @Test
     public void equalsHashCode() {
-        var a = new Board("a");
-        var b = new Board("a");
+        var a = new Board("a","a");
+        var b = new Board("a","a");
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void notEqualsHashCode() {
-        var a = new Board("a");
-        var b = new Board("b");
+        var a = new Board("a","a");
+        var b = new Board("b","b");
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void hasToString() {
-        var actual = new Board("a").toString();
+        var actual = new Board("a","a").toString();
         assertTrue(actual.contains(Board.class.getSimpleName()));
         assertTrue(actual.contains("\n"));
         assertTrue(actual.contains("title"));
@@ -39,7 +39,7 @@ public class BoardTest {
 
     @Test
     public void checkAddList() {
-        var board = new Board("a");
+        var board = new Board("a","a");
         var list = new TaskList("b");
         board.addList(list);
         assertTrue(board.lists.contains(list));
