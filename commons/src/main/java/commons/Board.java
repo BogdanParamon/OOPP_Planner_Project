@@ -13,6 +13,8 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
 
+    private String password;
+
     public String title;
 
     public String backgroundColor;
@@ -37,9 +39,11 @@ public class Board {
      * Creates a new Board object with the given title and an empty set of TaskLists.
      *
      * @param title The title to be given to the new Board
+     * @param password Password of the board
      */
-    public Board(String title) {
+    public Board(String title, String password) {
         this.title = title;
+        this.password = password;
         //default colors
         this.backgroundColor = "ffffff";
         this.buttonsBackground = "ddd";
@@ -109,5 +113,9 @@ public class Board {
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

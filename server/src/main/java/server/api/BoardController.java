@@ -80,6 +80,15 @@ public class BoardController {
         }
     }
 
+    @PostMapping(path = "/join")
+    public ResponseEntity<Board> join(@RequestBody Board board, @RequestParam long userId) {
+        try {
+            return ResponseEntity.ok(boardService.join(board, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     /**
      * Deletes a board from the database
      *
@@ -187,5 +196,12 @@ public class BoardController {
     public Packet renameMessage(String newTitle,
                                 @DestinationVariable("boardId") long boardId) {
         return boardService.renameMessage(newTitle, boardId);
+    }
+
+    @MessageMapping("/boards/join/{userId}")
+    @SendTo("/topic/boards/join/{userId}")
+    @Transactional
+    public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
+        return boardService.joinMessage(board, userId);
     }
 }

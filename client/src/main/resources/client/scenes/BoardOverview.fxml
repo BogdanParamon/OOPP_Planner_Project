@@ -8,7 +8,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: fff;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <children>
       <Text layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="900">
@@ -21,7 +20,7 @@
                 <Font size="20.0" />
             </font>
       </Text>
-      <MFXListView fx:id="boards" layoutX="129.0" layoutY="230.0" prefHeight="258.0" prefWidth="219.0"/>
+      <MFXListView fx:id="boards" layoutX="129.0" layoutY="230.0" prefHeight="258.0" prefWidth="219.0" />
       <Text layoutX="120.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you already have a board?">
             <font>
                 <Font size="18.0" />
@@ -32,22 +31,22 @@
                 <Font size="18.0" />
             </font>
       </Text>
-      <Text layoutX="502.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you want to create a new board?">
+      <Text layoutX="502.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you want to join or create a board?">
             <font>
                 <Font size="18.0" />
             </font>
       </Text>
-      <Text fill="#727272" layoutX="592.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add one now!">
+      <Text fill="#727272" layoutX="616.0" layoutY="219.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do it now!">
             <font>
                 <Font size="18.0" />
             </font>
       </Text>
-      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatMode="BORDER" floatingText="Board Name" layoutX="502.0" layoutY="261.0" prefHeight="57.0" prefWidth="305.0">
+      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatingText="ID -&gt; join, Name -&gt; create" floatingTextGap="1.0" layoutX="502.0" layoutY="261.0" prefHeight="67.0" prefWidth="311.0">
             <font>
                 <Font name="Roboto" size="20.0" />
             </font>
       </MFXTextField>
-      <MFXPasswordField borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="501.0" layoutY="346.0" prefHeight="57.0" prefWidth="305.0" style="-fx-wrap-text: black">
+      <MFXPasswordField fx:id="boardPassword" borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="502.0" layoutY="359.0" prefHeight="57.0" prefWidth="305.0" style="-fx-wrap-text: black">
             <font>
                 <Font name="Roboto" size="20.0" />
             </font>
@@ -57,7 +56,7 @@
                     <Font name="Roboto" size="20.0" />
               </font>
       </MFXButton>
-      <MFXButton buttonType="RAISED" layoutX="468.0" layoutY="446.0" onAction="#deleteAll" prefHeight="43.0" prefWidth="186.0" text="Delete all boards">
+      <MFXButton buttonType="RAISED" layoutX="468.0" layoutY="446.0" onAction="#joinBoard" prefHeight="43.0" prefWidth="186.0" text="Join Board">
                 <font>
                         <Font name="Roboto" size="20.0" />
                 </font>
@@ -67,6 +66,8 @@
                         <Font name="Roboto" size="20.0" />
                 </font>
        </MFXButton>
+      <Text fx:id="passwordErrorMsg" fill="RED" layoutX="582.0" layoutY="435.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password is incorrect!" textAlignment="CENTER" visible="false" wrappingWidth="150.0" />
+      <Text fx:id="idErrorMsg" fill="RED" layoutX="579.0" layoutY="347.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID is invalid!" textAlignment="CENTER" visible="false" wrappingWidth="150.0" />
 
    </children>
 </AnchorPane>

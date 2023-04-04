@@ -51,6 +51,13 @@ public class BoardService {
         return saved;
     }
 
+    public Board join(Board board, long userId) {
+        User user = userRepository.findById(userId).get();
+        user.boards.add(board);
+        userRepository.save(user);
+        return board;
+    }
+
     public String delete(long boardId) throws IllegalArgumentException {
         if (!boardRepository.existsById(boardId))
             throw new IllegalArgumentException();
@@ -149,7 +156,12 @@ public class BoardService {
         return boardIdAndNewTitle;
     }
 
-
-
-
+    public Packet joinMessage(Board board, long userId) {
+        join(board, userId);
+        Packet packet = new Packet();
+        packet.stringValue = board.title;
+        packet.longValue = board.boardId;
+        packet.longValue2 = userId;
+        return packet;
+    }
 }

@@ -11,6 +11,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -22,7 +23,10 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
+
+import static javafx.util.Duration.millis;
 
 public class BoardOverviewCtrl implements Initializable {
 
@@ -35,8 +39,15 @@ public class BoardOverviewCtrl implements Initializable {
 
     @FXML
     private MFXTextField boardTitle;
+
+    @FXML
+    private MFXTextField boardPassword;
     @FXML
     private Text subheading;
+    @FXML
+    private Text idErrorMsg;
+    @FXML
+    private Text passwordErrorMsg;
 
     @FXML
     private AnchorPane root;
@@ -73,7 +84,18 @@ public class BoardOverviewCtrl implements Initializable {
                     Platform.runLater(() -> {
                         MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
                         button.setOnAction(event
-                                -> switchSceneToBoard(server
+                                -> askForPassword(server
+                                .getBoardById(boardIdAndTitleAndUserId.longValue)));
+                        boards.getItems().add(button);
+                        boardTitle.clear();
+                    });
+                });
+        server.registerForMessages("/topic/boards/join/" + user.userId,
+                Packet.class, boardIdAndTitleAndUserId -> {
+                    Platform.runLater(() -> {
+                        MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
+                        button.setOnAction(event
+                                -> askForPassword(server
                                 .getBoardById(boardIdAndTitleAndUserId.longValue)));
                         boards.getItems().add(button);
                         boardTitle.clear();
@@ -87,8 +109,7 @@ public class BoardOverviewCtrl implements Initializable {
         boardTitlesAndIds.forEach((aLong, s) -> {
             MFXButton button = new MFXButton(s);
             button.setOnAction(event
-                    -> switchSceneToBoard(server
-                    .getBoardById(aLong)));
+                    -> askForPassword(server.getBoardById(aLong)));
             boards.getItems().add(button);
         });
         subheadingAnimation();
@@ -114,15 +135,30 @@ public class BoardOverviewCtrl implements Initializable {
         timeline.play();
     }
 
+    public void showErrorMessage(Text errorMsg) {
+        errorMsg.setVisible(true);
 
-    public void switchSceneToBoard(Board board) {
-        mainCtrl.boardCtrl.setBoard(board);
-        mainCtrl.showBoard();
+        Timeline timeline = new Timeline(
+                new KeyFrame(millis(0), new KeyValue(errorMsg.translateXProperty(), 0)),
+                new KeyFrame(millis(50), new KeyValue(errorMsg.translateXProperty(), -10)),
+                new KeyFrame(millis(100), new KeyValue(errorMsg.translateXProperty(), 10)),
+                new KeyFrame(millis(150), new KeyValue(errorMsg.translateXProperty(), -10)),
+                new KeyFrame(millis(200), new KeyValue(errorMsg.translateXProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
+
+    public void askForPassword(Board board) {
+        mainCtrl.passwordCtrl.setText("Please enter password for board " + board.title);
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.showPassword();
     }
 
     public void addBoard() {
         try {
-            Board board = new Board(boardTitle.getText());
+            Board board = new Board(boardTitle.getText(), boardPassword.getText());
             server.send("/app/boards/add/" + user.userId, board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -132,9 +168,19 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
-    public void deleteAll() {
-        server.deleteAllBoards();
-        boards.getItems().clear();
+    public void joinBoard() {
+        try {
+            Long boardId = Long.parseLong(boardTitle.getText());
+            Board board = server.getBoardById(boardId);
+            if (Objects.equals(board.getPassword(), boardPassword.getText())) {
+                server.send("/app/boards/join/" + user.userId, board);
+                switchSceneToBoard(board);
+            } else {
+                showErrorMessage(passwordErrorMsg);
+            }
+        } catch (NumberFormatException e) {
+            showErrorMessage(idErrorMsg);
+        }
     }
 
 
@@ -143,8 +189,14 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showHome();
     }
 
+    public void switchSceneToBoard(Board board) {
+        mainCtrl.boardCtrl.setBoard(board);
+        mainCtrl.showBoard();
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
+
 
 }
