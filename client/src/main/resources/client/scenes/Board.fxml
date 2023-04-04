@@ -33,12 +33,6 @@
                 </HBox>
             </content>
         </ScrollPane>
-        <TextField layoutX="613.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Search"
-                   style="-fx-background-color: ddd;">
-            <font>
-                <Font size="22.0"/>
-            </font>
-        </TextField>
         <Text fx:id="boardName" layoutX="240.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0"
               wrappingWidth="260.17819993769444">
             <font>
@@ -87,16 +81,6 @@
                 </Pane>
             </children>
         </VBox>
-        <Pane layoutX="832.0" layoutY="43.0">
-            <children>
-                <MFXButton prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" "/>
-                <ImageView fitHeight="24.0" fitWidth="24.0" layoutY="6.0">
-                    <image>
-                        <Image url="@/client/images/search.png"/>
-                    </image>
-                </ImageView>
-            </children>
-        </Pane>
         <Pane fx:id="overviewBoardsPane" layoutX="14.0" layoutY="508.0" prefHeight="57.0" prefWidth="150.0"
               style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
@@ -134,7 +118,7 @@
             </graphic>
         </MFXButton>
         <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0"
-                       style="-fx-background-radius: 10px; -fx-background-color: r;">
+                       style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
             <VBox fx:id="tagList" spacing="10">
                 <HBox>
                     <Text fx:id="txtTags" text="Tags">
@@ -142,7 +126,7 @@
                             <Font name="Roboto" size="20"/>
                         </font>
                     </Text>
-                    <Pane prefWidth="50"/>
+                    <Pane prefWidth="65"/>
 
                     <MFXButton fx:id="addTag" onAction="#addTag" style="-fx-background-color: white;" text="">
                         <graphic>
