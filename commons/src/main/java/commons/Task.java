@@ -19,7 +19,7 @@ public class Task {
 
     public String title;
 
-    public String description;
+    public String description = "";
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "taskId")

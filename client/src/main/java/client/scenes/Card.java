@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
@@ -43,10 +44,14 @@ public class Card extends Pane {
     private MFXButton openTask;
     @FXML
     private GridPane tags;
+    @FXML
+    private ImageView descriptionImage;
 
     private static long dragFromListId;
     private static long dragToListId;
     private static int dragToIndex;
+
+    private boolean hasDetailedTaskOpen = false;
 
     /**
      * Constructs a new Card instance with the specified parameters.
@@ -79,10 +84,6 @@ public class Card extends Pane {
 
         detailedTask = new DetailedTask(mainCtrl, server, board, taskList, task);
 
-        deleteTaskButton.setOnAction(event -> {
-            server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
-        });
-
         deleteTaskButton.setOnAction(event -> deleteTask());
 
         taskTitle.setText(task.title);
@@ -93,7 +94,14 @@ public class Card extends Pane {
 
         registerForAddTagMessages();
 
-        openTask.setOnAction(event -> displayDialog());
+        deleteTaskButton.setOnAction(event -> {
+            server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
+        });
+
+        openTask.setOnAction(event -> {
+            hasDetailedTaskOpen = true;
+            displayDialog();
+        });
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -192,6 +200,7 @@ public class Card extends Pane {
     }
 
     void displayDialog() {
+        detailedTask.updateDetails();
         mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
     }
 
@@ -261,5 +270,21 @@ public class Card extends Pane {
 
     public static void setDragToIndex(int dragToIndex) {
         Card.dragToIndex = dragToIndex;
+    }
+
+    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
+        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
+    }
+
+    public boolean isHasDetailedTaskOpen() {
+        return hasDetailedTaskOpen;
+    }
+
+    public void showDescriptionImage() {
+        descriptionImage.setVisible(true);
+    }
+
+    public void hideDescriptionImage() {
+        descriptionImage.setVisible(false);
     }
 }

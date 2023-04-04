@@ -6,9 +6,12 @@ import commons.Subtask;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
@@ -80,11 +83,14 @@ public class DetailedTask extends AnchorPane {
         }
 
         dtvTitle.setText(task.title);
-        dtvDescription.setText("Add description");
+        dtvDescription.setText(task.description);
 
         doneButton.setOnAction(event -> stopDisplayingDialog());
 
         addSubtaskButton.setOnAction(event -> addSubtask());
+
+        initEditTaskTitle();
+        initEditTaskDescription();
 
     }
 
@@ -98,7 +104,66 @@ public class DetailedTask extends AnchorPane {
         return tasks_vbox;
     }
 
-    void stopDisplayingDialog() {
+    public void stopDisplayingDialog() {
+        Card card = new Card(mainCtrl, server, task, taskList, board);
+        card.setHasDetailedTaskOpen(false);
         mainCtrl.boardCtrl.stopDisplayingDialog(this);
     }
+
+    public boolean hasTaskDescription() {
+        return !task.description.trim().equals("");
+    }
+
+    public void updateDetails() {
+
+    }
+
+    void initEditTaskTitle() {
+        dtvTitle.setOnKeyReleased(event -> handleKeyReleaseTitle(event));
+        dtvTitle.focusedProperty().addListener(this::handleFocusChangeTitle);
+    }
+
+    void initEditTaskDescription() {
+        dtvDescription.focusedProperty().addListener(this::handleFocusChangeDescription);
+    }
+
+    private void handleKeyReleaseTitle(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            dtvTitle.getParent().requestFocus();
+            saveTaskTitleFromDetailedTaskView();
+        }
+    }
+
+    private void handleFocusChangeTitle(ObservableValue<? extends Boolean>
+                                           observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskTitleFromDetailedTaskView();
+        }
+    }
+
+    private void handleFocusChangeDescription(ObservableValue<? extends Boolean>
+                                                observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+            saveTaskDescription();
+        }
+    }
+
+    private void saveTaskTitleFromDetailedTaskView() {
+        task.title = dtvTitle.getText();
+        server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+    }
+
+    private void saveTaskDescription() {
+        task.description = dtvDescription.getText();
+        server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+    }
+
+    public TextArea getDtvDescription() {
+        return dtvDescription;
+    }
+
+    public TextField getDtvTitle() {
+        return dtvTitle;
+    }
+
 }
