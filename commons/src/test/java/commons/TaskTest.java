@@ -14,6 +14,12 @@ public class TaskTest {
     }
 
     @Test
+    public void checkEmptyConstructor() {
+        var t = new Task();
+        assertNotNull(t);
+    }
+
+    @Test
     public void equalsHashCode() {
         var a = new Task("a");
         var b = new Task("a");
@@ -34,5 +40,27 @@ public class TaskTest {
         var actual = new Task("a").toString();
         assertTrue(actual.contains(Task.class.getSimpleName()));
         assertTrue(actual.contains("title"));
+    }
+
+    @Test
+    public void testSetId() {
+        var a = new Task("a");
+        a.setId(1L);
+        assertEquals(1L, a.taskId);
+    }
+
+    @Test
+    public void testSetTitle() {
+        var a = new Task("a");
+        a.setTitle("b");
+        assertEquals("b", a.title);
+    }
+
+    @Test
+    public void testAddSubtask() {
+        var a = new Task("a");
+        var subtask = new Subtask("subtask");
+        a.addSubtask(subtask);
+        assertTrue(a.subtasks.contains(subtask));
     }
 }

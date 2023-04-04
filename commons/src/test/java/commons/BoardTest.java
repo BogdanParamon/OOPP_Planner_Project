@@ -14,6 +14,13 @@ public class BoardTest {
     }
 
     @Test
+    public void checkEmptyConstructor() {
+        var b = new Board();
+        assertNotNull(b);
+        assertNotNull(b.lists);
+    }
+
+    @Test
     public void equalsHashCode() {
         var a = new Board("a");
         var b = new Board("a");
@@ -43,5 +50,13 @@ public class BoardTest {
         var list = new TaskList("b");
         board.addList(list);
         assertTrue(board.lists.contains(list));
+    }
+
+    @Test
+    public void checkAddTag() {
+        var board = new Board("a");
+        var tag = new Tag("tag", "#ffffff");
+        board.addTag(tag);
+        assertTrue(board.tags.contains(tag));
     }
 }

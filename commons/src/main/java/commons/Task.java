@@ -37,8 +37,7 @@ public class Task {
         this.title = title;
     }
 
-    @SuppressWarnings("unused")
-    public Task() {
+    Task() {
         // For object mapper
     }
 

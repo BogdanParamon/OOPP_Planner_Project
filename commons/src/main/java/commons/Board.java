@@ -48,8 +48,7 @@ public class Board {
         this.boardColor = "ddd";
     }
 
-    @SuppressWarnings("unused")
-    private Board() {
+    Board() {
         // For object mapper
     }
 
