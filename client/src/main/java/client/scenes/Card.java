@@ -41,9 +41,10 @@ public class Card extends Pane {
     private TextField taskTitle;
     @FXML
     private MFXButton openTask;
-
     @FXML
     private GridPane tags;
+    @FXML
+    private Pane root;
 
     private static long dragFromListId;
     private static long dragToListId;
@@ -259,5 +260,17 @@ public class Card extends Pane {
 
     public static void setDragToIndex(int dragToIndex) {
         Card.dragToIndex = dragToIndex;
+    }
+
+    public Pane getRoot() {
+        return root;
+    }
+
+    public MFXButton getDeleteTaskButton() {
+        return deleteTaskButton;
+    }
+
+    public MFXButton getOpenTask() {
+        return openTask;
     }
 }

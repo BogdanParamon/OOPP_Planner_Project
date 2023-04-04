@@ -14,6 +14,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -25,10 +28,7 @@ import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class BoardCtrl implements Initializable {
 
@@ -90,7 +90,24 @@ public class BoardCtrl implements Initializable {
     private ColorPicker colorPickerListsFont;
     @FXML
     private HBox tags_hbox;
-
+    @FXML
+    private ColorPicker presetB1;
+    @FXML
+    private ColorPicker presetB2;
+    @FXML
+    private ColorPicker presetB3;
+    @FXML
+    private ColorPicker presetF1;
+    @FXML
+    private ColorPicker presetF2;
+    @FXML
+    private ColorPicker presetF3;
+    @FXML
+    private Text pointer1;
+    @FXML
+    private Text pointer2;
+    @FXML
+    private Text pointer3;
     private Set<StompSession.Subscription> subscriptions;
 
     @FXML
@@ -169,6 +186,13 @@ public class BoardCtrl implements Initializable {
                         if (taskList.listId == listId) {
                             taskList.tasks.add(0, task);
                             Card card = new Card(mainCtrl, server, task, taskList, board);
+                            if (board.currentPreset == 0) {
+                                loadCardColors(card, board.cardsBackground1, board.cardsFont1);
+                            } else if (board.currentPreset == 1) {
+                                loadCardColors(card, board.cardsBackground2, board.cardsFont2);
+                            } else {
+                                loadCardColors(card, board.cardsBackground3, board.cardsFont3);
+                            }
                             list.getList().getChildren().add(0, card);
                             break;
                         }
@@ -300,7 +324,11 @@ public class BoardCtrl implements Initializable {
                             Tag tagUI = (Tag) tagList.getChildren().get(i);
                             if (tagUI.tag.tagId == tag.tagId) {
                                 System.out.println(i);
-                                tagList.getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                                Tag newTag = new Tag(mainCtrl, server, tag, board);
+                                newTag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                                newTag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                                newTag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+                                tagList.getChildren().set(i, newTag);
                                 break;
                             }
                         }
@@ -389,6 +417,7 @@ public class BoardCtrl implements Initializable {
 
         setBoardColors(board);
         setBoardFontColors(board);
+        setCardsColorsLaunch(board);
 
         subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
@@ -402,6 +431,47 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
+    }
+
+    public void setCardsColorsLaunch(Board board) {
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            for (int i = 0; i < list.getList().getChildren().size() - 1; ++i) {
+                Card card = (Card) list.getList().getChildren().get(i);
+                if (board.currentPreset == 0) {
+                    loadCardColors(card, board.cardsBackground1, board.cardsFont1);
+                } else if (board.currentPreset == 1) {
+                    loadCardColors(card, board.cardsBackground2, board.cardsFont2);
+                } else {
+                    loadCardColors(card, board.cardsBackground3, board.cardsFont3);
+                }
+            }
+        }
+    }
+
+    private void loadCardColors(Card card, String background, String font) {
+        card.getRoot().setStyle(fxBackgroundColor + background +
+                "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                + " -fx-border-radius: 10px ");
+        if (font.equals("000000")) {
+            card.getRoot().setStyle(fxBackgroundColor + background +
+                    "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                    + " -fx-border-radius: 10px ");
+        } else {
+            card.getRoot().setStyle(fxBackgroundColor + background +
+                    "; -fx-background-radius: 10px;" + " -fx-border-color: #"
+                    + font + "; -fx-border-radius: 10px ");
+        }
+        card.getOpenTask().setStyle(fxBackgroundColor + background);
+        card.getDeleteTaskButton().setStyle(fxBackgroundColor + background);
+        if (font.equals("000000")) {
+            card.getTaskTitle().setStyle(fxBackgroundColor + background
+                    + "; -fx-border-radius: 3px; -fx-border-color: ddd;");
+        } else {
+            card.getTaskTitle().setStyle(fxBackgroundColor + background
+                    + "; -fx-border-radius: 3px; -fx-border-color: #"
+                    + font + ";" + "; -fx-text-fill: #" + font);
+        }
     }
 
     private void setBoardColors(Board board) {
@@ -501,7 +571,27 @@ public class BoardCtrl implements Initializable {
         colorPickerBoard.setValue(Color.valueOf(board.boardColor));
         colorPickerListsColor.setValue(Color.valueOf(board.listsColor));
         colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
+        presetB1.setValue(Color.valueOf(board.cardsBackground1));
+        presetF1.setValue(Color.valueOf(board.cardsFont1));
+        presetB2.setValue(Color.valueOf(board.cardsBackground2));
+        presetF2.setValue(Color.valueOf(board.cardsFont2));
+        presetB3.setValue(Color.valueOf(board.cardsBackground3));
+        presetF3.setValue(Color.valueOf(board.cardsFont3));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
+
+        if (board.currentPreset == 0) {
+            pointer1.setVisible(true);
+            pointer2.setVisible(false);
+            pointer3.setVisible(false);
+        } else if (board.currentPreset == 1) {
+            pointer1.setVisible(false);
+            pointer2.setVisible(true);
+            pointer3.setVisible(false);
+        } else {
+            pointer1.setVisible(false);
+            pointer2.setVisible(false);
+            pointer3.setVisible(true);
+        }
     }
 
     public void closeCustomize() {
@@ -685,6 +775,103 @@ public class BoardCtrl implements Initializable {
         resetButtonFont();
         resetListsColor();
         resetListsFont();
+    }
+
+    public void apply1() {
+        String background = presetB1.getValue().toString().substring(2, 8);
+        String font = presetF1.getValue().toString().substring(2, 8);
+        board.cardsBackground1 = background;
+        board.cardsFont1 = font;
+        board.currentPreset = 0;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(true);
+        pointer2.setVisible(false);
+        pointer3.setVisible(false);
+    }
+
+    public void apply2() {
+        String background = presetB2.getValue().toString().substring(2, 8);
+        String font = presetF2.getValue().toString().substring(2, 8);
+        board.cardsBackground2 = background;
+        board.cardsFont2 = font;
+        board.currentPreset = 1;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(false);
+        pointer2.setVisible(true);
+        pointer3.setVisible(false);
+    }
+
+    public void apply3() {
+        String background = presetB3.getValue().toString().substring(2, 8);
+        String font = presetF3.getValue().toString().substring(2, 8);
+        board.cardsBackground3 = background;
+        board.cardsFont3 = font;
+        board.currentPreset = 2;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(false);
+        pointer2.setVisible(false);
+        pointer3.setVisible(true);
+    }
+
+    public void reset1() {
+        board.cardsBackground1 = "ffffff";
+        board.cardsFont1 = "000000";
+        if (board.currentPreset == 0) setCardsColors(board.cardsBackground1, board.cardsFont1);
+        presetB1.setValue(Color.valueOf(board.cardsBackground1));
+        presetF1.setValue(Color.valueOf(board.cardsFont1));
+        updateBoard(board);
+    }
+
+    public void reset2() {
+        board.cardsBackground2 = "ffffff";
+        board.cardsFont2 = "000000";
+        if (board.currentPreset == 1) setCardsColors(board.cardsBackground2, board.cardsFont2);
+        presetB2.setValue(Color.valueOf(board.cardsBackground2));
+        presetF2.setValue(Color.valueOf(board.cardsFont2));
+        updateBoard(board);
+    }
+
+    public void reset3() {
+        board.cardsBackground3 = "ffffff";
+        board.cardsFont3 = "000000";
+        if (board.currentPreset == 2) setCardsColors(board.cardsBackground3, board.cardsFont3);
+        presetB3.setValue(Color.valueOf(board.cardsBackground3));
+        presetF3.setValue(Color.valueOf(board.cardsFont3));
+        updateBoard(board);
+    }
+
+    public void setCardsColors(String background, String font) {
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            for (int i = 0; i < list.getList().getChildren().size() - 1; ++i) {
+                Card card = (Card) list.getList().getChildren().get(i);
+                if (font.equals("000000")) {
+                    card.getRoot().setStyle(fxBackgroundColor + background +
+                            "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                            + " -fx-border-radius: 10px ");
+                } else {
+                    card.getRoot().setStyle(fxBackgroundColor + background +
+                            "; -fx-background-radius: 10px;" + " -fx-border-color: #"
+                            + font + "; -fx-border-radius: 10px ");
+                }
+                card.getOpenTask().setStyle(fxBackgroundColor + background);
+                card.getDeleteTaskButton().setStyle(fxBackgroundColor + background);
+                if (font.equals("000000")) {
+                    card.getTaskTitle().setStyle(fxBackgroundColor + background
+                            + "; -fx-border-radius: 3px; -fx-border-color: ddd;");
+                } else {
+                    card.getTaskTitle().setStyle(fxBackgroundColor + background
+                            + "; -fx-border-radius: 3px; -fx-border-color: #" + font
+                            + "; -fx-text-fill: #" + font);
+                }
+            }
+        }
     }
 
     public AnchorPane getRoot() {

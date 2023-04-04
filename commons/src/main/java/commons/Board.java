@@ -29,6 +29,11 @@ public class Board {
 
     public String listsFontColor;
 
+    public String cardsBackground1, cardsBackground2,
+            cardsBackground3, cardsFont1, cardsFont2, cardsFont3;
+
+    public int currentPreset;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
@@ -52,6 +57,14 @@ public class Board {
         this.boardColor = "ddd";
         this.listsColor = "ffffff";
         this.listsFontColor = "000000";
+        this.cardsBackground1 = "ffffff";
+        this.cardsBackground2 = "ffffff";
+        this.cardsBackground3 = "ffffff";
+        this.cardsFont1 = "000000";
+        this.cardsFont2 = "000000";
+        this.cardsFont3 = "000000";
+
+        this.currentPreset = 0;
     }
 
     @SuppressWarnings("unused")
@@ -71,16 +84,17 @@ public class Board {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
-        return boardId == board.boardId && Objects.equals(title, board.title)
-                && Objects.equals(lists, board.lists)
-                && Objects.equals(backgroundColor, board.backgroundColor)
-                && Objects.equals(buttonsBackground, board.buttonsBackground)
-                && Objects.equals(backgroundColorFont, board.backgroundColorFont)
-                && Objects.equals(buttonsColorFont, board.buttonsColorFont)
-                && Objects.equals(boardColor, board.boardColor)
-                && Objects.equals(tags, board.tags)
-                && Objects.equals(listsColor, board.listsColor)
-                && Objects.equals(listsFontColor, board.listsFontColor);
+        return boardId == board.boardId
+                && title.equals(board.title)
+                && backgroundColor.equals(board.backgroundColor)
+                && buttonsBackground.equals(board.buttonsBackground)
+                && backgroundColorFont.equals(board.backgroundColorFont)
+                && buttonsColorFont.equals(board.buttonsColorFont)
+                && boardColor.equals(board.boardColor) && listsColor.equals(board.listsColor)
+                && listsFontColor.equals(board.listsFontColor) && cardsBackground1.equals(board.cardsBackground1)
+                && cardsBackground2.equals(board.cardsBackground2) && cardsBackground3.equals(board.cardsBackground3) && cardsFont1.equals(board.cardsFont1)
+                && cardsFont2.equals(board.cardsFont2) && cardsFont3.equals(board.cardsFont3) && Objects.equals(lists, board.lists)
+                && Objects.equals(tags, board.tags);
     }
 
     /**
@@ -93,7 +107,8 @@ public class Board {
     public int hashCode() {
         return Objects.hash(boardId, title, backgroundColor
                 , buttonsBackground, lists, backgroundColorFont
-                , buttonsColorFont, boardColor, tags, listsColor, listsFontColor);
+                , buttonsColorFont, boardColor, tags, listsColor, listsFontColor
+                , cardsBackground1, cardsBackground2, cardsBackground3, cardsFont1, cardsFont2, cardsFont3);
     }
 
     /**
