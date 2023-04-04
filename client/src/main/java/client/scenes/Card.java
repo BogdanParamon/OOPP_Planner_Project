@@ -84,6 +84,8 @@ public class Card extends Pane {
 
         detailedTask = new DetailedTask(mainCtrl, server, board, taskList, task);
 
+        deleteTaskButton.setOnAction(event -> deleteTask());
+
         taskTitle.setText(task.title);
         task.tags.forEach(tag -> addTag(tag, false));
 
@@ -91,10 +93,7 @@ public class Card extends Pane {
         initEditTaskTitle();
 
         registerForAddTagMessages();
-
-        deleteTaskButton.setOnAction(event -> {
-            server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
-        });
+        
 
         openTask.setOnAction(event -> {
             hasDetailedTaskOpen = true;
@@ -178,6 +177,10 @@ public class Card extends Pane {
             dragToListId = 0;
             event.consume();
         });
+    }
+
+    void deleteTask() {
+        server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
     }
 
     void initEditTaskTitle() {
