@@ -164,6 +164,10 @@ public class AdminOverviewCtrl implements Initializable {
     }
 
     public void finishEditingPassword() {
+        String newPassword = boardPasswordField.getText();
+        server.send("/app/boards/changePassword/" + selectedBoardId, newPassword);
+        boardPasswordText.setText(newPassword);
+
         boardPasswordText.setVisible(true);
         boardPasswordField.setVisible(false);
         editPasswordButton.setVisible(true);
@@ -189,6 +193,7 @@ public class AdminOverviewCtrl implements Initializable {
     }
 
     public void deselectBoard() {
+        selectedBoardId = 0;
         boardIdLabel.setVisible(false);
         boardTitleLabel.setVisible(false);
         boardPasswordLabel.setVisible(false);
