@@ -17,14 +17,18 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static javafx.util.Duration.millis;
 
@@ -32,23 +36,17 @@ public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
+    protected Map<Long, Map<Long, String>> accesses = new HashMap<>();
     private User user;
     @FXML
-    private MFXListView<MFXButton> boards;
+    private MFXListView<Pane> boards;
 
     @FXML
     private MFXTextField boardTitle;
-
-    @FXML
-    private MFXTextField boardPassword;
     @FXML
     private Text subheading;
     @FXML
     private Text idErrorMsg;
-    @FXML
-    private Text passwordErrorMsg;
-
     @FXML
     private AnchorPane root;
 
@@ -75,6 +73,33 @@ public class BoardOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
+        File accessesFile = new File("accesses.txt");
+        if (accessesFile.exists()) {
+            try {
+                Scanner scanner = new Scanner(accessesFile);
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    String[] parts = line.split(" ");
+                    long userId = Long.parseLong(parts[0]);
+                    long boardId = Long.parseLong(parts[1]);
+                    String password = parts[2];
+                    if (!accesses.containsKey(userId)) {
+                        accesses.put(userId, new HashMap<>());
+                        accesses.get(userId).put(boardId, password);
+                    } else {
+                        accesses.get(userId).put(boardId, password);
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                accessesFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         mainCtrl.initHeader(root);
     }
 
@@ -84,9 +109,19 @@ public class BoardOverviewCtrl implements Initializable {
                     Platform.runLater(() -> {
                         MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
                         button.setOnAction(event
-                                -> askForPassword(server
+                                -> switchSceneToBoard(server
                                 .getBoardById(boardIdAndTitleAndUserId.longValue)));
-                        boards.getItems().add(button);
+                        Pane pane = new Pane();
+                        pane.setPrefHeight(20);
+                        pane.getChildren().add(button);
+                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue).getPassword() != null) {
+                            ImageView lock = new ImageView("/client/images/lock-icon-11.png");
+                            lock.setFitHeight(20);
+                            lock.setFitWidth(20);
+                            lock.setX(190);
+                            pane.getChildren().add(lock);
+                        }
+                        boards.getItems().add(pane);
                         boardTitle.clear();
                     });
                 });
@@ -95,9 +130,19 @@ public class BoardOverviewCtrl implements Initializable {
                     Platform.runLater(() -> {
                         MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
                         button.setOnAction(event
-                                -> askForPassword(server
+                                -> switchSceneToBoard(server
                                 .getBoardById(boardIdAndTitleAndUserId.longValue)));
-                        boards.getItems().add(button);
+                        Pane pane = new Pane();
+                        pane.setPrefHeight(20);
+                        pane.getChildren().add(button);
+                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue).getPassword() != null) {
+                            ImageView lock = new ImageView("/client/images/lock-icon-11.png");
+                            lock.setFitHeight(20);
+                            lock.setFitWidth(20);
+                            lock.setX(190);
+                            pane.getChildren().add(lock);
+                        }
+                        boards.getItems().add(pane);
                         boardTitle.clear();
                     });
                 });
@@ -109,8 +154,19 @@ public class BoardOverviewCtrl implements Initializable {
         boardTitlesAndIds.forEach((aLong, s) -> {
             MFXButton button = new MFXButton(s);
             button.setOnAction(event
-                    -> askForPassword(server.getBoardById(aLong)));
-            boards.getItems().add(button);
+                    -> switchSceneToBoard(server.getBoardById(aLong)));
+            Pane pane = new Pane();
+            pane.setPrefHeight(20);
+            pane.getChildren().add(button);
+            if (!knowsPassword(user, server.getBoardById(aLong))) {
+                ImageView lock = new ImageView("/client/images/lock-icon-11.png");
+                lock.setFitHeight(20);
+                lock.setFitWidth(20);
+                lock.setX(190);
+                pane.getChildren().add(lock);
+            }
+            boards.getItems().add(pane);
+            boardTitle.clear();
         });
         subheadingAnimation();
     }
@@ -149,16 +205,9 @@ public class BoardOverviewCtrl implements Initializable {
         timeline.play();
     }
 
-
-    public void askForPassword(Board board) {
-        mainCtrl.passwordCtrl.setText("Please enter password for board " + board.title);
-        mainCtrl.passwordCtrl.setBoard(board);
-        mainCtrl.showPassword();
-    }
-
     public void addBoard() {
         try {
-            Board board = new Board(boardTitle.getText(), boardPassword.getText());
+            Board board = new Board(boardTitle.getText());
             server.send("/app/boards/add/" + user.userId, board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -168,16 +217,13 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
+
     public void joinBoard() {
         try {
             Long boardId = Long.parseLong(boardTitle.getText());
             Board board = server.getBoardById(boardId);
-            if (Objects.equals(board.getPassword(), boardPassword.getText())) {
-                server.send("/app/boards/join/" + user.userId, board);
-                switchSceneToBoard(board);
-            } else {
-                showErrorMessage(passwordErrorMsg);
-            }
+            server.send("/app/boards/join/" + user.userId, board);
+            switchSceneToBoard(board);
         } catch (NumberFormatException e) {
             showErrorMessage(idErrorMsg);
         }
@@ -191,12 +237,23 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void switchSceneToBoard(Board board) {
         mainCtrl.boardCtrl.setBoard(board);
+        mainCtrl.boardCtrl.setUser(user);
+        mainCtrl.boardCtrl.setUpProtection();
         mainCtrl.showBoard();
+    }
+
+    protected boolean knowsPassword(User user, Board board) {
+        if (board.getPassword() == null)
+            return true;
+        if (accesses.containsKey(user.userId)) {
+            if (accesses.get(user.userId).containsKey(board.boardId))
+                return Objects.equals(accesses.get(user.userId).get(board.boardId), board.getPassword());
+            return false;
+        }
+        return false;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
-
-
 }

@@ -2,10 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Board;
-import commons.Packet;
-import commons.Task;
-import commons.TaskList;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import jakarta.ws.rs.WebApplicationException;
@@ -14,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -21,11 +19,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
-import org.springframework.messaging.simp.stomp.StompSession;
 import javafx.stage.Modality;
+import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class BoardCtrl implements Initializable {
 
@@ -39,6 +40,7 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
+    private User user;
     @FXML
     private TextField newtTitle;
     @FXML
@@ -81,6 +83,8 @@ public class BoardCtrl implements Initializable {
     private MFXScrollPane tagsPane;
     @FXML
     private Text txtTags;
+    @FXML
+    private ImageView lock;
 
     private Set<StompSession.Subscription> subscriptions;
 
@@ -110,6 +114,43 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
+
+    }
+
+    public void setUpProtection() {
+        lock = new ImageView("/client/images/lock-icon-11.png");
+        lock.setFitHeight(60);
+        lock.setFitWidth(60);
+        lock.setX(770);
+        lock.setY(20);
+        root.getChildren().add(lock);
+        if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
+            disable();
+            lock.setOnMouseClicked(event -> {
+                askForPassword(board, user);
+            });
+        } else {
+            enable();
+            lock.setOnMouseClicked(event -> {
+                setPassword(board, user);
+            });
+        }
+    }
+
+    protected void askForPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(true);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
+    }
+
+    protected void setPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(false);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
     }
 
     public StompSession.Subscription registerForNewLists() {
@@ -520,8 +561,26 @@ public class BoardCtrl implements Initializable {
         resetBackgroundFont();
         resetButtonFont();
     }
-    
+
+    public void disable() {
+        addList.setDisable(true);
+        addTag.setDisable(true);
+        btnCustomize.setDisable(true);
+        editTitle.setDisable(true);
+    }
+
+    public void enable() {
+        addList.setDisable(false);
+        addTag.setDisable(false);
+        btnCustomize.setDisable(false);
+        editTitle.setDisable(false);
+    }
+
     public AnchorPane getRoot() {
         return root;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

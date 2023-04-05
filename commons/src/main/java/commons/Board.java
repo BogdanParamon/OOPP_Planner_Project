@@ -12,38 +12,27 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
-
-    private String password;
-
     public String title;
-
     public String backgroundColor;
-
     public String buttonsBackground;
-
     public String backgroundColorFont;
-
     public String buttonsColorFont;
-
     public String boardColor;
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardId")
     public Set<Tag> tags = new HashSet<>();
+    private String password;
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
      *
      * @param title The title to be given to the new Board
-     * @param password Password of the board
      */
-    public Board(String title, String password) {
+    public Board(String title) {
         this.title = title;
-        this.password = password;
         //default colors
         this.backgroundColor = "ffffff";
         this.buttonsBackground = "ddd";
@@ -117,5 +106,9 @@ public class Board {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -70,7 +70,9 @@ public class BoardService {
         if (board == null || !boardRepository.existsById(board.boardId)) {
             throw new IllegalArgumentException();
         }
+        System.out.println(board);
         Board updatedBoard = boardRepository.save(board);
+        System.out.println(updatedBoard);
         return updatedBoard;
     }
 

@@ -41,16 +41,11 @@
                 <Font size="18.0" />
             </font>
       </Text>
-      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatingText="ID -&gt; join, Name -&gt; create" floatingTextGap="1.0" layoutX="502.0" layoutY="261.0" prefHeight="67.0" prefWidth="311.0">
+      <MFXTextField fx:id="boardTitle" borderGap="2.0" floatingText="ID -&gt; join, Name -&gt; create" floatingTextGap="1.0" layoutX="502.0" layoutY="290.0" prefHeight="67.0" prefWidth="311.0">
             <font>
                 <Font name="Roboto" size="20.0" />
             </font>
       </MFXTextField>
-      <MFXPasswordField fx:id="boardPassword" borderGap="2.0" floatMode="BORDER" floatingText="Board Password" layoutX="502.0" layoutY="359.0" prefHeight="57.0" prefWidth="305.0" style="-fx-wrap-text: black">
-            <font>
-                <Font name="Roboto" size="20.0" />
-            </font>
-      </MFXPasswordField>
       <MFXButton buttonType="RAISED" layoutX="679.0" layoutY="446.0" onAction="#addBoard" text="Create Board">
               <font>
                     <Font name="Roboto" size="20.0" />
