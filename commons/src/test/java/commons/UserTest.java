@@ -4,34 +4,34 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SubtaskTest {
+class UserTest {
 
     @Test
     void testConstructor() {
-        var subtask = new Subtask("text");
-        assertNotNull(subtask);
-        assertEquals("text", subtask.subtaskText);
+        var user = new User("name");
+        assertNotNull(user);
+        assertEquals("name", user.userName);
     }
 
     @Test
     void testEmptyConstructor() {
-        var subtask = new Subtask();
-        assertNotNull(subtask);
-        assertEquals(Subtask.class, subtask.getClass());
+        var user = new User();
+        assertNotNull(user);
+        assertEquals(User.class, user.getClass());
     }
 
     @Test
     public void equalsHashCode() {
-        var a = new Subtask("a");
-        var b = new Subtask("a");
+        var a = new User("a");
+        var b = new User("a");
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void notEqualsHashCode() {
-        var a = new Subtask("a");
-        var b = new Subtask("b");
+        var a = new User("a");
+        var b = new User("b");
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());
     }
@@ -39,8 +39,9 @@ class SubtaskTest {
 
     @Test
     public void hasToString() {
-        var actual = new Subtask("testText").toString();
-        assertTrue(actual.contains(Subtask.class.getSimpleName()));
+        var actual = new User("testText").toString();
+        assertTrue(actual.contains(User.class.getSimpleName()));
+        assertTrue(actual.contains("\n"));
         assertTrue(actual.contains("testText"));
     }
 }
