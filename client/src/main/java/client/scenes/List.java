@@ -6,6 +6,7 @@ import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -15,7 +16,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -36,6 +36,9 @@ public class List extends Pane {
 
     @FXML
     private MFXButton deleteTaskListButton;
+
+    @FXML
+    private MFXScrollPane scrollPane;
 
     private Board board;
 
@@ -176,5 +179,19 @@ public class List extends Pane {
         server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 
+    public MFXScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
+    public MFXButton getAddButton() {
+        return addButton;
+    }
+
+    public MFXTextField getTitle() {
+        return title;
+    }
+
+    public MFXButton getDeleteTaskListButton() {
+        return deleteTaskListButton;
+    }
 }
