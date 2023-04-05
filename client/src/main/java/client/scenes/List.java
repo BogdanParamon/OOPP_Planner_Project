@@ -62,6 +62,10 @@ public class List extends Pane {
 
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList, board);
+            if (card.getDetailedTask().hasTaskDescription())
+                card.showDescriptionImage();
+            else
+                card.hideDescriptionImage();
             list.getChildren().add(list.getChildren().size() - 1, card);
         }
 

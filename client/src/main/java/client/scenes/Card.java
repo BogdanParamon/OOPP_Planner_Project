@@ -10,17 +10,17 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
@@ -33,6 +33,7 @@ public class Card extends Pane {
     private final Board board;
     private TaskList taskList;
     private Task task;
+    private DetailedTask detailedTask;
     private int row = 0;
     private int col = 0;
     @FXML
@@ -45,10 +46,14 @@ public class Card extends Pane {
     private GridPane tags;
     @FXML
     private Pane root;
+    @FXML
+    private ImageView descriptionImage;
 
     private static long dragFromListId;
     private static long dragToListId;
     private static int dragToIndex;
+
+    private boolean hasDetailedTaskOpen = false;
 
     /**
      * Constructs a new Card instance with the specified parameters.
@@ -79,6 +84,8 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
+        detailedTask = new DetailedTask(mainCtrl, server, board, taskList, task);
+
         deleteTaskButton.setOnAction(event -> deleteTask());
 
         taskTitle.setText(task.title);
@@ -88,8 +95,12 @@ public class Card extends Pane {
         initEditTaskTitle();
 
         registerForAddTagMessages();
+        
 
-        openTask.setOnAction(event -> displayDialog());
+        openTask.setOnAction(event -> {
+            hasDetailedTaskOpen = true;
+            displayDialog();
+        });
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -188,14 +199,8 @@ public class Card extends Pane {
     }
 
     void displayDialog() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initStyle(StageStyle.DECORATED);
-        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
-
-        AnchorPane root = detailedTask;
-        stage.setScene(new Scene(root));
-        stage.show();
+        detailedTask.updateDetails();
+        mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>
@@ -245,6 +250,10 @@ public class Card extends Pane {
         return taskTitle;
     }
 
+    public DetailedTask getDetailedTask() {
+        return detailedTask;
+    }
+
     public TaskList getTaskList() {
         return taskList;
     }
@@ -272,5 +281,21 @@ public class Card extends Pane {
 
     public MFXButton getOpenTask() {
         return openTask;
+    }
+
+    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
+        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
+    }
+
+    public boolean isHasDetailedTaskOpen() {
+        return hasDetailedTaskOpen;
+    }
+
+    public void showDescriptionImage() {
+        descriptionImage.setVisible(true);
+    }
+
+    public void hideDescriptionImage() {
+        descriptionImage.setVisible(false);
     }
 }

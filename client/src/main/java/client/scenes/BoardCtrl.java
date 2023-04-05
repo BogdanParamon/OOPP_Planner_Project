@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.Packet;
+import commons.Subtask;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -116,6 +117,8 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton addTag;
 
+    private Pane blurPane;
+
     /**
      * Setup server and main controller
      *
@@ -214,6 +217,12 @@ public class BoardCtrl implements Initializable {
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
                                     card.getTaskTitle().setText(task.title);
+                                    card.getDetailedTask().getDtvDescription()
+                                            .setText(task.description);
+                                    if (!task.description.trim().equals(""))
+                                        card.showDescriptionImage();
+                                    else card.hideDescriptionImage();
+                                    card.getDetailedTask().getDtvTitle().setText(task.title);
                                     break;
                                 }
                             }
@@ -229,6 +238,12 @@ public class BoardCtrl implements Initializable {
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
                         if (list.getTaskList().listId == listId) {
+                            for (Node node1 : list.getList().getChildren()) {
+                                if (!(node1 instanceof Card)) continue;
+                                Card card = (Card) node1;
+                                if (card.isHasDetailedTaskOpen())
+                                    card.getDetailedTask().stopDisplayingDialog();
+                            }
                             board_hbox.getChildren().remove(list);
                             board.lists.remove(list.getTaskList());
                             break;
@@ -250,12 +265,75 @@ public class BoardCtrl implements Initializable {
                                 if (!(cardNode instanceof Card)) continue;
                                 Card card = (Card) cardNode;
                                 if (card.getTask().taskId == taskId) {
+                                    if (card.isHasDetailedTaskOpen())
+                                        card.getDetailedTask().stopDisplayingDialog();
                                     list.getList().getChildren().remove(card);
                                     list.getTaskList().tasks.remove(card.getTask());
                                     break;
                                 }
                             }
                             break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForNewSubtasks() {
+        return server.registerForMessages("/topic/subtasks/add/" + board.boardId, Packet.class,
+                taskIdlistIdAndSubtask -> Platform.runLater(() -> {
+                    long taskId = taskIdlistIdAndSubtask.longValue;
+                    long listId = taskIdlistIdAndSubtask.longValue2;
+                    Subtask subtask = taskIdlistIdAndSubtask.subtask;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node node1 : list.getList().getChildren()) {
+                                Card card = (Card) node1;
+                                Task task = card.getTask();
+                                if (task.taskId == taskId) {
+                                    task.subtasks.add(0, subtask);
+                                    client.scenes.Subtask UISubtask =
+                                            new client.scenes.Subtask(mainCtrl,
+                                                    server, board, taskList, task, subtask);
+                                    card.getDetailedTask().
+                                            getTasks_vbox().getChildren().add(0, UISubtask);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForSubtaskRename() {
+        return server.registerForMessages("/topic/subtasks/rename/" + board.boardId, Packet.class,
+                taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
+                    long taskId = taskIdlistIdNewTitleAndSubtask.longValue;
+                    long listId = taskIdlistIdNewTitleAndSubtask.longValue2;
+                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node node1 : list.getList().getChildren()) {
+                                Card card = (Card) node1;
+                                Task task = card.getTask();
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
+                                        Subtask subtaskDB = subtaskUI.getSubtask();
+                                        if (subtaskDB.subTaskId == subtask.subTaskId) {
+                                            subtaskUI.getCheckbox().setText(subtask.subtaskText);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }));
@@ -294,6 +372,73 @@ public class BoardCtrl implements Initializable {
                         toList.getList().getChildren().add(dragToIndex, draggedCard);
                         toList.getTaskList().tasks.add(draggedCard.getTask());
                         draggedCard.setTaskList(toList.getTaskList());
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForSubtaskDelete() {
+        return server.registerForMessages("/topic/subtasks/delete/" + board.boardId, Packet.class,
+                taskIdlistIdAndSubtaskId -> Platform.runLater(() -> {
+                    long listId = taskIdlistIdAndSubtaskId.longValue;
+                    long taskId = taskIdlistIdAndSubtaskId.longValue2;
+                    long subtaskId = taskIdlistIdAndSubtaskId.longValue3;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node node1 : list.getList().getChildren()) {
+                                Card card = (Card) node1;
+                                Task task = card.getTask();
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
+                                        Subtask subtaskDB = subtaskUI.getSubtask();
+                                        if (subtaskDB.subTaskId == subtaskId) {
+                                            card.getDetailedTask().getTasks_vbox()
+                                                    .getChildren().remove(subtaskUI);
+                                            task.subtasks.remove(subtaskDB);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }));
+    }
+
+    public StompSession.Subscription registerForSubtaskStatus() {
+        return server.registerForMessages("/topic/subtasks/status/" + board.boardId, Packet.class,
+                taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
+                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+                    long listId = taskIdlistIdNewTitleAndSubtask.longValue;
+                    long taskId = taskIdlistIdNewTitleAndSubtask.longValue2;
+                    for (Node node : board_hbox.getChildren()) {
+                        List list = (List) node;
+                        TaskList taskList = list.getTaskList();
+                        if (taskList.listId == listId) {
+                            for (Node node1 : list.getList().getChildren()) {
+                                Card card = (Card) node1;
+                                Task task = card.getTask();
+                                if (task.taskId == taskId) {
+                                    for (Node node2 : card.getDetailedTask()
+                                            .getTasks_vbox().getChildren()) {
+                                        client.scenes.Subtask subtaskUI =
+                                                (client.scenes.Subtask) node2;
+                                        if (subtask.subTaskId == subtaskUI
+                                                .getSubtask().subTaskId) {
+                                            subtaskUI.getCheckbox()
+                                                    .setSelected(subtask.subtaskBoolean);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }));
     }
@@ -428,6 +573,10 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForBoardRenames());
         subscriptions.add(registerForListRenames());
         subscriptions.add(registerForTaskUpdates());
+        subscriptions.add(registerForNewSubtasks());
+        subscriptions.add(registerForSubtaskRename());
+        subscriptions.add(registerForSubtaskDelete());
+        subscriptions.add(registerForSubtaskStatus());
         subscriptions.add(registerForDragNDrops());
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
@@ -877,5 +1026,25 @@ public class BoardCtrl implements Initializable {
 
     public AnchorPane getRoot() {
         return root;
+    }
+
+    public void displayDetailedTask(DetailedTask detailedTask) {
+        blurPane = new Pane();
+        blurPane.setPrefSize(900, 600);
+        blurPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        root.getChildren().add(blurPane);
+        detailedTask.setStyle("-fx-background-radius: 20");
+        detailedTask.setLayoutX(150);
+        detailedTask.setLayoutY(100);
+        blurPane.setOnMouseClicked(event -> {
+            root.getChildren().remove(blurPane);
+            root.getChildren().remove(detailedTask);
+        });
+        root.getChildren().add(detailedTask);
+    }
+
+    public void stopDisplayingDialog(DetailedTask detailedTask) {
+        root.getChildren().remove(blurPane);
+        root.getChildren().remove(detailedTask);
     }
 }

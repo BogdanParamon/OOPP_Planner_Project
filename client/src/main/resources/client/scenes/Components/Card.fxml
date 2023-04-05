@@ -38,5 +38,10 @@
         <GridPane fx:id="tags" hgap="3" layoutX="5" layoutY="50" prefHeight="25" prefWidth="100" vgap="3">
 
         </GridPane>
+      <ImageView fx:id="descriptionImage" fitHeight="15.0" fitWidth="15.0" layoutX="8.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true" visible="false">
+          <image>
+              <Image url="@/client/images/description.png" />
+          </image>
+      </ImageView>
     </children>
 </fx:root>

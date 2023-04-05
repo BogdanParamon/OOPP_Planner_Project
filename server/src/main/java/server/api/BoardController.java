@@ -20,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
