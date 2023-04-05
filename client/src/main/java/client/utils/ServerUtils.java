@@ -19,6 +19,7 @@ import commons.Board;
 import commons.Subtask;
 import commons.Tag;
 import commons.User;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -44,6 +45,9 @@ public class ServerUtils {
     private static String SERVER;
     private static String websocketSERVER;
     private static StompSession session;
+    private static Client client = ClientBuilder.newClient(new ClientConfig());
+    private static StandardWebSocketClient webSocketClient = new StandardWebSocketClient();
+    private static WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
 
     public static void setSERVER(String SERVER) {
         ServerUtils.SERVER = "http://" + SERVER;
@@ -54,12 +58,23 @@ public class ServerUtils {
         ServerUtils.session = session;
     }
 
+    public static void setClient(Client client) {
+        ServerUtils.client = client;
+    }
+
+    public static void setWebSocketClient(StandardWebSocketClient webSocketClient) {
+        ServerUtils.webSocketClient = webSocketClient;
+    }
+
+    public static void setStompClient(WebSocketStompClient stompClient) {
+        ServerUtils.stompClient = stompClient;
+    }
+
     public boolean validServer() {
         String regex = "^(http)://[a-zA-Z0-9-_.]+(:[0-9]+)?/?$";
         if (!SERVER.matches(regex)) return false;
         try {
-            String resp = ClientBuilder.newClient(new ClientConfig())
-                    .property(ClientProperties.CONNECT_TIMEOUT, 500)
+            String resp = client.property(ClientProperties.CONNECT_TIMEOUT, 500)
                     .target(SERVER)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
@@ -71,16 +86,14 @@ public class ServerUtils {
     }
 
     public Board getBoardById(long boardId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/" + boardId)
+        return client.target(SERVER).path("api/boards/" + boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Board.class);
     }
 
     public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
+        return client.target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<Map<Long, String>>() {
@@ -88,11 +101,9 @@ public class ServerUtils {
     }
 
     public StompSession connectWebsocket() {
-        var client = new StandardWebSocketClient();
-        var stomp = new WebSocketStompClient(client);
-        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         try {
-            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() {
+            return stompClient.connect(websocketSERVER, new StompSessionHandlerAdapter() {
             }).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -122,25 +133,15 @@ public class ServerUtils {
         session.send(dest, o);
     }
 
-    public void deleteAllBoards() {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/deleteAll")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .delete();
-    }
-
     public User connectToUser(String userName) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/users/" + userName)
+        return client.target(SERVER).path("api/users/" + userName)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(User.class);
     }
 
     public Subtask addSubtask(long taskId, Subtask subtask) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/subtasks/add")
+        return client.target(SERVER).path("api/subtasks/add")
                 .queryParam("taskId", taskId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
@@ -148,8 +149,7 @@ public class ServerUtils {
     }
 
     public Tag getTagById(long tagId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/getTagById/" + tagId)
+        return client.target(SERVER).path("api/boards/getTagById/" + tagId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);

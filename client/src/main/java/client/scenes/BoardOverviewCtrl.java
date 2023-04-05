@@ -133,7 +133,6 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void deleteAll() {
-        server.deleteAllBoards();
         boards.getItems().clear();
     }
 
