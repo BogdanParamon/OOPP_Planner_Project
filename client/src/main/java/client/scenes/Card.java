@@ -100,6 +100,11 @@ public class Card extends Pane {
             displayDialog();
         });
 
+        this.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2)
+                displayDialog();
+        });
+
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
             String cssPath = cssURL.toExternalForm();
