@@ -114,7 +114,8 @@ public class Card extends Pane {
                 tag -> {
                     Platform.runLater(() -> {
                         addTag( tag, true);
-                        getDetailedTask().getTags_vbox().getChildren().add(new Tag(mainCtrl, server, tag, board));
+                        getDetailedTask().getTags_vbox()
+                                .getChildren().add(new Tag(mainCtrl, server, tag, board));
                         }
                     );
                 });
@@ -232,7 +233,8 @@ public class Card extends Pane {
 
     public void removeTag(long tagId) {
         task.tags.removeIf(tag -> tag.tagId == tagId);
-        getDetailedTask().getTags_vbox().getChildren().removeIf(node -> node instanceof Tag && ((Tag) node).tag.tagId == tagId);
+        getDetailedTask().getTags_vbox().getChildren()
+                .removeIf(node -> node instanceof Tag && ((Tag) node).tag.tagId == tagId);
         tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
     }
 
@@ -246,7 +248,8 @@ public class Card extends Pane {
             if (getDetailedTask().getTags_vbox().getChildren().get(i) instanceof Tag) {
                 Tag tagUI = (Tag) getDetailedTask().getTags_vbox().getChildren().get(i);
                 if (tagUI.tag.tagId == tag.tagId) {
-                    getDetailedTask().getTags_vbox().getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                    getDetailedTask().getTags_vbox()
+                            .getChildren().set(i, new Tag(mainCtrl, server, tag, board));
                     break;
                 }
             }
