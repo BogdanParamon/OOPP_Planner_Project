@@ -110,8 +110,8 @@ public class TaskService {
         if (!tagRepository.existsById(tagId) || !taskRepository.existsById(taskId)) {
             throw new IllegalArgumentException();
         }
-        Task task = taskRepository.getById(taskId);
-        Tag tag = tagRepository.getById(tagId);
+        Task task = taskRepository.findById(taskId).get();
+        Tag tag = tagRepository.findById(tagId).get();
 
         task.addTag(tag);
         taskRepository.save(task);
