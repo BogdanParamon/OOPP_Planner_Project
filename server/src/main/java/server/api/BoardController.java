@@ -20,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
@@ -75,6 +76,15 @@ public class BoardController {
     public ResponseEntity<Board> add(@RequestBody Board board, @RequestParam long userId) {
         try {
             return ResponseEntity.ok(boardService.add(board, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping(path = "/join")
+    public ResponseEntity<Board> join(@RequestBody Board board, @RequestParam long userId) {
+        try {
+            return ResponseEntity.ok(boardService.join(board, userId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
@@ -189,6 +199,12 @@ public class BoardController {
         return boardService.renameMessage(newTitle, boardId);
     }
 
+    @MessageMapping("/boards/join/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
+    @Transactional
+    public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
+        return boardService.joinMessage(board, userId);
+    }
     @MessageMapping("/boards/addTag/{boardId}")
     @SendTo("/topic/boards/addTag/{boardId}")
     @Transactional

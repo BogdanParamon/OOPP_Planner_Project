@@ -13,14 +13,13 @@ public class Subtask {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long subTaskId;
 
-    public String subtaskText;
+    public String subtaskText = "New Subtask";
     public boolean subtaskBoolean;
 
     public Subtask(String subtaskText) {
         this.subtaskText = subtaskText;
     }
 
-    @SuppressWarnings("unused")
     public Subtask() {
         // For object mapper
     }
@@ -47,5 +46,9 @@ public class Subtask {
                 ", subtaskText='" + subtaskText + '\'' +
                 ", subtaskBoolean=" + subtaskBoolean +
                 '}';
+    }
+
+    public void setSubtaskText(String subtaskText) {
+        this.subtaskText = subtaskText;
     }
 }

@@ -8,11 +8,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.ColorPicker?>
-<fx:root id="root" prefHeight="20.0" prefWidth="120.0" stylesheets="@/client/styles/tag.css" type="Pane"
+<fx:root prefHeight="20.0" prefWidth="120.0" style="-fx-background-color: transparent;" type="Pane"
          xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <Pane fx:id="tagPane" prefHeight="20" prefWidth="85">
-        <MFXTextField fx:id="tagName" id="tagName" layoutX="5" text="This is a ta" floatMode="DISABLED" prefWidth="75"
-                      disable="true">
+        <MFXTextField fx:id="tagName" layoutX="5" text="This is a ta" floatMode="DISABLED" prefWidth="75"
+                      disable="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
             <font>
                 <Font name="Roboto" size="13"/>
             </font>

@@ -4,7 +4,6 @@
     -fx-border-color: ddd;
     -fx-border-radius: 10px
 }
-
 .card:hover {
     -fx-border-color: blue;
 }
