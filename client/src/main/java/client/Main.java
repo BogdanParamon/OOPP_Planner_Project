@@ -70,6 +70,6 @@ public class Main extends Application {
 
 
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask,
-                userOrAdmin);
+                userOrAdmin, shortcuts);
     }
 }
