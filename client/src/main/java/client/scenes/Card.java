@@ -302,7 +302,6 @@ public class Card extends Pane {
     }
 
     public void setTaskList(TaskList taskList) {
-        System.out.println(this.toString() + this.taskList.listId + " " + taskList.listId);
         this.taskList = taskList;
     }
 

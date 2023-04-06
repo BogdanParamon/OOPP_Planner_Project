@@ -83,7 +83,6 @@ public class DetailedTask extends AnchorPane {
             tasks_vbox.getChildren().add(0, subtaskUI);
         }
 
-
         dtvTitle.setText(task.title);
         dtvDescription.setText(task.description);
 
@@ -120,10 +119,8 @@ public class DetailedTask extends AnchorPane {
         for (Tag tag : this.task.tags) {
             client.scenes.Tag tagUI = new client.scenes.Tag(mainCtrl, server, tag, board);
             tagUI.getDeleteTag().setOnAction(event -> {
-                System.out.println("This works1");
                 server.send("/app/tasks/deleteTag/" + task.taskId, tag.tagId);
             });
-            System.out.println("`hey");
             tags_vbox.getChildren().add(0, tagUI);
         }
     }
@@ -179,4 +176,14 @@ public class DetailedTask extends AnchorPane {
     public VBox getTags_vbox() {
         return tags_vbox;
     }
+
+    public void updateSubtaskOrder(Task task) {
+        for (Subtask subtask : task.subtasks) {
+            client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+            tasks_vbox.getChildren().add(0, subtaskUI);
+        }
+    }
+
 }

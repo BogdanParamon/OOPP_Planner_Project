@@ -35,6 +35,10 @@ public class Subtask extends AnchorPane {
     private MFXButton deleteButton;
     @FXML
     private MFXCheckbox checkbox;
+    @FXML
+    private MFXButton arrowUp;
+    @FXML
+    private MFXButton arrowDown;
 
     public Subtask(MainCtrl mainCtrl, ServerUtils server, Board board, TaskList taskList,
                    Task task, commons.Subtask subtask) {
@@ -81,6 +85,14 @@ public class Subtask extends AnchorPane {
                         + taskList.listId + "/" + task.taskId, subtask);
             }
         });
+
+        arrowDown.setOnAction(event -> {
+            task.switchSubtasksWithNext(this.subtask);
+            server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task.taskId);
+        });
+
+//        arrowUp.setOnAction(event -> detailedTask.moveSubtaskUp(this));
+
     }
 
     public void updateSubtaskTitle() {

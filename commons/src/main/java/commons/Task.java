@@ -91,4 +91,12 @@ public class Task {
         tags.add(tag);
     }
 
+    public void switchSubtasksWithNext(Subtask subtask) {
+        int index = subtasks.indexOf(subtask);
+        if(index != 0) {
+            subtasks.remove(subtask);
+            subtasks.add(index - 1, subtask);
+        }
+    }
+
 }
