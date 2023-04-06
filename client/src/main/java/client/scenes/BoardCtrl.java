@@ -117,7 +117,7 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton addTag;
 
-    private Pane blurPane;
+    @FXML private Pane blurPane;
 
     /**
      * Setup server and main controller
@@ -712,8 +712,13 @@ public class BoardCtrl implements Initializable {
     }
 
     public void showCustomize() {
-        if (customize.isVisible()) customize.setVisible(false);
-        else customize.setVisible(true);
+        customize.setVisible(true);
+        blurPane.setVisible(true);
+        blurPane.setOnMouseClicked(event -> {
+            blurPane.setVisible(false);
+            customize.setVisible(false);
+        });
+
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
         colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
@@ -1029,22 +1034,16 @@ public class BoardCtrl implements Initializable {
     }
 
     public void displayDetailedTask(DetailedTask detailedTask) {
-        blurPane = new Pane();
-        blurPane.setPrefSize(900, 600);
-        blurPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        root.getChildren().add(blurPane);
         detailedTask.setStyle("-fx-background-radius: 20");
         detailedTask.setLayoutX(150);
         detailedTask.setLayoutY(100);
-        blurPane.setOnMouseClicked(event -> {
-            root.getChildren().remove(blurPane);
-            root.getChildren().remove(detailedTask);
-        });
+        blurPane.setVisible(true);
+        blurPane.setOnMouseClicked(event -> { } );
         root.getChildren().add(detailedTask);
     }
 
     public void stopDisplayingDialog(DetailedTask detailedTask) {
-        root.getChildren().remove(blurPane);
+        blurPane.setVisible(false);
         root.getChildren().remove(detailedTask);
     }
 }
