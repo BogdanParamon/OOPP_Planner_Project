@@ -132,7 +132,7 @@ public class PasswordCtrl implements Initializable {
     }
 
     public void switchSceneToBoard(Board board) {
-        mainCtrl.boardCtrl.setBoard(board);
+        //mainCtrl.boardCtrl.setBoard(board);
         mainCtrl.showBoard();
     }
 

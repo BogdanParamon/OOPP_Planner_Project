@@ -64,8 +64,6 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton addList;
     @FXML
-    private MFXButton addTask;
-    @FXML
     private Pane custimozePane;
     @FXML
     private Pane overviewBoardsPane;
@@ -121,7 +119,7 @@ public class BoardCtrl implements Initializable {
         lock = new ImageView("/client/images/lock-icon-11.png");
         lock.setFitHeight(60);
         lock.setFitWidth(60);
-        lock.setX(770);
+        lock.setX(550);
         lock.setY(20);
         root.getChildren().add(lock);
         if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
@@ -158,6 +156,7 @@ public class BoardCtrl implements Initializable {
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
                     board_hbox.getChildren().add(listUI);
+                    board.lists.add(taskList);
                 }));
     }
 
@@ -345,7 +344,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
-        addTask.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -367,7 +365,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(board.buttonsColorFont));
         btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
         addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
-        addTask.setTextFill(Paint.valueOf(board.buttonsColorFont));
         txtTags.setFill(Paint.valueOf(board.backgroundColorFont));
     }
 
@@ -465,7 +462,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + buttonColor + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + buttonColor + ";");
-        addTask.setStyle(fxBackgroundColor + buttonColor + ";");
         btnCustomize.setStyle(fxBackgroundColor + buttonColor + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + buttonColor + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -492,7 +488,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
         btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
         addList.setTextFill(Paint.valueOf(buttonsFontColor));
-        addTask.setTextFill(Paint.valueOf(buttonsFontColor));
         this.board.buttonsColorFont = buttonsFontColor;
     }
 
@@ -523,7 +518,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
         String fxBckgroundColorDDD = "-fx-background-color: ddd;";
         addList.setStyle(fxBckgroundColorDDD);
-        addTask.setStyle(fxBckgroundColorDDD);
         btnOverviewBoards.setStyle(fxBckgroundColorDDD);
         btnCustomize.setStyle(fxBckgroundColorDDD);
         overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
@@ -547,7 +541,6 @@ public class BoardCtrl implements Initializable {
         btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
         btnCustomize.setTextFill(Paint.valueOf("Black"));
         addList.setTextFill(Paint.valueOf("Black"));
-        addTask.setTextFill(Paint.valueOf("Black"));
         board.buttonsColorFont = "Black";
 
         updateBoard(board);
