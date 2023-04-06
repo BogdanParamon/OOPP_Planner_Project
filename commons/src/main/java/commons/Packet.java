@@ -21,7 +21,8 @@ public class Packet {
         if (this == o) return true;
         if (!(o instanceof Packet)) return false;
         Packet packet = (Packet) o;
-        return longValue == packet.longValue && longValue2 == packet.longValue2
+        return longValue == packet.longValue
+                && longValue2 == packet.longValue2
                 && longValue3 == packet.longValue3
                 && intValue == packet.intValue
                 && Objects.equals(stringValue, packet.stringValue)
@@ -38,4 +39,18 @@ public class Packet {
                 intValue, stringValue, task, taskList, board, subtask, tag);
     }
 
+    @Override
+    public String toString() {
+        return "Packet{" + ", \n" +
+                " longValue=" + longValue + ", \n" +
+                " longValue2=" + longValue2 + ", \n" +
+                " longValue3=" + longValue3 + ", \n" +
+                " intValue=" + intValue + ", \n" +
+                " stringValue='" + stringValue + "', \n" +
+                " task=" + task + ", \n" +
+                " taskList=" + taskList + ", \n" +
+                " board=" + board + ", \n" +
+                " tag=" + tag + ", \n" +
+                '}';
+    }
 }
