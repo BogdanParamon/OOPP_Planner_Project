@@ -20,7 +20,7 @@ public class Subtask {
         this.subtaskText = subtaskText;
     }
 
-    Subtask() {
+    public Subtask() {
         // For object mapper
     }
 

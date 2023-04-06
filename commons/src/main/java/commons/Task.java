@@ -39,7 +39,7 @@ public class Task {
         this.title = title;
     }
 
-    Task() {
+    public Task() {
         // For object mapper
     }
 

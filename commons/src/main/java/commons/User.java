@@ -29,7 +29,7 @@ public class User {
     }
 
     //unused
-    User() {
+    public User() {
     }
 
     @Override
