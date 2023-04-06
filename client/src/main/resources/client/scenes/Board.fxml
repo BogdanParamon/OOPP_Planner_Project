@@ -1,318 +1,355 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <?import io.github.palexdev.materialfx.controls.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-border-color: black; -fx-border-width: 2px;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-border-color: black; -fx-border-width: 2px;"
+            stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardCtrl">
     <children>
-        <MFXScrollPane id="board" fx:id="boardScrollPane" hbarPolicy="ALWAYS" layoutX="183.0" layoutY="95.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="470.0" prefWidth="690.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;" vbarPolicy="NEVER">
+        <MFXScrollPane id="board" fx:id="boardScrollPane" hbarPolicy="ALWAYS" layoutX="183.0" layoutY="95.0"
+                       nodeOrientation="LEFT_TO_RIGHT" prefHeight="470.0" prefWidth="690.0"
+                       style="-fx-background-color: ddd; -fx-background-radius: 10px;" vbarPolicy="NEVER">
             <content>
-                <HBox fx:id="board_hbox" alignment="CENTER_LEFT" fillHeight="false" minWidth="690.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="450.0" spacing="15" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+                <HBox fx:id="board_hbox" alignment="CENTER_LEFT" fillHeight="false" minWidth="690.0"
+                      nodeOrientation="LEFT_TO_RIGHT" prefHeight="450.0" spacing="15" style="-fx-background-radius: 10;"
+                      HBox.hgrow="ALWAYS">
                     <padding>
-                        <Insets left="20.0" right="20.0" />
+                        <Insets left="20.0" right="20.0"/>
                     </padding>
                 </HBox>
             </content>
         </MFXScrollPane>
-        <TextField layoutX="613.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Search" style="-fx-background-color: ddd;">
+        <TextField layoutX="613.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Search"
+                   style="-fx-background-color: ddd;">
             <font>
-                <Font size="22.0" />
+                <Font size="22.0"/>
             </font>
         </TextField>
-        <Text fx:id="boardName" layoutX="240.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="260.17819993769444">
+        <Text fx:id="boardName" layoutX="240.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              wrappingWidth="260.17819993769444">
             <font>
-                <Font name="Roboto" size="30.0" />
+                <Font name="Roboto" size="30.0"/>
             </font>
         </Text>
         <Text fx:id="logo" layoutX="24.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio">
             <font>
-                <Font size="45.0" />
+                <Font size="45.0"/>
             </font>
         </Text>
-        <VBox fx:id="addListTaskVBox" layoutX="14.0" layoutY="95.0" prefHeight="112.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
+        <VBox fx:id="addListTaskVBox" layoutX="14.0" layoutY="95.0" prefHeight="54.0" prefWidth="150.0"
+              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
                 <Pane prefHeight="57.0" prefWidth="150.0">
                     <children>
-                        <MFXButton fx:id="addList" layoutX="27.0" layoutY="3.0" onAction="#addList" style="-fx-background-color: ddd;" text="Add List">
+                        <MFXButton fx:id="addList" layoutX="27.0" layoutY="3.0" onAction="#addList"
+                                   style="-fx-background-color: ddd;" text="Add List">
                             <font>
-                                <Font name="Roboto" size="20.0" />
+                                <Font name="Roboto" size="20.0"/>
                             </font>
                         </MFXButton>
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                             <image>
-                                <Image url="@/client/images/add_list.png" />
-                            </image>
-                        </ImageView>
-                        <Line endX="100.0" layoutX="25.0" layoutY="55.0" />
-
-                    </children>
-                </Pane>
-                <Pane prefHeight="42.0" prefWidth="85.0">
-                    <children>
-                        <MFXButton fx:id="addTask" layoutX="27.0" layoutY="2.0" onAction="#switchToAddTask" style="-fx-background-color: ddd;" text="Add Task">
-                            <font>
-                                <Font name="Roboto" size="20.0" />
-                            </font>
-                        </MFXButton>
-                        <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
-                            <image>
-                                <Image url="@/client/images/add_task.png" />
+                                <Image url="@/client/images/add_list.png"/>
                             </image>
                         </ImageView>
                     </children>
                 </Pane>
             </children>
         </VBox>
-        <Pane layoutX="832.0" layoutY="43.0">
+        <Pane fx:id="overviewBoardsPane" layoutX="14.0" layoutY="508.0" prefHeight="57.0" prefWidth="150.0"
+              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
-                <MFXButton prefHeight="33.0" prefWidth="25.0" style="-fx-background-color: ddd;" text=" " />
-                <ImageView fitHeight="24.0" fitWidth="24.0" layoutY="6.0">
-                    <image>
-                        <Image url="@/client/images/search.png" />
-                    </image>
-                </ImageView>
-            </children>
-        </Pane>
-        <Pane fx:id="overviewBoardsPane" layoutX="14.0" layoutY="508.0" prefHeight="57.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
-            <children>
-                <MFXButton fx:id="btnOverviewBoards" layoutX="35.0" layoutY="2.0" onAction="#switchToBoardOverviewScene" prefWidth="100.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true">
+                <MFXButton fx:id="btnOverviewBoards" layoutX="35.0" layoutY="2.0" onAction="#switchToBoardOverviewScene"
+                           prefWidth="100.0" style="-fx-background-color: ddd;" text="Overview Boards" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="16.0" />
+                        <Font name="Roboto" size="16.0"/>
                     </font>
                 </MFXButton>
                 <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
                     <image>
-                        <Image url="@/client/images/overview_boards.png" />
+                        <Image url="@/client/images/overview_boards.png"/>
                     </image>
                 </ImageView>
             </children>
         </Pane>
-        <TextField fx:id="newtTitle" layoutX="240.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0" promptText="Enter new title" style="-fx-background-color: ddd;" visible="false">
+        <TextField fx:id="newtTitle" layoutX="240.0" layoutY="36.0" prefHeight="45.0" prefWidth="260.0"
+                   promptText="Enter new title" style="-fx-background-color: ddd;" visible="false">
             <font>
-                <Font size="22.0" />
+                <Font size="22.0"/>
             </font>
         </TextField>
         <MFXButton fx:id="editTitle" layoutX="183.0" layoutY="38.0" onAction="#updateTitle" text="">
             <graphic>
                 <ImageView fitHeight="30.0" fitWidth="29.0">
-                    <Image url="@/client/images/editing.png" />
+                    <Image url="@/client/images/editing.png"/>
                 </ImageView>
             </graphic>
         </MFXButton>
         <MFXButton fx:id="save" layoutX="183.0" layoutY="38.0" onAction="#saveNewTitle" text="" visible="false">
             <graphic>
                 <ImageView fitHeight="30.0" fitWidth="29.0">
-                    <Image url="@/client/images/confirm.png" />
+                    <Image url="@/client/images/confirm.png"/>
                 </ImageView>
             </graphic>
         </MFXButton>
-        <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0" style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
+        <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0"
+                       style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
             <VBox fx:id="tagList" spacing="10">
                 <HBox fx:id="tags_hbox">
                     <Text fx:id="txtTags" text="Tags">
                         <font>
-                            <Font name="Roboto" size="20" />
+                            <Font name="Roboto" size="20"/>
                         </font>
                     </Text>
-                    <Pane prefWidth="65" />
+                    <Pane prefWidth="65"/>
 
                     <MFXButton fx:id="addTag" onAction="#addTag" style="-fx-background-color: white;" text="">
                         <graphic>
-                            <ImageView fitHeight="30" fitWidth="30">
-                                <Image url="@/client/images/addButton.png" />
+                            <ImageView fitHeight="30.0" fitWidth="30.0">
+                                <Image url="@/client/images/addButton.png"/>
                             </ImageView>
                         </graphic>
                         <padding>
-                            <Insets />
+                            <Insets/>
                         </padding>
                     </MFXButton>
                 </HBox>
             </VBox>
         </MFXScrollPane>
-        <Pane fx:id="custimozePane" layoutX="14.0" layoutY="438.0" prefHeight="57.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
+        <Pane fx:id="custimozePane" layoutX="14.0" layoutY="438.0" prefHeight="57.0" prefWidth="150.0"
+              style="-fx-background-color: ddd; -fx-background-radius: 10px;">
             <children>
-                <MFXButton fx:id="btnCustomize" layoutX="36.0" layoutY="6.0" onAction="#showCustomize" prefHeight="46.0" prefWidth="100.0" style="-fx-background-color: ddd;" text="Customize" wrapText="true">
+                <MFXButton fx:id="btnCustomize" layoutX="36.0" layoutY="6.0" onAction="#showCustomize" prefHeight="46.0"
+                           prefWidth="100.0" style="-fx-background-color: ddd;" text="Customize" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="16.0" />
+                        <Font name="Roboto" size="16.0"/>
                     </font>
                 </MFXButton>
-                <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="16.0" pickOnBounds="true"
+                           preserveRatio="true">
                     <image>
-                        <Image url="@/client/images/customization.png" />
+                        <Image url="@/client/images/customization.png"/>
                     </image>
                 </ImageView>
             </children>
         </Pane>
-        <Pane fx:id="blurPane" prefHeight="600" prefWidth="900" style="-fx-background-color: rgba(0, 0, 0, 0.5);" visible="false" />
-        <Pane fx:id="customize" layoutX="600" prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: #ddd; -fx-background-radius: 20px 0px 0px 20px;" visible="false">
+        <Pane fx:id="blurPane" prefHeight="600" prefWidth="900" style="-fx-background-color: rgba(0, 0, 0, 0.5);"
+              visible="false"/>
+        <Pane fx:id="customize" layoutX="600" prefHeight="600.0" prefWidth="300.0"
+              style="-fx-background-color: #ddd; -fx-background-radius: 20px 0px 0px 20px;" visible="false">
             <children>
-                <Text fx:id="txtCust" fill="WHITE" layoutX="42.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customize">
+                <Text fx:id="txtCust" fill="WHITE" layoutX="42.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Customize">
                     <font>
-                        <Font name="Roboto" size="45.0" />
+                        <Font name="Roboto" size="45.0"/>
                     </font>
                 </Text>
-                <MFXButton layoutX="182.0" layoutY="546.0" onAction="#resetAllColors" prefHeight="33.0" prefWidth="86.0" style="-fx-background-color: ddd;" text="Reset All" wrapText="true">
+                <MFXButton layoutX="182.0" layoutY="546.0" onAction="#resetAllColors" prefHeight="33.0" prefWidth="86.0"
+                           style="-fx-background-color: ddd;" text="Reset All" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="16.0" />
+                        <Font name="Roboto" size="16.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="15.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Background color:" wrappingWidth="139.78984375">
+                <Text layoutX="15.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Background color:"
+                      wrappingWidth="139.78984375">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerBackground" layoutX="146.0" layoutY="100.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="34.0" layoutY="546.0" onAction="#applyChanges" prefHeight="10.0" prefWidth="70.0" style="-fx-background-color: ddd;" text="Apply" wrapText="true">
+                <ColorPicker fx:id="colorPickerBackground" layoutX="146.0" layoutY="100.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="34.0" layoutY="546.0" onAction="#applyChanges" prefHeight="10.0" prefWidth="70.0"
+                           style="-fx-background-color: ddd;" text="Apply" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="16.0" />
+                        <Font name="Roboto" size="16.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="240.0" layoutY="100.0" onAction="#resetBackgroundColor" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <MFXButton layoutX="240.0" layoutY="100.0" onAction="#resetBackgroundColor" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="17.0" layoutY="301.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board color:" wrappingWidth="111.78984374999999">
+                <Text layoutX="17.0" layoutY="301.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board color:"
+                      wrappingWidth="111.78984374999999">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerBoard" layoutX="146.0" layoutY="281.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="285.0" onAction="#resetBoardColor" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerBoard" layoutX="146.0" layoutY="281.0" prefHeight="25.0" prefWidth="95.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="285.0" onAction="#resetBoardColor" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="17.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buttons color:" wrappingWidth="111.78984374999999">
+                <Text layoutX="17.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buttons color:"
+                      wrappingWidth="111.78984374999999">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerButtons" layoutX="146.0" layoutY="187.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="191.0" onAction="#resetButtonColor" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerButtons" layoutX="146.0" layoutY="187.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="191.0" onAction="#resetButtonColor" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="15.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Background font:" wrappingWidth="139.78984375000005">
+                <Text layoutX="15.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Background font:"
+                      wrappingWidth="139.78984375000005">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerBackgroundFont" layoutX="146.0" layoutY="128.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="129.0" onAction="#resetBackgroundFont" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerBackgroundFont" layoutX="146.0" layoutY="128.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="129.0" onAction="#resetBackgroundFont" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="17.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buttons font:" wrappingWidth="111.78984374999999">
+                <Text layoutX="17.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buttons font:"
+                      wrappingWidth="111.78984374999999">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerButtonsFont" layoutX="146.0" layoutY="218.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="222.0" onAction="#resetButtonFont" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerButtonsFont" layoutX="146.0" layoutY="218.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="222.0" onAction="#resetButtonFont" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="263.0" layoutY="1.0" onAction="#closeCustomize" prefHeight="10.0" prefWidth="12.0" style="-fx-background-color: ddd;" text="" />
-                <Text layoutX="17.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lists Color:" wrappingWidth="111.78984374999999">
+                <MFXButton layoutX="263.0" layoutY="1.0" onAction="#closeCustomize" prefHeight="10.0" prefWidth="12.0"
+                           style="-fx-background-color: ddd;" text=""/>
+                <Text layoutX="17.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lists Color:"
+                      wrappingWidth="111.78984374999999">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerListsColor" layoutX="146.0" layoutY="311.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="314.0" onAction="#resetListsColor" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerListsColor" layoutX="146.0" layoutY="311.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="314.0" onAction="#resetListsColor" prefHeight="24.0"
+                           prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="17.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lists font:" wrappingWidth="111.78984374999999">
+                <Text layoutX="17.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lists font:"
+                      wrappingWidth="111.78984374999999">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="colorPickerListsFont" layoutX="146.0" layoutY="340.0" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="240.0" layoutY="344.0" onAction="#resetListsFont" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <ColorPicker fx:id="colorPickerListsFont" layoutX="146.0" layoutY="340.0" prefHeight="25.0"
+                             prefWidth="95.0" style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="240.0" layoutY="344.0" onAction="#resetListsFont" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text layoutX="18.0" layoutY="418.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Card presets (background, font):" wrappingWidth="284.9899169921875">
+                <Text layoutX="18.0" layoutY="418.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Card presets (background, font):" wrappingWidth="284.9899169921875">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <Text layoutX="38.0" layoutY="453.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 1:" wrappingWidth="61.2000732421875">
+                <Text layoutX="38.0" layoutY="453.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 1:"
+                      wrappingWidth="61.2000732421875">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <Text layoutX="38.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 2:" wrappingWidth="61.2000732421875">
+                <Text layoutX="38.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 2:"
+                      wrappingWidth="61.2000732421875">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <Text layoutX="38.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 3:" wrappingWidth="61.2000732421875">
+                <Text layoutX="38.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preset 3:"
+                      wrappingWidth="61.2000732421875">
                     <font>
-                        <Font name="Roboto" size="13.0" />
+                        <Font name="Roboto" size="13.0"/>
                     </font>
                 </Text>
-                <ColorPicker fx:id="presetB1" layoutX="110.0" layoutY="437.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <ColorPicker fx:id="presetF1" layoutX="146.0" layoutY="437.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <ColorPicker fx:id="presetB2" layoutX="111.0" layoutY="472.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <ColorPicker fx:id="presetF2" layoutX="146.0" layoutY="472.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <ColorPicker fx:id="presetB3" layoutX="110.0" layoutY="509.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <ColorPicker fx:id="presetF3" layoutX="146.0" layoutY="509.0" prefHeight="25.0" prefWidth="29.0" style="-fx-background-color: #cfcabc;" />
-                <MFXButton layoutX="182.0" layoutY="438.0" onAction="#apply1" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Apply" wrapText="true">
+                <ColorPicker fx:id="presetB1" layoutX="110.0" layoutY="437.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <ColorPicker fx:id="presetF1" layoutX="146.0" layoutY="437.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <ColorPicker fx:id="presetB2" layoutX="111.0" layoutY="472.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <ColorPicker fx:id="presetF2" layoutX="146.0" layoutY="472.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <ColorPicker fx:id="presetB3" layoutX="110.0" layoutY="509.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <ColorPicker fx:id="presetF3" layoutX="146.0" layoutY="509.0" prefHeight="25.0" prefWidth="29.0"
+                             style="-fx-background-color: #cfcabc;"/>
+                <MFXButton layoutX="182.0" layoutY="438.0" onAction="#apply1" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Apply" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="182.0" layoutY="473.0" onAction="#apply2" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Apply" wrapText="true">
+                <MFXButton layoutX="182.0" layoutY="473.0" onAction="#apply2" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Apply" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="182.0" layoutY="509.0" onAction="#apply3" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Apply" wrapText="true">
+                <MFXButton layoutX="182.0" layoutY="509.0" onAction="#apply3" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Apply" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="240.0" layoutY="438.0" onAction="#reset1" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <MFXButton layoutX="240.0" layoutY="438.0" onAction="#reset1" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="240.0" layoutY="473.0" onAction="#reset2" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <MFXButton layoutX="240.0" layoutY="473.0" onAction="#reset2" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <MFXButton layoutX="240.0" layoutY="509.0" onAction="#reset3" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: ddd;" text="Reset" wrapText="true">
+                <MFXButton layoutX="240.0" layoutY="509.0" onAction="#reset3" prefHeight="24.0" prefWidth="46.0"
+                           style="-fx-background-color: ddd;" text="Reset" wrapText="true">
                     <font>
-                        <Font name="Roboto" size="11.0" />
+                        <Font name="Roboto" size="11.0"/>
                     </font>
                 </MFXButton>
-                <Text fx:id="pointer1" layoutX="14.0" layoutY="452.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-&gt;" wrappingWidth="26.0">
+                <Text fx:id="pointer1" layoutX="14.0" layoutY="452.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="-&gt;" wrappingWidth="26.0">
                     <font>
-                        <Font name="Roboto Bold" size="14.0" />
+                        <Font name="Roboto Bold" size="14.0"/>
                     </font>
                 </Text>
-                <Text fx:id="pointer2" layoutX="14.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-&gt;" wrappingWidth="26.0">
+                <Text fx:id="pointer2" layoutX="14.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="-&gt;" wrappingWidth="26.0">
                     <font>
-                        <Font name="Roboto Bold" size="14.0" />
+                        <Font name="Roboto Bold" size="14.0"/>
                     </font>
                 </Text>
-                <Text fx:id="pointer3" layoutX="14.0" layoutY="526.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-&gt;" wrappingWidth="26.0">
+                <Text fx:id="pointer3" layoutX="14.0" layoutY="526.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="-&gt;" wrappingWidth="26.0">
                     <font>
-                        <Font name="Roboto Bold" size="14.0" />
+                        <Font name="Roboto Bold" size="14.0"/>
                     </font>
                 </Text>
             </children>

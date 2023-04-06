@@ -30,7 +30,7 @@ public class TaskList {
     }
 
     @SuppressWarnings("unused")
-    private TaskList() {
+    public TaskList() {
         // For object mapper
     }
 

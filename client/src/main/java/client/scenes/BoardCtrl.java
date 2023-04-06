@@ -2,11 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Board;
-import commons.Packet;
-import commons.Subtask;
-import commons.Task;
-import commons.TaskList;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import jakarta.ws.rs.WebApplicationException;
@@ -15,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -29,7 +26,10 @@ import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class BoardCtrl implements Initializable {
 
@@ -43,6 +43,7 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
+    private User user;
     @FXML
     private TextField newtTitle;
     @FXML
@@ -66,8 +67,6 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton addList;
     @FXML
-    private MFXButton addTask;
-    @FXML
     private Pane custimozePane;
     @FXML
     private Pane overviewBoardsPane;
@@ -85,6 +84,8 @@ public class BoardCtrl implements Initializable {
     private MFXScrollPane tagsPane;
     @FXML
     private Text txtTags;
+    @FXML
+    private ImageView lock;
     @FXML
     private ColorPicker colorPickerListsColor;
     @FXML
@@ -139,6 +140,43 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
+
+    }
+
+    public void setUpProtection() {
+        lock = new ImageView("/client/images/lock-icon-11.png");
+        lock.setFitHeight(60);
+        lock.setFitWidth(60);
+        lock.setX(550);
+        lock.setY(20);
+        root.getChildren().add(lock);
+        if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
+            disable();
+            lock.setOnMouseClicked(event -> {
+                askForPassword(board, user);
+            });
+        } else {
+            enable();
+            lock.setOnMouseClicked(event -> {
+                setPassword(board, user);
+            });
+        }
+    }
+
+    protected void askForPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(true);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
+    }
+
+    protected void setPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(false);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
     }
 
     public StompSession.Subscription registerForNewLists() {
@@ -155,6 +193,7 @@ public class BoardCtrl implements Initializable {
                     listUI.getDeleteTaskListButton().
                             setStyle(fxBackgroundColor + board.listsColor + ";");
                     board_hbox.getChildren().add(listUI);
+                    board.lists.add(taskList);
                 }));
     }
 
@@ -283,7 +322,7 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdAndSubtask.longValue;
                     long listId = taskIdlistIdAndSubtask.longValue2;
-                    Subtask subtask = taskIdlistIdAndSubtask.subtask;
+                    commons.Subtask subtask = taskIdlistIdAndSubtask.subtask;
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
@@ -312,7 +351,7 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdNewTitleAndSubtask.longValue;
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue2;
-                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+                    commons.Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
                     for (Node node : board_hbox.getChildren()) {
                         List list = (List) node;
                         TaskList taskList = list.getTaskList();
@@ -325,7 +364,7 @@ public class BoardCtrl implements Initializable {
                                             .getTasks_vbox().getChildren()) {
                                         client.scenes.Subtask subtaskUI =
                                                 (client.scenes.Subtask) node2;
-                                        Subtask subtaskDB = subtaskUI.getSubtask();
+                                        commons.Subtask subtaskDB = subtaskUI.getSubtask();
                                         if (subtaskDB.subTaskId == subtask.subTaskId) {
                                             subtaskUI.getCheckbox().setText(subtask.subtaskText);
                                             break;
@@ -394,7 +433,7 @@ public class BoardCtrl implements Initializable {
                                             .getTasks_vbox().getChildren()) {
                                         client.scenes.Subtask subtaskUI =
                                                 (client.scenes.Subtask) node2;
-                                        Subtask subtaskDB = subtaskUI.getSubtask();
+                                        commons.Subtask subtaskDB = subtaskUI.getSubtask();
                                         if (subtaskDB.subTaskId == subtaskId) {
                                             card.getDetailedTask().getTasks_vbox()
                                                     .getChildren().remove(subtaskUI);
@@ -413,7 +452,7 @@ public class BoardCtrl implements Initializable {
     public StompSession.Subscription registerForSubtaskStatus() {
         return server.registerForMessages("/topic/subtasks/status/" + board.boardId, Packet.class,
                 taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
-                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+                    commons.Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue;
                     long taskId = taskIdlistIdNewTitleAndSubtask.longValue2;
                     for (Node node : board_hbox.getChildren()) {
@@ -632,7 +671,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
-        addTask.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -654,7 +692,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(board.buttonsColorFont));
         btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
         addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
-        addTask.setTextFill(Paint.valueOf(board.buttonsColorFont));
         txtTags.setFill(Paint.valueOf(board.backgroundColorFont));
     }
 
@@ -778,7 +815,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + buttonColor + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + buttonColor + ";");
-        addTask.setStyle(fxBackgroundColor + buttonColor + ";");
         btnCustomize.setStyle(fxBackgroundColor + buttonColor + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + buttonColor + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -826,7 +862,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
         btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
         addList.setTextFill(Paint.valueOf(buttonsFontColor));
-        addTask.setTextFill(Paint.valueOf(buttonsFontColor));
         this.board.buttonsColorFont = buttonsFontColor;
     }
 
@@ -863,7 +898,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
         String fxBckgroundColorDDD = "-fx-background-color: ddd;";
         addList.setStyle(fxBckgroundColorDDD);
-        addTask.setStyle(fxBckgroundColorDDD);
         btnOverviewBoards.setStyle(fxBckgroundColorDDD);
         btnCustomize.setStyle(fxBckgroundColorDDD);
         overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
@@ -887,7 +921,6 @@ public class BoardCtrl implements Initializable {
         btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
         btnCustomize.setTextFill(Paint.valueOf("Black"));
         addList.setTextFill(Paint.valueOf("Black"));
-        addTask.setTextFill(Paint.valueOf("Black"));
         board.buttonsColorFont = "Black";
 
         updateBoard(board);
@@ -930,6 +963,21 @@ public class BoardCtrl implements Initializable {
         resetButtonFont();
         resetListsColor();
         resetListsFont();
+    }
+
+
+    public void disable() {
+        addList.setDisable(true);
+        addTag.setDisable(true);
+        btnCustomize.setDisable(true);
+        editTitle.setDisable(true);
+    }
+
+    public void enable() {
+        addList.setDisable(false);
+        addTag.setDisable(false);
+        btnCustomize.setDisable(false);
+        editTitle.setDisable(false);
     }
 
     public void apply1() {
@@ -1033,6 +1081,9 @@ public class BoardCtrl implements Initializable {
         return root;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
     public void displayDetailedTask(DetailedTask detailedTask) {
         detailedTask.setStyle("-fx-background-radius: 20");
         detailedTask.setLayoutX(150);

@@ -20,7 +20,6 @@ public class Subtask {
         this.subtaskText = subtaskText;
     }
 
-    @SuppressWarnings("unused")
     public Subtask() {
         // For object mapper
     }
