@@ -9,6 +9,8 @@ import server.database.TagRepository;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +32,8 @@ public class TaskServiceTest {
         this.taskRepository = mock(TaskRepository.class);
         this.taskListRepository = mock(TaskListRepository.class);
         this.tagRepository = mock(TagRepository.class);
-        this.taskService = new TaskService(taskRepository, taskListRepository, tagRepository);
+        this.taskService =
+                new TaskService(taskRepository, taskListRepository, tagRepository);
     }
 
     @Test
@@ -52,7 +55,8 @@ public class TaskServiceTest {
     @Test
     public void testAddTaskThrowsException() {
         Task task = new Task();
-        assertThrows(IllegalArgumentException.class, () -> taskService.add(1L, task));
+        assertThrows(IllegalArgumentException.class,
+                () -> taskService.add(1L, task));
     }
 
     @Test
@@ -66,6 +70,28 @@ public class TaskServiceTest {
 
         taskRepository.save(task);
         assertEquals(taskService.getTaskById(1L), task);
+    }
+
+    @Test
+    public void testGetByIdThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> taskService.getTaskById(-1L));
+    }
+
+    @Test
+    public void testGetAllTasks() {
+        Task task1 = new Task();
+        Task task2 = new Task();
+        List<Task> result = new ArrayList<>();
+        result.add(task1);
+        result.add(task2);
+
+        when(taskRepository.save(task1)).thenReturn(task1);
+        when(taskRepository.save(task2)).thenReturn(task2);
+        when(taskRepository.findAll()).thenReturn(result);
+
+        taskRepository.save(task1);
+        taskRepository.save(task2);
+        assertEquals(taskService.getAll(), result);
     }
 
     @Test
@@ -106,7 +132,8 @@ public class TaskServiceTest {
 
     @Test
     public void testDeleteTaskThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> taskService.delete(-1L, -1L));
+        assertThrows(IllegalArgumentException.class,
+                () -> taskService.delete(-1L, -1L));
     }
 
     @Test
@@ -127,8 +154,39 @@ public class TaskServiceTest {
         assertEquals(taskService.addTag(1L, 1L), task);
     }
 
-//    @Test
-//    public void testAddTagThrowsException() {
-//
-//    }
+    @Test
+    public void testAddTagThrowsException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> taskService.addTag(-1L, -1L));
+    }
+
+    @Test
+    public void testDragTask() {
+        TaskList listFrom = new TaskList();
+        listFrom.listId = 1L;
+        TaskList listTo = new TaskList();
+        listTo.listId = 2L;
+        Task task = new Task();
+        task.taskId = 1L;
+        listFrom.tasks.add(task);
+
+        when(taskListRepository.existsById(1L)).thenReturn(true);
+        when(taskListRepository.findById(1L)).thenReturn(Optional.of(listFrom));
+        when(taskListRepository.existsById(2L)).thenReturn(true);
+        when(taskListRepository.findById(2L)).thenReturn(Optional.of(listTo));
+        when(taskRepository.existsById(1L)).thenReturn(true);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        when(taskListRepository.save(listFrom)).thenReturn(listFrom);
+        when(taskListRepository.save(listTo)).thenReturn(listTo);
+        when(taskRepository.save(task)).thenReturn(task);
+
+        assertEquals("Successful", taskService
+                .dragTask(1L, 1L, 2L, 0));
+    }
+
+    @Test
+    public void testDragTaskThrowsException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> taskService.dragTask(-1L, 1L, 2L, 0));
+    }
 }
