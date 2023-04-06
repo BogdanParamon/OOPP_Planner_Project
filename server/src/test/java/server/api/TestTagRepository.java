@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class TestTagRepository implements TagRepository {
+
+
     @Override
     public List<Tag> findAll() {
         return null;
@@ -157,5 +159,10 @@ public class TestTagRepository implements TagRepository {
     public <S extends Tag, R> R findBy(
             Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
+    }
+
+    @Override
+    public void deleteTaskTags(long tagID) {
+
     }
 }

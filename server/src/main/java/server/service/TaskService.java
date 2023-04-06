@@ -82,6 +82,7 @@ public class TaskService {
         TaskList taskList = taskListRepository.findById(taskListId).get();
         Task task = taskRepository.findById(taskId).get();
         if (taskList.tasks.remove(task)) {
+            taskRepository.deleteTaskTags(taskId);
             taskRepository.deleteById(taskId);
         }
         taskListRepository.save(taskList);

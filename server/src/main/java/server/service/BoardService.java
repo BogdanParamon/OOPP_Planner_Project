@@ -119,6 +119,7 @@ public class BoardService {
         if (!tagRepository.existsById(tagId)) {
             throw new IllegalArgumentException();
         }
+        tagRepository.deleteTaskTags(tagId);
         tagRepository.deleteById(tagId);
         return "Successful";
     }

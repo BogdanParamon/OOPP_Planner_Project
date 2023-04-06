@@ -20,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
@@ -204,4 +205,26 @@ public class BoardController {
     public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
         return boardService.joinMessage(board, userId);
     }
+    @MessageMapping("/boards/addTag/{boardId}")
+    @SendTo("/topic/boards/addTag/{boardId}")
+    @Transactional
+    public Tag addMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        return boardService.addTag(boardId, tag);
+    }
+
+    @MessageMapping("/boards/updateTag/{boardId}")
+    @SendTo("/topic/boards/updateTag/{boardId}")
+    @Transactional
+    public Tag updateMessage(Tag tag, @DestinationVariable("boardId") long boardId) {
+        return boardService.updateTag(tag);
+    }
+
+    @MessageMapping("/boards/deleteTag/{boardId}")
+    @SendTo("/topic/boards/deleteTag/{boardId}")
+    @Transactional
+    public Long deleteMessage(long tagId) {
+        boardService.deleteTag(tagId);
+        return tagId;
+    }
+
 }

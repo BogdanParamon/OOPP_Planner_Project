@@ -6,24 +6,22 @@ import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Modality;
-
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
+import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,26 +32,37 @@ public class Card extends Pane {
     private final ServerUtils server;
     private final Board board;
     private TaskList taskList;
-    private final Task task;
+    private Task task;
+    private DetailedTask detailedTask;
+    private int row = 0;
+    private int col = 0;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
     private TextField taskTitle;
     @FXML
     private MFXButton openTask;
+    @FXML
+    private GridPane tags;
+    @FXML
+    private Pane root;
+    @FXML
+    private ImageView descriptionImage;
 
     private static long dragFromListId;
     private static long dragToListId;
     private static int dragToIndex;
 
+    private boolean hasDetailedTaskOpen = false;
+
     /**
      * Constructs a new Card instance with the specified parameters.
      *
-     * @param mainCtrl  The MainCtrl instance that manages the main application view.
-     * @param server    The ServerUtils instance for handling server communication.
-     * @param task      The Task instance representing the task to be displayed in the card.
-     * @param taskList  The TaskList instance containing the task.
-     * @param board     The Board instance containing the taskList.
+     * @param mainCtrl The MainCtrl instance that manages the main application view.
+     * @param server   The ServerUtils instance for handling server communication.
+     * @param task     The Task instance representing the task to be displayed in the card.
+     * @param taskList The TaskList instance containing the task.
+     * @param board    The Board instance containing the taskList.
      */
     public Card(MainCtrl mainCtrl, ServerUtils server, Task task, TaskList taskList, Board board) {
 
@@ -75,16 +84,23 @@ public class Card extends Pane {
             throw new RuntimeException(e);
         }
 
-        deleteTaskButton.setOnAction(event -> {
-            server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
-        });
+        detailedTask = new DetailedTask(mainCtrl, server, board, taskList, task);
+
+        deleteTaskButton.setOnAction(event -> deleteTask());
 
         taskTitle.setText(task.title);
+        task.tags.forEach(tag -> addTag(tag, false));
 
         initDrag();
         initEditTaskTitle();
 
-        openTask.setOnAction(event -> displayDialog());
+        registerForAddTagMessages();
+        
+
+        openTask.setOnAction(event -> {
+            hasDetailedTaskOpen = true;
+            displayDialog();
+        });
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -94,6 +110,15 @@ public class Card extends Pane {
             System.out.println("Can not load Cardstyle.css");
         }
     }
+
+    public StompSession.Subscription registerForAddTagMessages() {
+        return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
+                tag -> {
+                    Platform.runLater(() -> addTag( tag, true)
+                    );
+                });
+    }
+
 
 
     void initDrag() {
@@ -117,6 +142,26 @@ public class Card extends Pane {
             event.consume();
         });
 
+        setOnDragOver(event -> {
+            if (!event.getGestureSource().getClass().equals(client.scenes.Tag.class))
+                return;
+            event.acceptTransferModes(TransferMode.MOVE);
+            event.consume();
+        });
+
+        setOnDragDropped(event -> {
+            if (!event.getGestureSource().getClass().equals(client.scenes.Tag.class))
+                return;
+
+            Dragboard db = event.getDragboard();
+            long tagId = Long.parseLong(db.getString());
+            commons.Tag tag = server.getTagById(tagId);
+            if (!task.tags.contains(tag)) {
+                server.send("/app/tasks/addTag/" + task.taskId, tag);
+            }
+            event.setDropCompleted(true);
+        });
+
         setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE
                     && !(dragFromListId == dragToListId && index[0] == dragToIndex)) {
@@ -136,6 +181,10 @@ public class Card extends Pane {
         });
     }
 
+    void deleteTask() {
+        server.send("/app/tasks/delete/" + board.boardId + "/" + taskList.listId, task.taskId);
+    }
+
     void initEditTaskTitle() {
         taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
@@ -150,14 +199,8 @@ public class Card extends Pane {
     }
 
     void displayDialog() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initStyle(StageStyle.DECORATED);
-        DetailedTask detailedTask = new DetailedTask(mainCtrl, server, task);
-
-        AnchorPane root = detailedTask;
-        stage.setScene(new Scene(root));
-        stage.show();
+        detailedTask.updateDetails();
+        mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>
@@ -172,6 +215,33 @@ public class Card extends Pane {
         server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
     }
 
+    public void addTag(commons.Tag tag, boolean newTag) {
+        Pane pane = new Pane();
+        pane.setId(String.valueOf(tag.tagId));
+        pane.setPrefSize(20, 7);
+        pane.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
+
+        if (newTag) {
+            task.addTag(tag);
+        }
+        tags.add(pane, col, row);
+        col = (col + 1) % 4;
+        if (col == 0) row++;
+    }
+
+    public void removeTag(long tagId) {
+        task.tags.removeIf(tag -> tag.tagId == tagId);
+        tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
+    }
+
+    public void updateTag(commons.Tag tag) {
+        for (Node node : tags.getChildren()) {
+            if (node.getId().equals(String.valueOf(tag.tagId))) {
+                node.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
+            }
+        }
+    }
+
     public Task getTask() {
         return task;
     }
@@ -180,11 +250,16 @@ public class Card extends Pane {
         return taskTitle;
     }
 
+    public DetailedTask getDetailedTask() {
+        return detailedTask;
+    }
+
     public TaskList getTaskList() {
         return taskList;
     }
 
     public void setTaskList(TaskList taskList) {
+        System.out.println(this.toString() + this.taskList.listId + " " + taskList.listId);
         this.taskList = taskList;
     }
 
@@ -194,5 +269,33 @@ public class Card extends Pane {
 
     public static void setDragToIndex(int dragToIndex) {
         Card.dragToIndex = dragToIndex;
+    }
+
+    public Pane getRoot() {
+        return root;
+    }
+
+    public MFXButton getDeleteTaskButton() {
+        return deleteTaskButton;
+    }
+
+    public MFXButton getOpenTask() {
+        return openTask;
+    }
+
+    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
+        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
+    }
+
+    public boolean isHasDetailedTaskOpen() {
+        return hasDetailedTaskOpen;
+    }
+
+    public void showDescriptionImage() {
+        descriptionImage.setVisible(true);
+    }
+
+    public void hideDescriptionImage() {
+        descriptionImage.setVisible(false);
     }
 }

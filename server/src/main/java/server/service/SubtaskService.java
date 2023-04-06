@@ -1,5 +1,6 @@
 package server.service;
 
+import commons.Packet;
 import commons.Subtask;
 import commons.Task;
 import org.springframework.stereotype.Service;
@@ -36,12 +37,54 @@ public class SubtaskService {
         return subtaskRepository.save(subtask);
     }
 
-    public String delete(long subtaskId) throws IllegalArgumentException {
-        if (!subtaskRepository.existsById(subtaskId) || subtaskId < 0) {
+    public String delete(long subtaskId, long taskId) throws IllegalArgumentException {
+        if (!subtaskRepository.existsById(subtaskId) || subtaskId < 0
+                || !taskRepository.existsById(taskId) || taskId < 0) {
             throw new IllegalArgumentException();
         }
-        subtaskRepository.deleteById(subtaskId);
+        Task task = taskRepository.findById(taskId).get();
+        Subtask subtask = subtaskRepository.findById(subtaskId).get();
+        if (task.subtasks.remove(subtask)) {
+            subtaskRepository.deleteById(subtaskId);
+        }
+        taskRepository.save(task);
         return "Successful";
+    }
+
+    public Packet addMessage(Subtask subtask, long boardId, long listId, long taskId) {
+        add(taskId, subtask);
+        Packet packet = new Packet();
+        packet.longValue = taskId;
+        packet.longValue2 = listId;
+        packet.subtask = subtask;
+        return packet;
+    }
+
+    public Packet renameMessage(Subtask subtask, long boardId, long listId, long taskId) {
+        updateSubtask(subtask);
+        Packet packet = new Packet();
+        packet.longValue = taskId;
+        packet.longValue2 = listId;
+        packet.subtask = subtask;
+        return packet;
+    }
+
+    public Packet deleteMessage(Long subtaskId, long boardId, long listId, long taskId) {
+        delete(subtaskId, taskId);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.longValue2 = taskId;
+        packet.longValue3 = subtaskId;
+        return packet;
+    }
+
+    public Packet statusMessage(Subtask subtask, long boardId, long listId, long taskId) {
+        updateSubtask(subtask);
+        Packet packet = new Packet();
+        packet.longValue = listId;
+        packet.longValue2 = taskId;
+        packet.subtask = subtask;
+        return packet;
     }
 
 }
