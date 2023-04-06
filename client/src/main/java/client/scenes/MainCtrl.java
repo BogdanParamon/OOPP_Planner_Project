@@ -38,8 +38,6 @@ public class MainCtrl {
     protected Scene board;
     protected AddTaskCtrl addTaskCtrl;
     protected Scene addTask;
-
-    protected DetailedTaskCtrl detailedTaskCtrl;
     protected Scene detailedTask;
 
     protected Scene userOrAdmin;
@@ -57,7 +55,6 @@ public class MainCtrl {
      * @param boardOverview home scene for a server
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
-     * @param detailedTask  allows user to see details of a task
      * @param userOrAdmin   allow user to pick between user view and admin view
      * @param shortcuts
      */
@@ -81,9 +78,6 @@ public class MainCtrl {
 
         this.addTaskCtrl = addTask.getKey();
         this.addTask = new Scene(addTask.getValue());
-
-        this.detailedTaskCtrl = detailedTask.getKey();
-        this.detailedTask = new Scene(detailedTask.getValue());
 
         this.userOrAdminCtrl = userOrAdmin.getKey();
         this.userOrAdmin = new Scene(userOrAdmin.getValue());

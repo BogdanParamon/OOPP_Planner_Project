@@ -15,10 +15,7 @@
  */
 package client.utils;
 
-import commons.Board;
-import commons.Tag;
-import commons.Task;
-import commons.TaskList;
+import commons.*;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -166,6 +163,15 @@ public class ServerUtils {
                 });
     }
 
+    public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<Map<Long, String>>() {
+                });
+    }
+
     public StompSession connectWebsocket() {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
@@ -209,7 +215,6 @@ public class ServerUtils {
                 .delete();
     }
 
-
     public void deleteTask(Task task) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/tasks/delete/")
@@ -234,6 +239,23 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Task.class);
+    }
+
+    public User connectToUser(String userName) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/users/" + userName)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(User.class);
+    }
+
+    public Subtask addSubtask(long taskId, Subtask subtask) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/subtasks/add")
+                .queryParam("taskId", taskId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
     public Tag addTagToBoard(long boardId, commons.Tag tag) {
@@ -269,7 +291,16 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
     }
+
     public void disconnectWebsocket() {
         session.disconnect();
+    }
+
+    public Subtask updateSubtask(Subtask subtask) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/subtasks/update")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 }

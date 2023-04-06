@@ -68,6 +68,7 @@ public class Main extends Application {
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
+
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask,
                 userOrAdmin, shortcuts);
     }

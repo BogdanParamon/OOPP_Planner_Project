@@ -1,36 +1,24 @@
 package server.api;
 
-import commons.Board;
+import commons.Packet;
 import commons.TaskList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
-import server.database.TaskListRepository;
+import server.service.TaskListService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/taskLists")
 public class TaskListController {
-    private final TaskListRepository taskListRepository;
-    private final BoardRepository boardRepository;
 
-    /**
-     * Constructor for class TaskListController
-     *
-     * @param taskListRepository      - the repository containing all task lists
-     * @param boardRepository - the repository containing all boards
-     */
-    public TaskListController(TaskListRepository taskListRepository,
-                              BoardRepository boardRepository) {
-        this.taskListRepository = taskListRepository;
-        this.boardRepository = boardRepository;
-    }
+    @Autowired
+    private TaskListService taskListService;
 
     /**
      * Gets all task lists from the repository
@@ -38,8 +26,8 @@ public class TaskListController {
      * @return a list containing all task lists
      */
     @GetMapping(path = {"", "/"})
-    public List<TaskList> getAll() {
-        return taskListRepository.findAll();
+    public ResponseEntity<List<TaskList>> getAll() {
+        return ResponseEntity.ok(taskListService.getAll());
     }
 
     /**
@@ -50,10 +38,11 @@ public class TaskListController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TaskList> getById(@PathVariable("id") long id) {
-        if (id < 0 || !taskListRepository.existsById(id)) {
+        try {
+            return ResponseEntity.ok(taskListService.getById(id));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(taskListRepository.findById(id).get());
     }
 
     /**
@@ -65,15 +54,11 @@ public class TaskListController {
      */
     @PostMapping(path = "/add")
     public ResponseEntity<TaskList> add(@RequestBody TaskList list, @RequestParam long boardId) {
-        if (list.title == null || list.tasks == null
-                || list.title.isEmpty() ||  ! boardRepository.existsById(boardId)) {
+        try {
+            return ResponseEntity.ok(taskListService.add(list, boardId));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList saved = taskListRepository.save(list);
-        Board parentBoard = boardRepository.findById(boardId).get();
-        parentBoard.lists.add(saved);
-        boardRepository.save(parentBoard);
-        return ResponseEntity.ok(list);
     }
 
     /**
@@ -83,14 +68,12 @@ public class TaskListController {
      * @return a response entity object of type TaskList
      */
     @DeleteMapping("/delete")
-    public ResponseEntity<TaskList> delete(@RequestParam long id) {
-        if (id < 0 || !taskListRepository.existsById(id)) {
+    public ResponseEntity<String> delete(@RequestParam long id) {
+        try {
+            return ResponseEntity.ok(taskListService.delete(id));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList tl = taskListRepository.findById(id).get();
-        taskListRepository.deleteById(id);
-
-        return ResponseEntity.ok().build();
     }
 
     /**
@@ -102,40 +85,41 @@ public class TaskListController {
      */
     @PutMapping("/update")
     public ResponseEntity<TaskList> updateList(@RequestBody TaskList taskList) {
-        if (taskList == null || !taskListRepository.existsById(taskList.listId)) {
+        try {
+            return ResponseEntity.ok(taskListService.updateList(taskList));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList updatedList = taskListRepository.save(taskList);
-        return ResponseEntity.ok(updatedList);
     }
 
     @PutMapping("/rename")
     public ResponseEntity<TaskList> renameList(@RequestParam long listId,
                                                @RequestBody String newTitle) {
-        if (newTitle == null || !taskListRepository.existsById(listId)) {
+        try {
+            return ResponseEntity.ok(taskListService.renameList(listId, newTitle));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        TaskList taskList = taskListRepository.findById(listId).get();
-        taskList.title = newTitle;
-        TaskList updatedList = taskListRepository.save(taskList);
-        return ResponseEntity.ok(updatedList);
     }
 
     @MessageMapping("/taskLists/add/{boardId}")
     @SendTo("/topic/taskLists/add/{boardId}")
     @Transactional
     public TaskList addMessage(TaskList taskList, @DestinationVariable("boardId") long boardId) {
-        add(taskList, boardId);
-        return taskList;
+        return taskListService.addMessage(taskList, boardId);
     }
 
     @MessageMapping("/taskLists/rename/{boardId}")
     @SendTo("/topic/taskLists/rename/{boardId}")
     @Transactional
-    public ArrayList<Object> renameMessage(ArrayList<Object> listIdAndNewTitle) {
-        var listId = listIdAndNewTitle.get(0);
-        listId = (long) (int) listId;
-        renameList((Long) listId, (String) listIdAndNewTitle.get(1));
-        return listIdAndNewTitle;
+    public Packet renameMessage(Packet listIdAndNewTitle) {
+        return taskListService.renameMessage(listIdAndNewTitle);
+    }
+
+    @MessageMapping("/taskLists/delete/{boardId}")
+    @SendTo("/topic/taskLists/delete/{boardId}")
+    @Transactional
+    public Long deleteMessage(Long listId) {
+        return taskListService.deleteMessage(listId);
     }
 }

@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.User;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -20,13 +21,14 @@ public class UserOrAdminCtrl implements Initializable {
     private AnchorPane root;
 
     @FXML
+    private MFXButton button;
+    @FXML
     private MFXTextField nameField;
 
     @FXML
-    private MFXPasswordField passwordField;
-
+    private MFXButton viewButton;
     @FXML
-    private MFXButton button;
+    private MFXPasswordField passwordField;
 
     private boolean mode; // 0 -> user, 1 -> admin
 
@@ -42,23 +44,28 @@ public class UserOrAdminCtrl implements Initializable {
         nameField.setVisible(true);
         passwordField.setVisible(false);
         mode = false;
+        button.setOnAction(
+                event -> switchSceneToBoardOverview(server.connectToUser(nameField.getText())));
     }
+
 
     public void view() {
         if (mode == false) {
             mode = true;
             nameField.setVisible(false);
             passwordField.setVisible(true);
-            button.setText("User view");
+            viewButton.setText("User view");
         } else {
             mode = false;
             nameField.setVisible(true);
             passwordField.setVisible(false);
-            button.setText("Admin view");
+            viewButton.setText("Admin view");
         }
     }
 
-    public void ok() {
+    public void switchSceneToBoardOverview(User user) {
+        mainCtrl.boardOverviewCtrl.setUser(user);
+        mainCtrl.boardOverviewCtrl.registerForNewBoards();
         mainCtrl.showBoardOverview();
     }
 

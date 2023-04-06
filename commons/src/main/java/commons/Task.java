@@ -1,13 +1,15 @@
 package commons;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Task {
@@ -17,7 +19,14 @@ public class Task {
 
     public String title;
 
+    public String description = "";
+
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taskId")
+    @OrderColumn
+    public List<Subtask> subtasks = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "taskId")
     public Set<Tag> tags = new HashSet<>();
 
@@ -35,31 +44,20 @@ public class Task {
         // For object mapper
     }
 
-    /**
-     * Compares this object to another object and returns true only if they are equal.
-     * Two Tasks are equal if they have the same taskId, title and are in the same list.
-     *
-     * @param o The object that is going to be compared to this
-     * @return True if and only if the other object is a Task with the same attributes
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Task)) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(title, task.title)
+        return taskId == task.taskId
+                && Objects.equals(title, task.title)
+                && Objects.equals(subtasks, task.subtasks)
                 && Objects.equals(tags, task.tags);
     }
 
-    /**
-     * Generates a hash code for this object,
-     * which uses the taskId, title and list attributes.
-     *
-     * @return The generated hash code for this object
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, title, tags);
+        return Objects.hash(taskId, title, subtasks, tags);
     }
 
     /**
@@ -69,7 +67,12 @@ public class Task {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+        return "Task{" +
+                "taskId=" + taskId +
+                ", title='" + title + '\'' +
+                ", subtasks=" + subtasks +
+                ", tags=" + tags +
+                '}';
     }
 
     public void setId(Long id) {
@@ -78,6 +81,10 @@ public class Task {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void addSubtask(Subtask subtask) {
+        subtasks.add(subtask);
     }
 
     public void addTag(Tag tag) {
