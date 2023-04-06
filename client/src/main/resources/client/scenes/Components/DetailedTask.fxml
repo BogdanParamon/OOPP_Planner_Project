@@ -4,45 +4,41 @@
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<fx:root prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: fff;" type="AnchorPane"
-         xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: fff;" type="AnchorPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Pane layoutX="50.0" layoutY="38.0" prefHeight="325.0" prefWidth="500.0"
-              style="-fx-background-radius: 20px; -fx-background-color: ddd;">
+        <Pane layoutX="50.0" layoutY="25.0" prefHeight="325.0" prefWidth="500.0" style="-fx-background-radius: 20px; -fx-background-color: ddd;">
             <children>
-                <TextField fx:id="dtvTitle" layoutX="24.0" layoutY="33.0" prefHeight="30.0" prefWidth="453.0"
-                           style="-fx-background-radius: 10px; -fx-background-color: fff;"/>
+                <TextField fx:id="dtvTitle" layoutX="24.0" layoutY="33.0" prefHeight="30.0" prefWidth="453.0" style="-fx-background-radius: 10px; -fx-background-color: fff;" />
                 <Text layoutX="24.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title: ">
                     <font>
-                        <Font size="18.0"/>
+                        <Font size="18.0" />
                     </font>
                 </Text>
                 <Text layoutX="25.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:">
                     <font>
-                        <Font size="18.0"/>
+                        <Font size="18.0" />
                     </font>
                 </Text>
-                <Pane layoutX="26.0" layoutY="198.0" prefHeight="111.0" prefWidth="281.0"
-                      style="-fx-background-color: fff; -fx-background-radius: 10px;">
+                <Pane layoutX="26.0" layoutY="198.0" prefHeight="111.0" prefWidth="281.0" style="-fx-background-color: fff; -fx-background-radius: 10px;">
                     <children>
-                        <MFXScrollPane hbarPolicy="NEVER" layoutX="4.0" layoutY="6.0" prefHeight="100.0"
-                                       prefWidth="263.0">
+                        <MFXScrollPane hbarPolicy="NEVER" layoutX="4.0" layoutY="6.0" prefHeight="100.0" prefWidth="263.0">
                             <content>
-                                <VBox fx:id="tasks_vbox" prefWidth="260.0">
+                                <VBox fx:id="tasks_vbox" prefHeight="39.0" prefWidth="240.0">
                                     <children>
-                                        <MFXButton fx:id="addSubtaskButton" layoutX="177.0" layoutY="1.0"
-                                                   prefHeight="33.0" prefWidth="28.0" text="">
+                                        <MFXButton fx:id="addSubtaskButton" layoutX="177.0" layoutY="1.0" prefHeight="33.0" prefWidth="28.0" text="">
                                             <graphic>
                                                 <ImageView fitHeight="30" fitWidth="30">
-                                                    <Image url="@/client/images/addButton.png"/>
+                                                    <Image url="@/client/images/addButton.png" />
                                                 </ImageView>
                                             </graphic>
                                         </MFXButton>
@@ -52,30 +48,42 @@
                         </MFXScrollPane>
                     </children>
                 </Pane>
-                <Pane layoutX="316.0" layoutY="197.0" prefHeight="111.0" prefWidth="160.0"
-                      style="-fx-background-color: fff; -fx-background-radius: 10px;">
+                <Pane layoutX="316.0" layoutY="197.0" prefHeight="111.0" prefWidth="160.0" style="-fx-background-color: fff; -fx-background-radius: 10px;">
                     <children>
-                        <MFXScrollPane hbarPolicy="NEVER" layoutX="3.0" layoutY="6.0" prefHeight="100.0"
-                                       prefWidth="154.0">
+                        <MFXScrollPane hbarPolicy="NEVER" layoutX="3.0" layoutY="6.0" prefHeight="100.0" prefWidth="154.0">
                             <content>
-                                <VBox fx:id="tags_vbox" prefWidth="145.0"/>
+                                <VBox fx:id="tags_vbox" prefWidth="145.0" />
                             </content>
                         </MFXScrollPane>
                     </children>
                 </Pane>
                 <Text layoutX="25.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks:">
                     <font>
-                        <Font size="18.0"/>
+                        <Font size="18.0" />
                     </font>
                 </Text>
                 <Text layoutX="316.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tags:">
                     <font>
-                        <Font size="18.0"/>
+                        <Font size="18.0" />
                     </font>
                 </Text>
-                <TextArea fx:id="dtvDescription" layoutX="24.0" layoutY="97.0" prefHeight="75.0" prefWidth="453.0"
-                          style="-fx-background-color: fff; -fx-background-radius: 10px;" wrapText="true"/>
+                <TextArea fx:id="dtvDescription" layoutX="24.0" layoutY="97.0" prefHeight="75.0" prefWidth="453.0" style="-fx-background-color: fff; -fx-background-radius: 10px;" wrapText="true" />
             </children>
+         <effect>
+            <DropShadow height="28.0" radius="13.5" spread="0.2" width="28.0">
+               <color>
+                  <Color opacity="0.5" />
+               </color>
+            </DropShadow>
+         </effect>
         </Pane>
+      <MFXButton fx:id="doneButton" layoutX="471.0" layoutY="361.0" prefHeight="27.0" prefWidth="62.0" style="-fx-background-color: ddd;" text="Done">
+         <effect>
+            <DropShadow spread="0.2">
+               <color>
+                  <Color opacity="0.5" />
+               </color>
+            </DropShadow>
+         </effect></MFXButton>
     </children>
 </fx:root>

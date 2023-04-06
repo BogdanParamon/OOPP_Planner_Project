@@ -43,4 +43,11 @@ class SubtaskTest {
         assertTrue(actual.contains(Subtask.class.getSimpleName()));
         assertTrue(actual.contains("testText"));
     }
+
+    @Test
+    public void testSetSubtaskText() {
+        var subtask = new Subtask("a");
+        subtask.setSubtaskText("b");
+        assertEquals("b", subtask.subtaskText);
+    }
 }

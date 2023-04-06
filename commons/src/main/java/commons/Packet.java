@@ -11,6 +11,7 @@ public class Packet {
     public Task task;
     public TaskList taskList;
     public Board board;
+    public Subtask subtask;
     public Tag tag;
 
     public Packet() { }
@@ -28,13 +29,14 @@ public class Packet {
                 && Objects.equals(task, packet.task)
                 && Objects.equals(taskList, packet.taskList)
                 && Objects.equals(board, packet.board)
+                && Objects.equals(subtask, packet.subtask)
                 && Objects.equals(tag, packet.tag);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(longValue, longValue2, longValue3,
-                intValue, stringValue, task, taskList, board, tag);
+                intValue, stringValue, task, taskList, board, subtask, tag);
     }
 
     @Override
