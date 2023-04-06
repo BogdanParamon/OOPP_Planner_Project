@@ -61,8 +61,6 @@ public class Main extends Application {
                 FXML.load(HomeCtrl.class, "client", "scenes", "Home.fxml");
         var board = FXML.load(BoardCtrl.class, "client", "scenes", "Board.fxml");
         var addTask = FXML.load(AddTaskCtrl.class, "client", "scenes", "AddTask.fxml");
-        var detailedTask =
-                FXML.load(DetailedTaskCtrl.class, "client", "scenes", "DetailedTask.fxml");
         var userOrAdmin = FXML.load(UserOrAdminCtrl.class, "client", "scenes", "UserOrAdmin.fxml");
         var shortcuts = FXML.load(ShortcutsCtrl.class, "client", "scenes", "Shortcuts.fxml");
 
@@ -71,6 +69,6 @@ public class Main extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask,
-                detailedTask, userOrAdmin, shortcuts);
+                userOrAdmin, shortcuts);
     }
 }

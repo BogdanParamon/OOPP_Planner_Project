@@ -66,7 +66,6 @@ public class MainCtrl {
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<DetailedTaskCtrl, Parent> detailedTask,
                            Pair<UserOrAdminCtrl, Parent> userOrAdmin,
                            Pair<ShortcutsCtrl, Parent> shortcuts) {
         this.primaryStage = primaryStage;
