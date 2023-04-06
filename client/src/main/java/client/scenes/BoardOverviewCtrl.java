@@ -114,7 +114,8 @@ public class BoardOverviewCtrl implements Initializable {
                         Pane pane = new Pane();
                         pane.setPrefHeight(20);
                         pane.getChildren().add(button);
-                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue).getPassword() != null) {
+                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue)
+                                .getPassword() != null) {
                             ImageView lock = new ImageView("/client/images/lock-icon-11.png");
                             lock.setFitHeight(20);
                             lock.setFitWidth(20);
@@ -135,7 +136,8 @@ public class BoardOverviewCtrl implements Initializable {
                         Pane pane = new Pane();
                         pane.setPrefHeight(20);
                         pane.getChildren().add(button);
-                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue).getPassword() != null) {
+                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue)
+                                .getPassword() != null) {
                             ImageView lock = new ImageView("/client/images/lock-icon-11.png");
                             lock.setFitHeight(20);
                             lock.setFitWidth(20);
@@ -247,7 +249,8 @@ public class BoardOverviewCtrl implements Initializable {
             return true;
         if (accesses.containsKey(user.userId)) {
             if (accesses.get(user.userId).containsKey(board.boardId))
-                return Objects.equals(accesses.get(user.userId).get(board.boardId), board.getPassword());
+                return Objects.equals(accesses.get(user.userId).get(board.boardId),
+                        board.getPassword());
             return false;
         }
         return false;

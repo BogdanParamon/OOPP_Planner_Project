@@ -65,46 +65,14 @@ public class PasswordCtrl implements Initializable {
 
     public void ok() {
         if (mode) {
-            if (Objects.equals(passwordField.getText(), board.getPassword())) {
-                mainCtrl.boardCtrl.enable();
-                try {
-                    FileWriter fw = new FileWriter(new File("accesses.txt"), true);
-                    BufferedWriter bf = new BufferedWriter(fw);
-                    PrintWriter writer = new PrintWriter(bf);
-                    writer.write(user.userId + " " + board.boardId + " " + board.getPassword() + '\n');
-                    writer.flush();
-                    if (!mainCtrl.boardOverviewCtrl.accesses.containsKey(user.userId)) {
-                        mainCtrl.boardOverviewCtrl.accesses.put(user.userId, new HashMap<>());
-                        mainCtrl.boardOverviewCtrl.accesses.get(user.userId).put(board.boardId, board.getPassword());
-                    } else
-                        mainCtrl.boardOverviewCtrl.accesses.get(user.userId).put(board.boardId, board.getPassword());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                mainCtrl.boardCtrl.setUpProtection();
-                switchSceneToBoard(board);
-                setUp();
-                passwordField.clear();
-                errorMsg.setVisible(false);
-            } else {
-                mainCtrl.password.getStylesheets().add("/client/styles/inputerror.css");
-                errorMsg.setVisible(true);
-
-                Timeline timeline = new Timeline(
-                        new KeyFrame(millis(0), new KeyValue(passwordField.translateXProperty(), 0)),
-                        new KeyFrame(millis(50), new KeyValue(passwordField.translateXProperty(), -10)),
-                        new KeyFrame(millis(100), new KeyValue(passwordField.translateXProperty(), 10)),
-                        new KeyFrame(millis(150),
-                                new KeyValue(passwordField.translateXProperty(), -10)),
-                        new KeyFrame(millis(200), new KeyValue(passwordField.translateXProperty(), 0))
-                );
-                timeline.setCycleCount(1);
-                timeline.play();
-            }
+            okAsk();
         } else {
-            board.setPassword(passwordField.getText());
-            System.out.println(board);
-            server.send("/app/boards/update", board);
+            okSet();
+        }
+    }
+
+    public void okAsk() {
+        if (Objects.equals(passwordField.getText(), board.getPassword())) {
             mainCtrl.boardCtrl.enable();
             try {
                 FileWriter fw = new FileWriter(new File("accesses.txt"), true);
@@ -114,16 +82,60 @@ public class PasswordCtrl implements Initializable {
                 writer.flush();
                 if (!mainCtrl.boardOverviewCtrl.accesses.containsKey(user.userId)) {
                     mainCtrl.boardOverviewCtrl.accesses.put(user.userId, new HashMap<>());
-                    mainCtrl.boardOverviewCtrl.accesses.get(user.userId).put(board.boardId, board.getPassword());
+                    mainCtrl.boardOverviewCtrl.accesses.get(user.userId)
+                            .put(board.boardId, board.getPassword());
                 } else
-                    mainCtrl.boardOverviewCtrl.accesses.get(user.userId).put(board.boardId, board.getPassword());
+                    mainCtrl.boardOverviewCtrl.accesses.get(user.userId)
+                            .put(board.boardId, board.getPassword());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             mainCtrl.boardCtrl.setUpProtection();
             switchSceneToBoard(board);
+            setUp();
             passwordField.clear();
+            errorMsg.setVisible(false);
+        } else {
+            mainCtrl.password.getStylesheets().add("/client/styles/inputerror.css");
+            errorMsg.setVisible(true);
+
+            Timeline timeline = new Timeline(
+                    new KeyFrame(millis(0), new KeyValue(passwordField.translateXProperty(), 0)),
+                    new KeyFrame(millis(50), new KeyValue(passwordField.translateXProperty(), -10)),
+                    new KeyFrame(millis(100), new KeyValue(passwordField.translateXProperty(), 10)),
+                    new KeyFrame(millis(150),
+                            new KeyValue(passwordField.translateXProperty(), -10)),
+                    new KeyFrame(millis(200), new KeyValue(passwordField.translateXProperty(), 0))
+            );
+            timeline.setCycleCount(1);
+            timeline.play();
         }
+    }
+
+    public void okSet() {
+        board.setPassword(passwordField.getText());
+        System.out.println(board);
+        server.send("/app/boards/update", board);
+        mainCtrl.boardCtrl.enable();
+        try {
+            FileWriter fw = new FileWriter(new File("accesses.txt"), true);
+            BufferedWriter bf = new BufferedWriter(fw);
+            PrintWriter writer = new PrintWriter(bf);
+            writer.write(user.userId + " " + board.boardId + " " + board.getPassword() + '\n');
+            writer.flush();
+            if (!mainCtrl.boardOverviewCtrl.accesses.containsKey(user.userId)) {
+                mainCtrl.boardOverviewCtrl.accesses.put(user.userId, new HashMap<>());
+                mainCtrl.boardOverviewCtrl.accesses.get(user.userId)
+                        .put(board.boardId, board.getPassword());
+            } else
+                mainCtrl.boardOverviewCtrl.accesses.get(user.userId)
+                        .put(board.boardId, board.getPassword());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        mainCtrl.boardCtrl.setUpProtection();
+        switchSceneToBoard(board);
+        passwordField.clear();
     }
 
     public void goBack() {
