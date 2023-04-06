@@ -21,7 +21,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -56,15 +55,13 @@ public class MainCtrl {
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param userOrAdmin   allow user to pick between user view and admin view
-     * @param shortcuts
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<UserOrAdminCtrl, Parent> userOrAdmin,
-                           Pair<ShortcutsCtrl, Parent> shortcuts) {
+                           Pair<UserOrAdminCtrl, Parent> userOrAdmin) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -82,37 +79,10 @@ public class MainCtrl {
         this.userOrAdminCtrl = userOrAdmin.getKey();
         this.userOrAdmin = new Scene(userOrAdmin.getValue());
 
-        this.shortcutsCtrl = shortcuts.getKey();
-        this.shortcuts = new Scene(shortcuts.getValue());
-
         primaryStage.setScene(this.home);
         primaryStage.show();
-
-        registerKeyEventHandler(this.home);
-        registerKeyEventHandler(this.boardOverview);
-        registerKeyEventHandler(this.board);
-        registerKeyEventHandler(this.addTask);
-        registerKeyEventHandler(this.detailedTask);
-        registerKeyEventHandler(this.userOrAdmin);
     }
 
-    private void registerKeyEventHandler(Scene scene) {
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCharacter().equals("?")) {
-                toggleShortcutsScene();
-            }
-        });
-    }
-
-    public void toggleShortcutsScene() {
-        if (!shortcutsCtrl.isShortcutsVisible()) {
-            primaryStage.setTitle("Shortcuts");
-            primaryStage.setScene(shortcuts);
-            shortcutsCtrl.showShortcuts();
-        } else {
-            shortcutsCtrl.hideShortcuts();
-        }
-    }
 
     /**
      * board
