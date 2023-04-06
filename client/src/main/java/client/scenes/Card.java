@@ -186,7 +186,7 @@ public class Card extends Pane {
     }
 
     void initEditTaskTitle() {
-        taskTitle.setOnKeyReleased(this::handleKeyRelease);
+        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
 

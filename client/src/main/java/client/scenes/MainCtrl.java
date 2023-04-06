@@ -41,7 +41,6 @@ public class MainCtrl {
 
     protected Scene userOrAdmin;
     protected UserOrAdminCtrl userOrAdminCtrl;
-
     private double xOffset, yOffset;
 
     /**
@@ -80,7 +79,6 @@ public class MainCtrl {
         primaryStage.setScene(this.home);
         primaryStage.show();
     }
-
 
     /**
      * board
