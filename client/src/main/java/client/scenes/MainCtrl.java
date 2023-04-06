@@ -42,8 +42,6 @@ public class MainCtrl {
     protected Scene userOrAdmin;
     protected UserOrAdminCtrl userOrAdminCtrl;
 
-    protected ShortcutsCtrl shortcutsCtrl;
-    protected Scene shortcuts;
     private double xOffset, yOffset;
 
     /**
