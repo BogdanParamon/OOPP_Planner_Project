@@ -128,20 +128,21 @@ public class Card extends Pane {
     }
 
     public StompSession.Subscription registerForDeleteTagMessages() {
-        return server.registerForMessages("/topic/tasks/deleteTag/" + task.taskId, commons.Packet.class,
+        return server.registerForMessages("/topic/tasks/deleteTag/"
+                        + task.taskId, commons.Packet.class,
                 packet -> {
                     Platform.runLater(() -> {
-                                long tagId = packet.longValue;
-                                for(Node node : getDetailedTask().getTags_vbox().getChildren()){
-                                    if(!(node instanceof Tag)) continue;
-                                    Tag tag = (Tag) node;
-                                    if(tag.getTagId() == tagId) {
-                                        getDetailedTask().getTags_vbox().getChildren().remove(tag);
-                                        break;
-                                    }
-                                }
-                                removeTag(tagId);
+                        long tagId = packet.longValue;
+                        for (Node node : getDetailedTask().getTags_vbox().getChildren()) {
+                            if (!(node instanceof Tag)) continue;
+                            Tag tag = (Tag) node;
+                            if (tag.getTagId() == tagId) {
+                                getDetailedTask().getTags_vbox().getChildren().remove(tag);
+                                break;
                             }
+                        }
+                        removeTag(tagId);
+                    }
                     );
                 });
     }
