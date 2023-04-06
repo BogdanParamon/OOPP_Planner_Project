@@ -67,7 +67,8 @@ public class Board {
         this.currentPreset = 0;
     }
 
-    Board() {
+    @SuppressWarnings("unused")
+    public Board() {
         // For object mapper
     }
 
@@ -136,5 +137,9 @@ public class Board {
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+    public void setId(long id) {
+        this.boardId = id;
     }
 }

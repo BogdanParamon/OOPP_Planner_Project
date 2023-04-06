@@ -29,7 +29,8 @@ public class TaskList {
         this.title = title;
     }
 
-    TaskList() {
+    @SuppressWarnings("unused")
+    public TaskList() {
         // For object mapper
     }
 
