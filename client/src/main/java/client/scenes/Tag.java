@@ -108,4 +108,8 @@ public class Tag extends Pane {
     public Long getTagId() {
         return tag.tagId;
     }
+
+    public MFXButton getDeleteTag() {
+        return deleteTag;
+    }
 }

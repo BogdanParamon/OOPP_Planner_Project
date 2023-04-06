@@ -169,5 +169,12 @@ public class TaskController {
         return tag;
     }
 
+    @MessageMapping("/tasks/deleteTag/{taskId}")
+    @SendTo("/topic/tasks/deleteTag/{taskId}")
+    @Transactional
+    public Packet deleteTag(long tagId, @DestinationVariable("taskId") long taskId) {
+        return taskService.deleteTag(tagId, taskId);
+    }
+
 }
 

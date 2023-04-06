@@ -152,4 +152,11 @@ public class TaskService {
         return packet;
     }
 
+    public Packet deleteTag(long tagId, long taskId) {
+        taskRepository.deleteTagFromTask(taskId, tagId);
+        Packet packet = new Packet();
+        packet.longValue = tagId;
+        return packet;
+    }
+
 }
