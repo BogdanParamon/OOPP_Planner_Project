@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" stylesheets="@/client/styles/global.css"
+            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.scenes.GlobalHotKey">
+    <children>
+        <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10" />
+                </padding>
+                <children>
+                    <Label text="Shift + Up/Down: change the order of the task" />
+                    <Label text="E: Edit task title directly" />
+                    <Label text="Del or Backspace: Delete a task without open it" />
+                    <Label text="Enter: open task details" />
+                    <Label text="Ese: close detailed task" />
+                    <Label text="T: open a popup for adding tags" />
+                    <Label text="C: open a popup for color selection" />
+                </children>
+            </VBox>
+        </ScrollPane>
+    </children>
+</AnchorPane>
