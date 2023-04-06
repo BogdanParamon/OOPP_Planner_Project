@@ -68,7 +68,7 @@ public class Board {
     }
 
     @SuppressWarnings("unused")
-    private Board() {
+    public Board() {
         // For object mapper
     }
 
@@ -137,5 +137,9 @@ public class Board {
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+    public void setId(long id) {
+        this.boardId = id;
     }
 }
