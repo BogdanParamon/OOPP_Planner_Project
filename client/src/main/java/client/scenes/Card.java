@@ -112,7 +112,10 @@ public class Card extends Pane {
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
-                    Platform.runLater(() -> addTag( tag, true)
+                    Platform.runLater(() -> {
+                        addTag( tag, true);
+                        getDetailedTask().getTags_vbox().getChildren().add(new Tag(mainCtrl, server, tag, board));
+                        }
                     );
                 });
     }
@@ -229,6 +232,7 @@ public class Card extends Pane {
 
     public void removeTag(long tagId) {
         task.tags.removeIf(tag -> tag.tagId == tagId);
+        getDetailedTask().getTags_vbox().getChildren().removeIf(node -> node instanceof Tag && ((Tag) node).tag.tagId == tagId);
         tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
     }
 
@@ -236,6 +240,15 @@ public class Card extends Pane {
         for (Node node : tags.getChildren()) {
             if (node.getId().equals(String.valueOf(tag.tagId))) {
                 node.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
+            }
+        }
+        for (int i = 0; i < getDetailedTask().getTags_vbox().getChildren().size(); i++) {
+            if (getDetailedTask().getTags_vbox().getChildren().get(i) instanceof Tag) {
+                Tag tagUI = (Tag) getDetailedTask().getTags_vbox().getChildren().get(i);
+                if (tagUI.tag.tagId == tag.tagId) {
+                    getDetailedTask().getTags_vbox().getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                    break;
+                }
             }
         }
     }

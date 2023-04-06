@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Subtask;
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -30,8 +31,8 @@ public class DetailedTask extends AnchorPane {
     @FXML
     private VBox tasks_vbox;
 
-//    @FXML
-//    private VBox tags_vbox;
+    @FXML
+    private VBox tags_vbox;
 
     @FXML
     private TextField dtvTitle;
@@ -80,6 +81,11 @@ public class DetailedTask extends AnchorPane {
                     new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
             subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
             tasks_vbox.getChildren().add(0, subtaskUI);
+        }
+
+        for (Tag tag : this.task.tags) {
+            client.scenes.Tag tagUI = new client.scenes.Tag(mainCtrl, server, tag, board);
+            tags_vbox.getChildren().add(0, tagUI);
         }
 
         dtvTitle.setText(task.title);
@@ -166,4 +172,7 @@ public class DetailedTask extends AnchorPane {
         return dtvTitle;
     }
 
+    public VBox getTags_vbox() {
+        return tags_vbox;
+    }
 }
