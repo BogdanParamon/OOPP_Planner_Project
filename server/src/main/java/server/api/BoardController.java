@@ -200,7 +200,7 @@ public class BoardController {
     }
 
     @MessageMapping("/boards/join/{userId}")
-    @SendTo("/topic/boards/join/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
     @Transactional
     public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
         return boardService.joinMessage(board, userId);

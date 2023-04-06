@@ -126,28 +126,6 @@ public class BoardOverviewCtrl implements Initializable {
                         boardTitle.clear();
                     });
                 });
-        server.registerForMessages("/topic/boards/join/" + user.userId,
-                Packet.class, boardIdAndTitleAndUserId -> {
-                    Platform.runLater(() -> {
-                        MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
-                        button.setOnAction(event
-                                -> switchSceneToBoard(server
-                                .getBoardById(boardIdAndTitleAndUserId.longValue)));
-                        Pane pane = new Pane();
-                        pane.setPrefHeight(20);
-                        pane.getChildren().add(button);
-                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue)
-                                .getPassword() != null) {
-                            ImageView lock = new ImageView("/client/images/lock-icon-11.png");
-                            lock.setFitHeight(20);
-                            lock.setFitWidth(20);
-                            lock.setX(190);
-                            pane.getChildren().add(lock);
-                        }
-                        boards.getItems().add(pane);
-                        boardTitle.clear();
-                    });
-                });
     }
 
     public void load() {

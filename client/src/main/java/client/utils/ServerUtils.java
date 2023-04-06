@@ -163,15 +163,6 @@ public class ServerUtils {
                 });
     }
 
-    public Board join(Board board, long userId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/join")
-                .queryParam("userId", userId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
-    }
-
     public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
