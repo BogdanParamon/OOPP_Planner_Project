@@ -33,6 +33,8 @@ public class Card extends Pane {
     private int row = 0;
     private int col = 0;
     public boolean isFocused = false;
+
+    public static Card focused = null;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
@@ -117,17 +119,6 @@ public class Card extends Pane {
             }
         });
 
-        this.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
-                if (isFocused) {
-                    deleteTask();
-                }
-            } else if (event.getCode() == KeyCode.ENTER) {
-                if (isFocused && !taskTitle.isFocused()) {
-                    displayDialog();
-                }
-            }
-        });
 
 //        this.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPress);
 
@@ -259,6 +250,12 @@ public class Card extends Pane {
             saveTaskTitle();
         }
     }
+
+    void editTaskTitle() {
+        taskTitle.requestFocus();
+        taskTitle.selectAll();
+    }
+
 
     void displayDialog() {
         detailedTask.updateDetails();
