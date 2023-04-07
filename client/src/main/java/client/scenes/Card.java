@@ -20,7 +20,6 @@ import javafx.scene.layout.GridPane;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class Card extends Pane {
 
@@ -32,9 +31,10 @@ public class Card extends Pane {
     private DetailedTask detailedTask;
     private int row = 0;
     private int col = 0;
-    public boolean isFocused = false;
 
     public static Card focused = null;
+
+    public boolean isDetailedTaskOpen = false;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
@@ -102,34 +102,12 @@ public class Card extends Pane {
         });
 
         this.setOnMouseClicked(event -> {
+            if (focused != null && focused != this) {
+                focused.setStyle(focused.getStyle().replace("blue", "ddd"));
+            }
             setStyle(getStyle().replace("ddd", "blue"));
-            isFocused = true;
+            focused = this;
         });
-
-        this.setOnMouseExited(event -> {
-            if (!isFocused) {
-                setStyle(getStyle().replace("blue", "ddd"));
-            }
-        });
-
-        this.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            if (!event.isPrimaryButtonDown()) {
-                setStyle(getStyle().replace("blue", "ddd"));
-                isFocused = false;
-            }
-        });
-
-
-//        this.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPress);
-
-//
-//        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
-//        if (cssURL != null) {
-//            String cssPath = cssURL.toExternalForm();
-//            getStylesheets().add(cssPath);
-//        } else {
-//            System.out.println("Can not load Cardstyle.css");
-//        }
     }
 
     enum Direction {
@@ -137,22 +115,18 @@ public class Card extends Pane {
     }
 
     public void simulateDragAndDrop(Direction direction) {
-        if (!isFocused) return;
+
         System.out.println(direction);
         VBox parent = (VBox) getParent();
         int currentIndex = parent.getChildren().indexOf(this);
-//        int currentIndex = taskList.tasks.indexOf(task);
         int newIndex = direction == Direction.UP ? currentIndex - 1 : currentIndex + 1;
 
         System.out.println(currentIndex);
         System.out.println(newIndex);
-//
-//
+
         if (newIndex >= 0 && newIndex < parent.getChildren().size() - 1) {
             parent.getChildren().remove(this);
             parent.getChildren().add(newIndex, this);
-
-
 
             Packet packet = new Packet();
             packet.longValue = task.taskId;
@@ -260,6 +234,12 @@ public class Card extends Pane {
     void displayDialog() {
         detailedTask.updateDetails();
         mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
+        isDetailedTaskOpen = true;
+    }
+
+    void closeDialog() {
+        mainCtrl.boardCtrl.stopDisplayingDialog(detailedTask);
+        isDetailedTaskOpen = false;
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>

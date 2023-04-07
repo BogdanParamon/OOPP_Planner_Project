@@ -143,39 +143,36 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
-        root.addEventHandler(KeyEvent.KEY_PRESSED, this::handleShortucts);
 
     }
 
-    public void handleShortucts(KeyEvent event) {
-        Card focusedCard = null;
-        for (var node : board_hbox.getChildren()) {
-            List list = (List) node;
-            for (var node2 : list.getList().getChildren()) {
-                if (node2 instanceof Card) {
-                    Card card = (Card) node2;
-                    if (card.isFocused) {
-                        focusedCard = card;
-                    }
-                }
-            }
-        }
-        if (focusedCard == null) return;
+    public void handleShortcuts(KeyEvent event) {
+        if (Card.focused == null) return;
 
         if (event.isShiftDown()) {
             if (event.getCode() == KeyCode.UP) {
-                focusedCard.simulateDragAndDrop(Card.Direction.UP);
+                Card.focused.simulateDragAndDrop(Card.Direction.UP);
             } else if (event.getCode() == KeyCode.DOWN) {
-                focusedCard.simulateDragAndDrop(Card.Direction.DOWN);
+                Card.focused.simulateDragAndDrop(Card.Direction.DOWN);
             }
         } else if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
-            focusedCard.deleteTask();
+            Card.focused.deleteTask();
         } else if (event.getCode() == KeyCode.ENTER) {
-            focusedCard.displayDialog();
+            if (!Card.focused.isDetailedTaskOpen) {
+                Card.focused.displayDialog();
+            }
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            if (Card.focused.isDetailedTaskOpen) {
+                Card.focused.closeDialog();
+            }
         } else if (event.getCode() == KeyCode.E) {
-            focusedCard.editTaskTitle();
+            Card.focused.editTaskTitle();
+        } else if (event.getCode() == KeyCode.C) {
+            showCustomize();
         }
     }
+
+
 
     public StompSession.Subscription registerForNewLists() {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
@@ -619,7 +616,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForTagDeletes());
 
         getRoot().getScene().setOnKeyPressed(event -> {
-            handleShortucts(event);
+            handleShortcuts(event);
             System.out.println(event.getCode());
         });
     }
