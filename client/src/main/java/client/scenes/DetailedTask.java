@@ -177,13 +177,5 @@ public class DetailedTask extends AnchorPane {
         return tags_vbox;
     }
 
-    public void updateSubtaskOrder(Task task) {
-        for (Subtask subtask : task.subtasks) {
-            client.scenes.Subtask subtaskUI =
-                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
-            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
-            tasks_vbox.getChildren().add(0, subtaskUI);
-        }
-    }
 
 }

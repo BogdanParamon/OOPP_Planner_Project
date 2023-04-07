@@ -180,7 +180,6 @@ public class BoardCtrl implements Initializable {
                                     card.getTaskTitle().setText(task.title);
                                     card.getDetailedTask().getDtvDescription()
                                             .setText(task.description);
-                                    card.getDetailedTask().updateSubtaskOrder(task);
                                     if (!task.description.trim().equals(""))
                                         card.showDescriptionImage();
                                     else card.hideDescriptionImage();
