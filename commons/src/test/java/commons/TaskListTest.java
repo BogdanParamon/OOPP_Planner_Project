@@ -15,6 +15,13 @@ public class TaskListTest {
     }
 
     @Test
+    public void checkEmptyConstructor() {
+        var t = new TaskList();
+        assertNotNull(t);
+        assertNotNull(t.tasks);
+    }
+
+    @Test
     public void equalsHashCode() {
         var a = new TaskList("a");
         var b = new TaskList("a");
@@ -44,5 +51,19 @@ public class TaskListTest {
         var task = new Task("b");
         list.addTask(task);
         assertTrue(list.tasks.contains(task));
+    }
+
+    @Test
+    public void testSetListId() {
+        var list = new TaskList("a");
+        list.setListId(1L);
+        assertEquals(1L, list.listId);
+    }
+
+    @Test
+    public void testSetTitle() {
+        var list = new TaskList("a");
+        list.setTitle("b");
+        assertEquals("b", list.title);
     }
 }
