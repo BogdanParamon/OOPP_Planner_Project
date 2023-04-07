@@ -183,43 +183,6 @@ public class BoardCtrl implements Initializable {
         mainCtrl.showPassword();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void handleShortcuts(KeyEvent event) {
         if (Card.focused == null) return;
 
