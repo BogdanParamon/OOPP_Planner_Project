@@ -18,6 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -129,6 +131,8 @@ public class BoardCtrl implements Initializable {
     public BoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
+
     }
 
     /**
@@ -139,6 +143,31 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
+
+    }
+
+    public void handleShortucts(KeyEvent event) {
+        if (event.isShiftDown()) {
+            Card focusedCard = null;
+            for (var node : board_hbox.getChildren()) {
+                List list = (List) node;
+                for (var node2 : list.getList().getChildren()) {
+                    if (node2 instanceof Card) {
+                        Card card = (Card) node2;
+                        if (card.isFocused) {
+                            focusedCard = card;
+                        }
+                    }
+                }
+            }
+            if (focusedCard == null) return;
+
+            if (event.getCode() == KeyCode.UP) {
+                focusedCard.simulateDragAndDrop(Card.Direction.UP);
+            } else if (event.getCode() == KeyCode.DOWN) {
+                focusedCard.simulateDragAndDrop(Card.Direction.DOWN);
+            }
+        }
     }
 
     public StompSession.Subscription registerForNewLists() {
@@ -581,6 +610,11 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
+
+        getRoot().getScene().setOnKeyPressed(event -> {
+            handleShortucts(event);
+            System.out.println(event.getCode());
+        });
     }
 
     public void setCardsColorsLaunch(Board board) {

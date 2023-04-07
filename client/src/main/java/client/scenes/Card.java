@@ -11,14 +11,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -36,6 +32,7 @@ public class Card extends Pane {
     private DetailedTask detailedTask;
     private int row = 0;
     private int col = 0;
+    public boolean isFocused = false;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
@@ -102,14 +99,79 @@ public class Card extends Pane {
             displayDialog();
         });
 
-        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
-        if (cssURL != null) {
-            String cssPath = cssURL.toExternalForm();
-            getStylesheets().add(cssPath);
-        } else {
-            System.out.println("Can not load Cardstyle.css");
+        this.setOnMouseClicked(event -> {
+            setStyle(getStyle().replace("ddd", "blue"));
+            isFocused = true;
+        });
+
+        this.setOnMouseExited(event -> {
+            if (!isFocused) {
+                setStyle(getStyle().replace("blue", "ddd"));
+            }
+        });
+
+        this.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (!event.isPrimaryButtonDown()) {
+                setStyle(getStyle().replace("blue", "ddd"));
+                isFocused = false;
+            }
+        });
+
+        this.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+                if (isFocused) {
+                    deleteTask();
+                }
+            } else if (event.getCode() == KeyCode.ENTER) {
+                if (isFocused && !taskTitle.isFocused()) {
+                    displayDialog();
+                }
+            }
+        });
+
+//        this.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPress);
+
+//
+//        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
+//        if (cssURL != null) {
+//            String cssPath = cssURL.toExternalForm();
+//            getStylesheets().add(cssPath);
+//        } else {
+//            System.out.println("Can not load Cardstyle.css");
+//        }
+    }
+
+    enum Direction {
+        UP, DOWN;
+    }
+
+    public void simulateDragAndDrop(Direction direction) {
+        if (!isFocused) return;
+        System.out.println(direction);
+        VBox parent = (VBox) getParent();
+        int currentIndex = parent.getChildren().indexOf(this);
+//        int currentIndex = taskList.tasks.indexOf(task);
+        int newIndex = direction == Direction.UP ? currentIndex - 1 : currentIndex + 1;
+
+        System.out.println(currentIndex);
+        System.out.println(newIndex);
+//
+//
+        if (newIndex >= 0 && newIndex < parent.getChildren().size() - 1) {
+            parent.getChildren().remove(this);
+            parent.getChildren().add(newIndex, this);
+
+
+
+            Packet packet = new Packet();
+            packet.longValue = task.taskId;
+            packet.longValue2 = taskList.listId;
+            packet.longValue3 = taskList.listId;
+            packet.intValue = newIndex;
+            server.send("/app/tasks/drag/" + board.boardId, packet);
         }
     }
+
 
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
