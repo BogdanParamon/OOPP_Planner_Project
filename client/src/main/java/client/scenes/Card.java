@@ -10,6 +10,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
@@ -17,6 +22,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
@@ -136,6 +145,49 @@ public class Card extends Pane {
             server.send("/app/tasks/drag/" + board.boardId, packet);
         }
     }
+
+    public void showAddTagPopup() {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.UNDECORATED);
+        popupStage.initOwner(this.getScene().getWindow());
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+        Label label = new Label("Enter tag name:");
+        TextField tagNameInput = new TextField();
+
+        Label colorLabel = new Label("Choose tag color:");
+        ColorPicker colorPicker = new ColorPicker();
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> {
+            String tagName = tagNameInput.getText().trim();
+            Color tagColor = colorPicker.getValue();
+            if (!tagName.isEmpty() && tagColor != null) {
+                addTagToTask(tagName, tagColor);
+
+                popupStage.close();
+            }
+        });
+
+        vbox.getChildren().addAll(label, tagNameInput, colorLabel, colorPicker, addButton);
+        Scene scene = new Scene(vbox);
+        popupStage.setScene(scene);
+
+        popupStage.show();
+    }
+
+    public void addTagToTask(String tagName, Color tagColor) {
+        commons.Tag newTag = new commons.Tag();
+        newTag.setText(tagName);
+        newTag.setColor("#" + tagColor.toString().substring(2, 8));
+
+        addTag(newTag, true);
+    }
+
 
 
     public StompSession.Subscription registerForAddTagMessages() {

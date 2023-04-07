@@ -170,7 +170,7 @@ public class BoardCtrl implements Initializable {
         } else if (event.getCode() == KeyCode.C) {
             showCustomize();
         } else if (event.getCode() == KeyCode.T) {
-            addTag();
+            Card.focused.showAddTagPopup();
         }
     }
 
