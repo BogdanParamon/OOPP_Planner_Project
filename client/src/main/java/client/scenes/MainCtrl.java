@@ -166,7 +166,7 @@ public class MainCtrl {
         header.getChildren().add(closeIcon);
 
 
-        root.getChildren().add(0, header);
+        root.getChildren().add(root.getChildren().size() - 1, header);
 
         closeIcon.setOnMouseClicked(event -> Platform.exit());
         minimizeIcon.setOnMouseClicked(event -> primaryStage.setIconified(true));
