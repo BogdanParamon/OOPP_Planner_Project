@@ -169,6 +169,8 @@ public class BoardCtrl implements Initializable {
             Card.focused.editTaskTitle();
         } else if (event.getCode() == KeyCode.C) {
             showCustomize();
+        } else if (event.getCode() == KeyCode.T) {
+            addTag();
         }
     }
 
