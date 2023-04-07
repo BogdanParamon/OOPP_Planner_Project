@@ -146,6 +146,43 @@ public class BoardCtrl implements Initializable {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void handleShortcuts(KeyEvent event) {
         if (Card.focused == null) return;
 
