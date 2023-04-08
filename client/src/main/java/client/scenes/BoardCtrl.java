@@ -396,6 +396,7 @@ public class BoardCtrl implements Initializable {
                                                 .getSubtask().subTaskId) {
                                             subtaskUI.getCheckbox()
                                                     .setSelected(subtask.subtaskBoolean);
+                                            card.updateProgress();
                                             break;
                                         }
                                     }

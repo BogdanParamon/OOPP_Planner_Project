@@ -3,13 +3,16 @@ package client.scenes;
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Packet;
+import commons.Subtask;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -46,6 +49,10 @@ public class Card extends Pane {
     private GridPane tags;
     @FXML
     private ImageView descriptionImage;
+    @FXML
+    private MFXProgressBar progressBar;
+    @FXML
+    private Label progressLabel;
 
     private static long dragFromListId;
     private static long dragToListId;
@@ -105,6 +112,8 @@ public class Card extends Pane {
             if (event.getClickCount() == 2)
                 displayDialog();
         });
+
+        updateProgress();
 
         URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
         if (cssURL != null) {
@@ -323,5 +332,26 @@ public class Card extends Pane {
 
     public void hideDescriptionImage() {
         descriptionImage.setVisible(false);
+    }
+
+    public void updateProgress() {
+        progressLabel.setText(currentProgress());
+        progressBar.setProgress(currentProgressDouble());
+    }
+
+    public String currentProgress() {
+        int total = task.subtasks.size();
+        int done = 0;
+        for(Subtask subtask : task.subtasks)
+            if(subtask.subtaskBoolean) done++;
+        return done + "/" + total;
+    }
+
+    public double currentProgressDouble() {
+        double total = task.subtasks.size();
+        double done = 0.0;
+        for(Subtask subtask : task.subtasks)
+            if(subtask.subtaskBoolean) done++;
+        return done/total;
     }
 }

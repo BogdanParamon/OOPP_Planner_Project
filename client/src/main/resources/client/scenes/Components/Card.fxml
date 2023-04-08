@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXProgressBar?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -19,7 +21,11 @@
                 <Insets />
             </padding>
         </MFXButton>
-        <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" text="Lectures" />
+        <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" text="Lectures" >
+            <font>
+                <Font name="Roboto" />
+            </font>
+        </TextField>
         <MFXButton fx:id="openTask" layoutX="100.0" layoutY="41.0" text="">
             <graphic>
                 <ImageView fitHeight="15.0" fitWidth="15.0" style="-fx-background-color: transparent">
@@ -40,5 +46,11 @@
               <Image url="@/client/images/description.png" />
           </image>
       </ImageView>
+      <MFXProgressBar fx:id="progressBar" animationSpeed="0.0" layoutX="49.0" layoutY="37.0" prefWidth="40.0" />
+      <Label fx:id="progressLabel" layoutX="27.0" layoutY="31.0" >
+          <font>
+              <Font name="Roboto Semibold" size="12.0" />
+          </font>
+      </Label>
     </children>
 </fx:root>
