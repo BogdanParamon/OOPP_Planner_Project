@@ -11,18 +11,24 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class AdminOverviewCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
-    private MFXListView<MFXButton> boards;
+    private MFXListView<Pane> boards;
     @FXML
     private Text subheading;
     @FXML
@@ -55,6 +61,7 @@ public class AdminOverviewCtrl implements Initializable {
     private MFXButton deleteBoardButton;
     @FXML
     private AnchorPane root;
+    private final HashMap<Long, Pane> boardPaneMap = new HashMap<>();
 
     private int index = 0;
     private long selectedBoardId;
@@ -76,9 +83,21 @@ public class AdminOverviewCtrl implements Initializable {
         var boardTitlesAndIds = server.getBoardTitlesAndIds();
         boards.getItems().clear();
         boardTitlesAndIds.forEach((boardId, boardName) -> {
-            MFXButton button = new MFXButton(boardName + " #id: " + boardId);
-            button.setOnAction(event -> showBoardDetails(boardId));
-            boards.getItems().add(button);
+            Pane boardPane = new Pane();
+            boardPane.setOnMouseClicked(event -> showBoardDetails(boardId));
+
+            Text boardNameText = new Text(boardName);
+            boardNameText.setLayoutY(15);
+            boardNameText.setFont(new Font("Roboto", 16));
+            Text IdLabel = new Text("#id: " + boardId);
+            IdLabel.setLayoutX(160);
+            IdLabel.setLayoutY(15);
+
+            boardPane.getChildren().add(boardNameText);
+            boardPane.getChildren().add(IdLabel);
+
+            boards.getItems().add(boardPane);
+            boardPaneMap.put(boardId, boardPane);
         });
 
         subheadingAnimation();
@@ -144,11 +163,8 @@ public class AdminOverviewCtrl implements Initializable {
             String newTitle = boardTitleField.getText();
             server.send("/app/boards/rename/" + selectedBoardId, newTitle);
             boardTitleText.setText(newTitle);
-            for (MFXButton button : boards.getItems()) {
-                if (button.getText().split(" #id: ")[1].equals(String.valueOf(selectedBoardId))) {
-                    button.setText(newTitle + " #id: " + selectedBoardId);
-                }
-            }
+            MFXButton button = (MFXButton) boardPaneMap.get(selectedBoardId).getChildren().get(0);
+            button.setText(newTitle);
         }
         boardTitleText.setVisible(true);
         boardTitleField.setVisible(false);
@@ -182,13 +198,9 @@ public class AdminOverviewCtrl implements Initializable {
 
     public void deleteBoard(long boardId) {
         server.deleteBoardById(boardId);
-        MFXButton toBeRemoved = null;
-        for (MFXButton button : boards.getItems()) {
-            if (button.getText().split(" #id: ")[1].equals(String.valueOf(selectedBoardId))) {
-                toBeRemoved = button;
-            }
-        }
+        Pane toBeRemoved = boardPaneMap.get(selectedBoardId);
         boards.getItems().remove(toBeRemoved);
+        boardPaneMap.remove(selectedBoardId);
         deselectBoard();
     }
 
