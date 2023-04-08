@@ -196,8 +196,6 @@ public class BoardOverviewCtrl implements Initializable {
             alert.showAndWait();
         }
     }
-
-
     public void joinBoard() {
         try {
             Long boardId = Long.parseLong(boardTitle.getText());
