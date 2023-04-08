@@ -11,13 +11,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -125,10 +122,15 @@ public class AdminOverviewCtrl implements Initializable {
 
         boardIdText.setText(String.valueOf(board.boardId));
         boardTitleText.setText(board.title);
-        boardPasswordText.setText("Placeholder password");
-
         boardTitleField.setText(board.title);
-        boardPasswordField.setText("Placeholder password");
+
+        if (board.getPassword() != null) {
+            boardPasswordText.setText(board.getPassword());
+            boardPasswordField.setText(board.getPassword());
+        } else {
+            boardPasswordText.setText("");
+            boardPasswordField.setText("");
+        }
 
         boardIdLabel.setVisible(true);
         boardTitleLabel.setVisible(true);

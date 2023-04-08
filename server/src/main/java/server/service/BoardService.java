@@ -97,6 +97,16 @@ public class BoardService {
         return updatedBoard;
     }
 
+    public Board changePassword(long boardId, String newPassword) throws IllegalArgumentException {
+        if (newPassword == null || !boardRepository.existsById(boardId)) {
+            throw new IllegalArgumentException();
+        }
+        Board board = boardRepository.findById(boardId).get();
+        board.setPassword(newPassword);
+        Board updatedBoard = boardRepository.save(board);
+        return updatedBoard;
+    }
+
     public Tag addTag(long boardId, Tag tag) throws IllegalArgumentException {
         if (!boardRepository.existsById(boardId)) {
             throw new IllegalArgumentException();
@@ -156,6 +166,14 @@ public class BoardService {
         boardIdAndNewTitle.longValue = boardId;
         boardIdAndNewTitle.stringValue = newTitle;
         return boardIdAndNewTitle;
+    }
+
+    public Packet changePasswordMessage(String newPassword, long boardId) {
+        changePassword(boardId, newPassword);
+        Packet boardIdAndNewPassword = new Packet();
+        boardIdAndNewPassword.longValue = boardId;
+        boardIdAndNewPassword.stringValue = newPassword;
+        return boardIdAndNewPassword;
     }
 
     public Packet joinMessage(Board board, long userId) {
