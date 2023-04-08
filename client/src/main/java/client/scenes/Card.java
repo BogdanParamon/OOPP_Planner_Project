@@ -342,16 +342,16 @@ public class Card extends Pane {
     public String currentProgress() {
         int total = task.subtasks.size();
         int done = 0;
-        for(Subtask subtask : task.subtasks)
-            if(subtask.subtaskBoolean) done++;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
         return done + "/" + total;
     }
 
     public double currentProgressDouble() {
         double total = task.subtasks.size();
         double done = 0.0;
-        for(Subtask subtask : task.subtasks)
-            if(subtask.subtaskBoolean) done++;
-        return done/total;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
+        return done / total;
     }
 }
