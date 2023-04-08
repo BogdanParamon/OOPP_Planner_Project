@@ -65,12 +65,13 @@ public class Main extends Application {
                 FXML.load(UserOrAdminCtrl.class, "client", "scenes", "UserOrAdmin.fxml");
         var adminOverview =
                 FXML.load(AdminOverviewCtrl.class, "client", "scenes", "AdminOverview.fxml");
+        var password = FXML.load(PasswordCtrl.class, "client", "scenes", "Password.fxml");
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
 
         mainCtrl.initialize(primaryStage, home, boardOverview, board, addTask,
-                userOrAdmin, adminOverview);
+                userOrAdmin, adminOverview, password);
     }
 }

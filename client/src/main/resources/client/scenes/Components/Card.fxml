@@ -1,37 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-<fx:root prefHeight="70.0" type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-         styleClass="card">
+
+<fx:root fx:id="root" prefHeight="70.0"
+         style="-fx-background-radius: 10px; -fx-background-color: white; -fx-border-color: ddd;     -fx-border-radius: 10px"
+         type="Pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <MFXButton fx:id="deleteTaskButton" layoutX="110.0" layoutY="4.0" text="X">
+        <MFXButton fx:id="deleteTaskButton" layoutX="103.0" layoutY="6.0" text="X">
             <font>
-                <Font name="Roboto Bold" size="11.0"/>
+                <Font name="Roboto Bold" size="15.0"/>
             </font>
             <padding>
                 <Insets/>
             </padding>
         </MFXButton>
-        <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" text="Lectures"/>
-        <MFXButton fx:id="openTask" layoutX="88.0" layoutY="41.0" prefHeight="0.0" prefWidth="0.0" text=" ">
+        <TextField fx:id="taskTitle" layoutX="4" layoutY="4.0" prefWidth="90.0" style="-fx-border-radius: 3px;"
+                   text="Lectures"/>
+        <MFXButton fx:id="openTask" layoutX="100.0" layoutY="41.0" text="">
             <graphic>
-                <Pane>
-                    <children>
-                        <ImageView fitHeight="15.0" fitWidth="15.0">
-                            <image>
-                                <Image url="@/client/images/detailed_task_view.png"/>
-                            </image>
-                        </ImageView>
-                    </children>
-                </Pane>
+                <ImageView fitHeight="15.0" fitWidth="15.0" style="-fx-background-color: transparent">
+                    <image>
+                        <Image url="@/client/images/detailed_task_view.png"/>
+                    </image>
+                </ImageView>
             </graphic>
+            <padding>
+                <Insets/>
+            </padding>
         </MFXButton>
+        <GridPane fx:id="tags" hgap="3" layoutX="5" layoutY="50" prefHeight="25" prefWidth="100" vgap="3">
+
+        </GridPane>
+      <ImageView fx:id="descriptionImage" fitHeight="15.0" fitWidth="15.0" layoutX="8.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true" visible="false">
+          <image>
+              <Image url="@/client/images/description.png" />
+          </image>
+      </ImageView>
     </children>
 </fx:root>
