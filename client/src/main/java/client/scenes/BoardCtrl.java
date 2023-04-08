@@ -15,6 +15,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -130,6 +132,8 @@ public class BoardCtrl implements Initializable {
     public BoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
+
     }
 
     /**
@@ -178,6 +182,36 @@ public class BoardCtrl implements Initializable {
         mainCtrl.passwordCtrl.setUp();
         mainCtrl.showPassword();
     }
+
+    public void handleShortcuts(KeyEvent event) {
+        if (Card.focused == null) return;
+
+        if (event.isShiftDown()) {
+            if (event.getCode() == KeyCode.UP) {
+                Card.focused.simulateDragAndDrop(Card.Direction.UP);
+            } else if (event.getCode() == KeyCode.DOWN) {
+                Card.focused.simulateDragAndDrop(Card.Direction.DOWN);
+            }
+        } else if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+            Card.focused.deleteTask();
+        } else if (event.getCode() == KeyCode.ENTER) {
+            if (!Card.focused.isDetailedTaskOpen) {
+                Card.focused.displayDialog();
+            }
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            if (Card.focused.isDetailedTaskOpen) {
+                Card.focused.closeDialog();
+            }
+        } else if (event.getCode() == KeyCode.E) {
+            Card.focused.editTaskTitle();
+        } else if (event.getCode() == KeyCode.C) {
+            showCustomize();
+        } else if (event.getCode() == KeyCode.T) {
+            Card.focused.showAddTagPopup();
+        }
+    }
+
+
 
     public StompSession.Subscription registerForNewLists() {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
@@ -620,6 +654,11 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
+
+        getRoot().getScene().setOnKeyPressed(event -> {
+            handleShortcuts(event);
+            System.out.println(event.getCode());
+        });
     }
 
     public void setCardsColorsLaunch(Board board) {
