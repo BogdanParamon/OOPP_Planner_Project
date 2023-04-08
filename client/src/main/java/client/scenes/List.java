@@ -26,6 +26,8 @@ public class List extends Pane {
     private final TaskList taskList;
     private Integer dragIndex;
 
+    public Task FocusedTask = null;
+
     @FXML
     private VBox list;
     @FXML
