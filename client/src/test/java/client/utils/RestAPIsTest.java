@@ -73,7 +73,7 @@ public class RestAPIsTest {
     }
 
     @Test
-    public void getBoardByIdTest2() {
+    public void getInvalidBoardTest() {
         Board board = new Board("Board 42");
         board.boardId = 42;
 
@@ -106,7 +106,7 @@ public class RestAPIsTest {
     }
 
     @Test
-    public void getBoardTitlesAndIdsByUserIdTest2() {
+    public void getInvalidBoardTitlesAndIdsByUserIdTest() {
         Board board = new Board("Board 42");
         board.boardId = 42;
 
