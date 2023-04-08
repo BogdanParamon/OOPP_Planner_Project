@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -90,34 +91,12 @@ public class Subtask extends AnchorPane {
             }
         });
 
-        arrowDown.setOnAction(event -> {
-            VBox parent = (VBox) this.getParent();
-            int index = parent.getChildren().indexOf(this);
-            if (index < parent.getChildren().size() - 2) {
-                Node first = parent.getChildren().get(index + 1);
-                Node second = parent.getChildren().get(index);
-                parent.getChildren().set(index + 1, new Text());
-                parent.getChildren().set(index, new Text());
-                parent.getChildren().set(index + 1, second);
-                parent.getChildren().set(index, first);
-                Collections.swap(task.subtasks, index - 1, index);
-                server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task.taskId);
-            }
-        });
+        arrowDown.setOnAction(event -> arrowDownFct());
 
-        arrowUp.setOnAction(event -> {
-            VBox parent = (VBox) this.getParent();
-            int index = parent.getChildren().indexOf(this);
-            if (index > 0) {
-                Node first = parent.getChildren().get(index - 1);
-                Node second = parent.getChildren().get(index);
-                parent.getChildren().set(index - 1, new Text());
-                parent.getChildren().set(index, new Text());
-                parent.getChildren().set(index - 1, second);
-                parent.getChildren().set(index, first);
-                Collections.swap(task.subtasks, index - 1, index);
-                server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task.taskId);
-            }
+        arrowUp.setOnAction(event -> arrowUpFct());
+
+        inputTitle.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && inputTitle.isVisible()) saveSubtaskTitle();
         });
 
     }
@@ -129,6 +108,7 @@ public class Subtask extends AnchorPane {
         arrowUp.setVisible(false);
         arrowDown.setVisible(false);
         saveButton.setVisible(true);
+        inputTitle.requestFocus();
     }
 
     public void saveSubtaskTitle() {
@@ -169,5 +149,35 @@ public class Subtask extends AnchorPane {
 
     public MFXCheckbox getCheckbox() {
         return checkbox;
+    }
+
+    public void arrowDownFct() {
+        VBox parent = (VBox) this.getParent();
+        int index = parent.getChildren().indexOf(this);
+        if (index < parent.getChildren().size() - 2) {
+            Node first = parent.getChildren().get(index + 1);
+            Node second = parent.getChildren().get(index);
+            parent.getChildren().set(index + 1, new Text());
+            parent.getChildren().set(index, new Text());
+            parent.getChildren().set(index + 1, second);
+            parent.getChildren().set(index, first);
+            Collections.swap(task.subtasks, index + 1, index);
+            server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+        }
+    }
+
+    public void arrowUpFct() {
+        VBox parent = (VBox) this.getParent();
+        int index = parent.getChildren().indexOf(this);
+        if (index > 0) {
+            Node first = parent.getChildren().get(index - 1);
+            Node second = parent.getChildren().get(index);
+            parent.getChildren().set(index - 1, new Text());
+            parent.getChildren().set(index, new Text());
+            parent.getChildren().set(index - 1, second);
+            parent.getChildren().set(index, first);
+            Collections.swap(task.subtasks, index - 1, index);
+            server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+        }
     }
 }

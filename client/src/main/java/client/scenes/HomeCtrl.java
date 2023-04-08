@@ -75,13 +75,6 @@ public class HomeCtrl implements Initializable {
         }
     }
 
-    /**
-     * Uses showHome method to switch scenes to Home scene
-     */
-    public void switchSceneToBoardOverview() {
-        mainCtrl.showBoardOverview();
-    }
-
     public void switchSceneToUserOrAdmin() {
         mainCtrl.showUserOrAdmin();
     }

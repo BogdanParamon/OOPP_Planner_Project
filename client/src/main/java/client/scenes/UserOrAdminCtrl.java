@@ -8,6 +8,7 @@ import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
@@ -46,6 +47,10 @@ public class UserOrAdminCtrl implements Initializable {
         mode = false;
         button.setOnAction(
                 event -> switchSceneToBoardOverview(server.connectToUser(nameField.getText())));
+        nameField.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER)
+                switchSceneToBoardOverview(server.connectToUser(nameField.getText()));
+        });
     }
 
 

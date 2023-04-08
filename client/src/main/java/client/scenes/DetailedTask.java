@@ -76,12 +76,6 @@ public class DetailedTask extends AnchorPane {
             throw new RuntimeException(e);
         }
 
-        for (Subtask subtask : this.task.subtasks) {
-            client.scenes.Subtask subtaskUI =
-                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
-            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
-            tasks_vbox.getChildren().add(0, subtaskUI);
-        }
 
         dtvTitle.setText(task.title);
         dtvDescription.setText(task.description);
@@ -115,6 +109,13 @@ public class DetailedTask extends AnchorPane {
     }
 
     public void updateDetails() {
+        tasks_vbox.getChildren().remove(0, tasks_vbox.getChildren().size() - 1);
+        for (Subtask subtask : this.task.subtasks) {
+            client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+            tasks_vbox.getChildren().add(tasks_vbox.getChildren().size() - 1, subtaskUI);
+        }
         tags_vbox.getChildren().clear();
         for (Tag tag : this.task.tags) {
             client.scenes.Tag tagUI = new client.scenes.Tag(mainCtrl, server, tag, board);
@@ -176,6 +177,4 @@ public class DetailedTask extends AnchorPane {
     public VBox getTags_vbox() {
         return tags_vbox;
     }
-
-
 }

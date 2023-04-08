@@ -84,7 +84,7 @@ public class Task {
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        subtasks.add(0, subtask);
     }
 
     public void addTag(Tag tag) {
@@ -93,7 +93,7 @@ public class Task {
 
     public void switchSubtasksWithNext(Subtask subtask) {
         int index = subtasks.indexOf(subtask);
-        if(index != 0) {
+        if (index != 0) {
             subtasks.remove(subtask);
             subtasks.add(index - 1, subtask);
         }

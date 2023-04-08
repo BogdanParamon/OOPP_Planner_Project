@@ -147,6 +147,7 @@ public class Card extends Pane {
                 });
     }
 
+
     void initDrag() {
         int[] index = {0};
         VBox[] orignalParent = new VBox[1];

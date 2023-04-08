@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -180,6 +181,7 @@ public class BoardCtrl implements Initializable {
                                     card.getTaskTitle().setText(task.title);
                                     card.getDetailedTask().getDtvDescription()
                                             .setText(task.description);
+                                    card.getDetailedTask().updateDetails();
                                     if (!task.description.trim().equals(""))
                                         card.showDescriptionImage();
                                     else card.hideDescriptionImage();
@@ -257,8 +259,9 @@ public class BoardCtrl implements Initializable {
                                     client.scenes.Subtask UISubtask =
                                             new client.scenes.Subtask(mainCtrl,
                                                     server, board, taskList, task, subtask);
-                                    card.getDetailedTask().
-                                            getTasks_vbox().getChildren().add(0, UISubtask);
+                                    UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
+                                    card.getDetailedTask()
+                                            .getTasks_vbox().getChildren().add(0, UISubtask);
                                     break;
                                 }
                             }
@@ -505,6 +508,10 @@ public class BoardCtrl implements Initializable {
 
         setBoardColors(board);
         setBoardFontColors(board);
+
+        newtTitle.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && newtTitle.isVisible()) saveNewTitle();
+        });
 
         subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
