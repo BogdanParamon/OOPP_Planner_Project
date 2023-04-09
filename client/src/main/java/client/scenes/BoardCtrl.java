@@ -657,7 +657,6 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForTagDeletes());
 
         getRoot().getScene().setOnKeyPressed(event -> {
-            System.out.println(event.getCode());
             handleShortcutKeys(event);
             handleControlKeys(event);
         });
