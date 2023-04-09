@@ -153,6 +153,7 @@ public class BoardCtrl implements Initializable {
     public void setUpProtection() {
         if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
             disable();
+            passwordButton.setText("Unlock");
             passwordButton.setOnMouseClicked(event -> {
                 askForPassword(board, user);
             });
@@ -161,6 +162,7 @@ public class BoardCtrl implements Initializable {
             });
         } else {
             enable();
+            passwordButton.setText("Lock");
             passwordButton.setOnMouseClicked(event -> {
                 setPassword(board, user);
             });
