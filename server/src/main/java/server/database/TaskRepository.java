@@ -10,4 +10,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Modifying
     @Query(value = "DELETE FROM TASK_TAGS WHERE TASK_TASK_ID = ?1", nativeQuery = true)
     void deleteTaskTags(long taskId);
+
+    @Modifying
+    @Query(value = "DELETE FROM TASK_TAGS WHERE TASK_TASK_ID = ?1 and TAGS_TAG_ID = ?2",
+            nativeQuery = true)
+    void deleteTagFromTask(long taskId, long tagId);
 }
