@@ -630,7 +630,6 @@ public class BoardCtrl implements Initializable {
             board_hbox.getChildren().add(list);
             listMap.put(taskList.listId, list);
         }
-
         tagList.getChildren().remove(1, tagList.getChildren().size());
         tagMap = new HashMap<>();
         for (var tag : board.tags) {
@@ -641,7 +640,6 @@ public class BoardCtrl implements Initializable {
             tagList.getChildren().add(tagUI);
             tagMap.put(tag.tagId, tagUI);
         }
-
         setBoardColors(board);
         setBoardFontColors(board);
         setCardsColorsLaunch(board);
