@@ -329,27 +329,33 @@ public class Card extends Pane {
         taskTitle.setOnMouseClicked(event -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("You can not edit tasks in read-only mode!");
-            alert.setContentText("Please unlock board by entering password in order to edit tasks and lists.");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
             alert.showAndWait();
         });
         taskTitle.setOnKeyPressed(event -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("You can not edit tasks in read-only mode!");
-            alert.setContentText("Please unlock board by entering password in order to edit tasks and lists.");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
             alert.showAndWait();
         });
         this.setOnDragDetected(event -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("You can not edit tasks in read-only mode!");
-            alert.setContentText("Please unlock board by entering password in order to edit tasks and lists.");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
             alert.showAndWait();
         });
     }
+
     public void enable() {
         deleteTaskButton.setDisable(false);
         taskTitle.setDisable(false);
-        taskTitle.setOnMouseClicked(event -> {});
-        taskTitle.setOnKeyPressed(event -> {});
+        taskTitle.setOnMouseClicked(event -> {
+        });
+        taskTitle.setOnKeyPressed(event -> {
+        });
         initDrag();
     }
 

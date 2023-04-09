@@ -160,8 +160,8 @@ public class DetailedTask extends AnchorPane {
         }
     }
 
-    private void handleFocusChangeDescription(ObservableValue<? extends Boolean>
-                                                      observable, Boolean oldValue, Boolean newValue) {
+    private void handleFocusChangeDescription(ObservableValue<? extends Boolean> observable,
+                                              Boolean oldValue, Boolean newValue) {
         if (!newValue) {
             saveTaskDescription();
         }
