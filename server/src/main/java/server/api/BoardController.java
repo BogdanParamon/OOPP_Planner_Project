@@ -187,10 +187,10 @@ public class BoardController {
     }
 
 
-    @MessageMapping("/boards/update")
-    @SendTo("/topic/boards/update")
+    @MessageMapping("/boards/update/{boardId}")
+    @SendTo("/topic/boards/update/{boardId}")
     @Transactional
-    public Packet updateMessage(Board board) {
+    public Board updateMessage(Board board) {
         return boardService.updateMessage(board);
     }
 

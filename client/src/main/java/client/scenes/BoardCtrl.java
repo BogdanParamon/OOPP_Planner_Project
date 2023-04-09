@@ -247,6 +247,46 @@ public class BoardCtrl implements Initializable {
                 }));
     }
 
+    public StompSession.Subscription registerForBoardUpdates() {
+        return server.registerForMessages("/topic/boards/update/" + board.boardId, Board.class,
+                updatedBoard -> Platform.runLater(() -> {
+                    setBoardColors(updatedBoard);
+                    setBoardFontColors(updatedBoard);
+                    setCardsColorsLaunch(updatedBoard);
+                    setColorPickersAndPresets(updatedBoard);
+                    applyChangesListsAndTags(updatedBoard);
+                    board.backgroundColor = updatedBoard.backgroundColor;
+                    board.buttonsBackground = updatedBoard.buttonsBackground;
+                    board.backgroundColorFont = updatedBoard.backgroundColorFont;
+                    board.buttonsColorFont = updatedBoard.buttonsColorFont;
+                    board.boardColor = updatedBoard.boardColor;
+                    board.listsColor = updatedBoard.listsColor;
+                    board.listsFontColor = updatedBoard.listsFontColor;
+                    board.cardsBackground1 = updatedBoard.cardsBackground1;
+                    board.cardsBackground2 = updatedBoard.cardsBackground2;
+                    board.cardsBackground3 = updatedBoard.cardsBackground3;
+                    board.cardsFont1 = updatedBoard.cardsFont1;
+                    board.cardsFont2 = updatedBoard.cardsFont2;
+                    board.cardsFont3 = updatedBoard.cardsFont3;
+                    if (updatedBoard.currentPreset == 0) {
+                        board.currentPreset = 0;
+                        pointer1.setVisible(true);
+                        pointer2.setVisible(false);
+                        pointer3.setVisible(false);
+                    } else if (updatedBoard.currentPreset == 1) {
+                        board.currentPreset = 1;
+                        pointer1.setVisible(false);
+                        pointer2.setVisible(true);
+                        pointer3.setVisible(false);
+                    } else {
+                        board.currentPreset = 2;
+                        pointer1.setVisible(false);
+                        pointer2.setVisible(false);
+                        pointer3.setVisible(true);
+                    }
+                }));
+    }
+
     public StompSession.Subscription registerForNewTasks() {
         return server.registerForMessages("/topic/tasks/add/" + board.boardId, Packet.class,
                 listIdAndTask -> Platform.runLater(() -> {
@@ -518,6 +558,7 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
+        subscriptions.add(registerForBoardUpdates());
 
         getRoot().getScene().setOnKeyPressed(event -> {
             handleShortcuts(event);
@@ -635,7 +676,7 @@ public class BoardCtrl implements Initializable {
 
     public void updateBoard(Board board) {
         try {
-            server.send("/app/boards/update", board);
+            server.send("/app/boards/update/" + board.boardId, board);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -659,20 +700,7 @@ public class BoardCtrl implements Initializable {
             customize.setVisible(false);
         });
 
-        colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
-        colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
-        colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
-        colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
-        colorPickerBoard.setValue(Color.valueOf(board.boardColor));
-        colorPickerListsColor.setValue(Color.valueOf(board.listsColor));
-        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
-        presetB1.setValue(Color.valueOf(board.cardsBackground1));
-        presetF1.setValue(Color.valueOf(board.cardsFont1));
-        presetB2.setValue(Color.valueOf(board.cardsBackground2));
-        presetF2.setValue(Color.valueOf(board.cardsFont2));
-        presetB3.setValue(Color.valueOf(board.cardsBackground3));
-        presetF3.setValue(Color.valueOf(board.cardsFont3));
-        txtCust.setFill(Paint.valueOf(board.backgroundColor));
+        setColorPickersAndPresets(board);
 
         if (board.currentPreset == 0) {
             pointer1.setVisible(true);
@@ -687,6 +715,23 @@ public class BoardCtrl implements Initializable {
             pointer2.setVisible(false);
             pointer3.setVisible(true);
         }
+    }
+
+    private void setColorPickersAndPresets(Board board) {
+        colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
+        colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
+        colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
+        colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
+        colorPickerBoard.setValue(Color.valueOf(board.boardColor));
+        colorPickerListsColor.setValue(Color.valueOf(board.listsColor));
+        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
+        presetB1.setValue(Color.valueOf(board.cardsBackground1));
+        presetF1.setValue(Color.valueOf(board.cardsFont1));
+        presetB2.setValue(Color.valueOf(board.cardsBackground2));
+        presetF2.setValue(Color.valueOf(board.cardsFont2));
+        presetB3.setValue(Color.valueOf(board.cardsBackground3));
+        presetF3.setValue(Color.valueOf(board.cardsFont3));
+        txtCust.setFill(Paint.valueOf(board.backgroundColor));
     }
 
     public void closeCustomize() {
@@ -725,7 +770,15 @@ public class BoardCtrl implements Initializable {
         custimozePane.setStyle(fxBackgroundColor
                 + buttonColor + ";-fx-background-radius: 10px;");
         this.board.buttonsBackground = buttonColor;
-        //lists color
+        //lists and tags color
+        applyChangesListsAndTags(this.board);
+
+        applyChangesFont();
+
+        updateBoard(board);
+    }
+
+    private void applyChangesListsAndTags(Board board) {
         board.listsColor = colorPickerListsColor.getValue().toString().substring(2, 8);
         board.listsFontColor = colorPickerListsFont.getValue().toString().substring(2, 8);
         for (Node node : board_hbox.getChildren()) {
@@ -746,10 +799,6 @@ public class BoardCtrl implements Initializable {
             tag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
             tag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
         }
-
-        applyChangesFont();
-
-        updateBoard(board);
     }
 
     public void applyChangesFont() {
@@ -758,14 +807,14 @@ public class BoardCtrl implements Initializable {
                 .getValue().toString().substring(2, 8);
         logo.setFill(Paint.valueOf(backgroundFontColor));
         boardName.setFill(Paint.valueOf(backgroundFontColor));
-        this.board.backgroundColorFont = backgroundFontColor;
+        board.backgroundColorFont = backgroundFontColor;
         txtTags.setFill(Paint.valueOf(backgroundFontColor));
         //buttons font
         String buttonsFontColor = colorPickerButtonsFont.getValue().toString().substring(2, 8);
         btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
         btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
         addList.setTextFill(Paint.valueOf(buttonsFontColor));
-        this.board.buttonsColorFont = buttonsFontColor;
+        board.buttonsColorFont = buttonsFontColor;
     }
 
     public void resetBackgroundColor() {

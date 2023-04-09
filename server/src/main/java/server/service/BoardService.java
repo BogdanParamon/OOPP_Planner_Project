@@ -152,12 +152,9 @@ public class BoardService {
         return packet;
     }
 
-    public Packet updateMessage(Board board) {
+    public Board updateMessage(Board board) {
         updateBoard(board);
-        Packet packet = new Packet();
-        packet.longValue = board.boardId;
-        packet.board = board;
-        return packet;
+        return board;
     }
 
     public Packet renameMessage(String newTitle, long boardId) {
