@@ -23,6 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -125,6 +126,8 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton passwordButton;
 
+    @FXML private Pane shortcutsPane;
+
     /**
      * Setup server and main controller
      *
@@ -151,6 +154,12 @@ public class BoardCtrl implements Initializable {
     }
 
     public void setUpProtection() {
+        lock = new ImageView("/client/images/lock-icon-11.png");
+        lock.setFitHeight(60);
+        lock.setFitWidth(60);
+        lock.setX(400);
+        lock.setY(20);
+        root.getChildren().add(lock);
         if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
             disable();
             passwordButton.setText("Unlock");
@@ -188,7 +197,16 @@ public class BoardCtrl implements Initializable {
         mainCtrl.showPassword();
     }
 
-    public void handleShortcuts(KeyEvent event) {
+    public void handleShortcutKeys(KeyEvent event) {
+        if (event.isShiftDown() && event.getCode() == KeyCode.SLASH && !shortcutsPane.isVisible()) {
+            blurPane.setVisible(true);
+            shortcutsPane.setVisible(true);
+            blurPane.setOnMouseClicked(event1 -> {
+                blurPane.setVisible(false);
+                shortcutsPane.setVisible(false);
+            });
+        }
+
         if (Card.focused == null) return;
 
         if (event.isShiftDown()) {
@@ -200,22 +218,136 @@ public class BoardCtrl implements Initializable {
         } else if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
             Card.focused.deleteTask();
         } else if (event.getCode() == KeyCode.ENTER) {
-            if (!Card.focused.isDetailedTaskOpen) {
-                Card.focused.displayDialog();
+            for (Node node : root.getChildren()) {
+                if (node instanceof DetailedTask) {
+                    return;
+                }
             }
+            Card.focused.displayDialog();
         } else if (event.getCode() == KeyCode.ESCAPE) {
-            if (Card.focused.isDetailedTaskOpen) {
-                Card.focused.closeDialog();
+            for (Node node : root.getChildren()) {
+                if (node instanceof DetailedTask) {
+                    stopDisplayingDialog((DetailedTask) node);
+                    break;
+                }
             }
         } else if (event.getCode() == KeyCode.E) {
             Card.focused.editTaskTitle();
         } else if (event.getCode() == KeyCode.C) {
             showCustomize();
         } else if (event.getCode() == KeyCode.T) {
-            Card.focused.showAddTagPopup();
+            displayTagSelectionPane();
         }
     }
 
+    public void displayTagSelectionPane() {
+        Pane pane = new Pane();
+        pane.setPrefSize(120, 200);
+        pane.setStyle("-fx-background-color: white; -fx-background-radius: 10px");
+        pane.setLayoutX(400);
+        pane.setLayoutY(250);
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setLayoutX(10);
+
+        for (var tag : board.tags) {
+            Pane tagPane = new Pane();
+            tagPane.setPrefSize(85, 20);
+            tagPane.setStyle("-fx-background-color: "
+                    + tag.getColor() + "; -fx-background-radius: 10px");
+            Label text = new Label(tag.getText());
+            text.setFont(Font.font("Roboto", 13));
+            text.setLayoutX(5);
+            text.setLayoutY(3);
+            tagPane.getChildren().add(text);
+
+            tagPane.setOnMouseClicked(event1 -> {
+                if (Card.focused.getTask().tags.contains(tag))  return;
+                server.send("/app/tasks/addTag/" + Card.focused.getTask().taskId, tag);
+                blurPane.setVisible(false);
+                root.getChildren().remove(pane);
+            });
+
+            vbox.getChildren().add(tagPane);
+        }
+
+        MFXScrollPane scrollPane = new MFXScrollPane();
+        scrollPane.setPrefHeight(180);
+        scrollPane.setPrefWidth(110);
+        scrollPane.setLayoutX(5);
+        scrollPane.setLayoutY(10);
+        scrollPane.setContent(vbox);
+
+        pane.getChildren().add(scrollPane);
+
+        blurPane.setVisible(true);
+        blurPane.setOnMouseClicked(event1 -> {
+            blurPane.setVisible(false);
+            root.getChildren().remove(pane);
+        });
+        root.getChildren().add(root.getChildren().size() - 1, pane);
+    }
+
+    public void handleControlKeys(KeyEvent event) {
+        if (Card.focused == null) return;
+
+        if (event.isControlDown()) {
+            if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN
+                    || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT) {
+                handleControlArrowKeys(event);
+            }
+        }
+    }
+
+    private void handleControlArrowKeys(KeyEvent event) {
+        VBox parent = (VBox) Card.focused.getParent();
+        int cardIndex = parent.getChildren().indexOf(Card.focused);
+
+        int listIndex = -1;
+        for (int i = 0; i < board_hbox.getChildren().size(); i++) {
+            List list = (List) board_hbox.getChildren().get(i);
+            if ( list.getList().equals(parent)) {
+                listIndex = i;
+                break;
+            }
+        }
+
+        if (event.getCode() == KeyCode.UP) {
+            if (cardIndex > 0) {
+                updateCardFocus((Card) parent.getChildren().get(cardIndex - 1));
+            }
+        } else if (event.getCode() == KeyCode.DOWN) {
+            if (cardIndex < parent.getChildren().size() - 2) {
+                updateCardFocus((Card) parent.getChildren().get(cardIndex + 1));
+            }
+        } else if (event.getCode() == KeyCode.RIGHT) {
+            if (listIndex == -1 || listIndex == board_hbox.getChildren().size() - 1) return;
+            List list = (List) board_hbox.getChildren().get(listIndex + 1);
+            if (list.getList().getChildren().size() == 1) return;
+            if (list.getList().getChildren().size() <= cardIndex + 1) {
+                updateCardFocus((Card)
+                        list.getList().getChildren().get(list.getList().getChildren().size() - 2));
+            } else {
+                updateCardFocus((Card) list.getList().getChildren().get(cardIndex));
+            }
+        } else if (event.getCode() == KeyCode.LEFT) {
+            if (listIndex <= 0) return;
+            List list = (List) board_hbox.getChildren().get(listIndex - 1 );
+            if (list.getList().getChildren().size() == 1) return;
+            if (list.getList().getChildren().size() <= cardIndex + 1) {
+                updateCardFocus((Card)
+                        list.getList().getChildren().get(list.getList().getChildren().size() - 2));
+            } else {
+                updateCardFocus((Card) list.getList().getChildren().get(cardIndex));
+            }
+        }
+    }
+
+    private void updateCardFocus(Card newFocusedCard) {
+        Card.focused.setStyle(Card.focused.getStyle().replace("blue", "ddd"));
+        Card.focused = newFocusedCard;
+        Card.focused.setStyle(Card.focused.getStyle().replace("ddd", "blue"));
+    }
 
 
     public StompSession.Subscription registerForNewLists() {
@@ -498,7 +630,6 @@ public class BoardCtrl implements Initializable {
             board_hbox.getChildren().add(list);
             listMap.put(taskList.listId, list);
         }
-
         tagList.getChildren().remove(1, tagList.getChildren().size());
         tagMap = new HashMap<>();
         for (var tag : board.tags) {
@@ -509,7 +640,6 @@ public class BoardCtrl implements Initializable {
             tagList.getChildren().add(tagUI);
             tagMap.put(tag.tagId, tagUI);
         }
-
         setBoardColors(board);
         setBoardFontColors(board);
         setCardsColorsLaunch(board);
@@ -536,9 +666,11 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForTagDeletes());
 
         getRoot().getScene().setOnKeyPressed(event -> {
-            handleShortcuts(event);
-            System.out.println(event.getCode());
+            handleShortcutKeys(event);
+            handleControlKeys(event);
         });
+
+        getRoot().requestFocus();
     }
 
     public void setCardsColorsLaunch(Board board) {
