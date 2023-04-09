@@ -173,7 +173,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void showErrorMessage(Text errorMsg) {
         errorMsg.setVisible(true);
-
         Timeline timeline = new Timeline(
                 new KeyFrame(millis(0), new KeyValue(errorMsg.translateXProperty(), 0)),
                 new KeyFrame(millis(50), new KeyValue(errorMsg.translateXProperty(), -10)),
@@ -197,7 +196,6 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
-
     public void joinBoard() {
         try {
             Long boardId = Long.parseLong(boardTitle.getText());
@@ -209,7 +207,6 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
-
     public void switchSceneToHome() {
         server.disconnectWebsocket();
         mainCtrl.showHome();
@@ -218,6 +215,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void switchSceneToBoard(Board board) {
         mainCtrl.boardCtrl.setBoard(board);
         mainCtrl.boardCtrl.setUser(user);
+        mainCtrl.boardCtrl.setAdminMode(false);
         mainCtrl.boardCtrl.setUpProtection();
         mainCtrl.showBoard();
     }

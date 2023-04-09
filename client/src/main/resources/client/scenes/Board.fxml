@@ -43,13 +43,27 @@
                                 <Font name="Roboto" size="20.0" />
                             </font>
                         </MFXButton>
-                        <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="10.0" layoutY="13.0">
+                        <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="15.0" layoutY="19.0">
                             <image>
                                 <Image url="@/client/images/add_list.png" />
                             </image>
                         </ImageView>
                     </children>
                 </Pane>
+            <Pane prefHeight="57.0" prefWidth="150.0">
+               <children>
+                  <MFXButton fx:id="passwordButton" layoutX="44.0" layoutY="5.0" prefHeight="42.0" prefWidth="91.0" style="-fx-background-color: ddd;" text="Lock" wrapText="true">
+                     <font>
+                        <Font name="Roboto" size="20.0" />
+                     </font>
+                  </MFXButton>
+                  <ImageView fx:id="lock" fitHeight="24.0" fitWidth="26.0" layoutX="23.0" layoutY="15.0">
+                     <image>
+                        <Image url="@/client/images/lock-icon-11.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
             </children>
         </VBox>
         <Pane fx:id="overviewBoardsPane" layoutX="14.0" layoutY="508.0" prefHeight="57.0" prefWidth="150.0" style="-fx-background-color: ddd; -fx-background-radius: 10px;">
