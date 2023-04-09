@@ -92,6 +92,14 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
+    public Map<Long, String> getBoardTitlesAndIds() {
+        return client.target(SERVER).path("api/boards/titles&ids")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<Map<Long, String>>() {
+                });
+    }
+
     public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
         return client.target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
                 .request(APPLICATION_JSON)
@@ -133,6 +141,15 @@ public class ServerUtils {
         session.send(dest, o);
     }
 
+    public void deleteBoardById(long boardId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/boards/delete")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
     public User connectToUser(String userName) {
         return client.target(SERVER).path("api/users/" + userName)
                 .request(APPLICATION_JSON)
@@ -153,6 +170,15 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);
+    }
+
+
+    public Boolean verifyAdminPassword(String password) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/users/verifyAdmin")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(password, APPLICATION_JSON), Boolean.class);
     }
 
     public void disconnectWebsocket() {

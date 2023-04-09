@@ -17,6 +17,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -43,6 +44,7 @@ public class List extends Pane {
     private MFXScrollPane scrollPane;
 
     private Board board;
+    private HashMap<Long, Card> cardMap;
 
     public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList, Board board) {
         this.mainCtrl = mainCtrl;
@@ -62,6 +64,7 @@ public class List extends Pane {
             throw new RuntimeException(e);
         }
 
+        cardMap = new HashMap<>();
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList, board);
             if (card.getDetailedTask().hasTaskDescription())
@@ -69,6 +72,7 @@ public class List extends Pane {
             else
                 card.hideDescriptionImage();
             list.getChildren().add(list.getChildren().size() - 1, card);
+            cardMap.put(task.taskId, card);
         }
 
         title.setText(taskList.title);
@@ -195,5 +199,9 @@ public class List extends Pane {
 
     public MFXButton getDeleteTaskListButton() {
         return deleteTaskListButton;
+    }
+
+    public HashMap<Long, Card> getCardMap() {
+        return cardMap;
     }
 }

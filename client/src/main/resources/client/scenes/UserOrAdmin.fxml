@@ -37,11 +37,16 @@
                </font>
             </Text>
             <MFXButton fx:id="button" layoutX="419.0" layoutY="171.0" prefHeight="48.0" prefWidth="51.0" text="OK" />
-            <Text fill="#777777" layoutX="156.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a Username or an Admin Password:">
-               <font>
-                  <Font name="Roboto" size="14.0" />
-               </font>
-            </Text>
+             <Text fill="#777777" layoutX="156.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a Username or an Admin Password:">
+                 <font>
+                     <Font name="Roboto" size="14.0" />
+                 </font>
+             </Text>
+             <Text fx:id="incorrectPasswordMsg" fill="red" layoutX="243.0" layoutY="241.0" text="Incorrect Password" visible="false">
+                 <font>
+                     <Font size="15.0" />
+                 </font>
+             </Text>
          </children>
          <effect>
             <DropShadow spread="0.29">

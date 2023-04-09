@@ -97,10 +97,12 @@ public class BoardController {
      * @return successful if board exists
      */
     @DeleteMapping(path = "/delete")
+    @Transactional
     public ResponseEntity<String> delete(@RequestParam long boardId) {
         try {
             return ResponseEntity.ok(boardService.delete(boardId));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -187,6 +189,7 @@ public class BoardController {
 
     @MessageMapping("/boards/update")
     @SendTo("/topic/boards/update")
+    @Transactional
     public Packet updateMessage(Board board) {
         return boardService.updateMessage(board);
     }
@@ -197,6 +200,14 @@ public class BoardController {
     public Packet renameMessage(String newTitle,
                                 @DestinationVariable("boardId") long boardId) {
         return boardService.renameMessage(newTitle, boardId);
+    }
+
+    @MessageMapping("/boards/changePassword/{boardId}")
+    @SendTo("/topic/boards/changePassword/{boardId}")
+    @Transactional
+    public Packet changePasswordMessage(String newPassword,
+                                        @DestinationVariable("boardId") long boardId) {
+        return boardService.changePasswordMessage(newPassword, boardId);
     }
 
     @MessageMapping("/boards/join/{userId}")
