@@ -202,10 +202,10 @@ public class Card extends Pane {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
                     Platform.runLater(() -> {
-                                addTag(tag, true);
-                                getDetailedTask().getTags_vbox()
-                                        .getChildren().add(new Tag(mainCtrl, server, tag, board));
-                            }
+                        addTag(tag, true);
+                        getDetailedTask().getTags_vbox()
+                                .getChildren().add(new Tag(mainCtrl, server, tag, board));
+                    }
                     );
                 });
     }
@@ -215,18 +215,17 @@ public class Card extends Pane {
                         + task.taskId, commons.Packet.class,
                 packet -> {
                     Platform.runLater(() -> {
-                                long tagId = packet.longValue;
-                                for (Node node : getDetailedTask().getTags_vbox().getChildren()) {
-                                    if (!(node instanceof Tag)) continue;
-                                    Tag tag = (Tag) node;
-                                    if (tag.getTagId() == tagId) {
-                                        getDetailedTask().getTags_vbox().getChildren().remove(tag);
-                                        break;
-                                    }
-                                }
-                                removeTag(tagId);
+                        long tagId = packet.longValue;
+                        for (Node node : getDetailedTask().getTags_vbox().getChildren()) {
+                            if (!(node instanceof Tag)) continue;
+                            Tag tag = (Tag) node;
+                            if (tag.getTagId() == tagId) {
+                                getDetailedTask().getTags_vbox().getChildren().remove(tag);
+                                break;
                             }
-                    );
+                        }
+                        removeTag(tagId);
+                    });
                 });
     }
 
