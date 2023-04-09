@@ -240,8 +240,9 @@ public class BoardCtrl implements Initializable {
     public StompSession.Subscription registerForListRenames() {
         return server.registerForMessages("/topic/taskLists/rename/" + board.boardId,
                 Packet.class, listIdAndNewTitle -> Platform.runLater(() -> {
-                    listMap.get(listIdAndNewTitle.longValue)
-                            .setTitle(listIdAndNewTitle.stringValue);
+                    List listUI = listMap.get(listIdAndNewTitle.longValue);
+                    listUI.setTitle(listIdAndNewTitle.stringValue);
+                    listUI.getTaskList().title = listIdAndNewTitle.stringValue;
                 }));
     }
 
@@ -249,6 +250,7 @@ public class BoardCtrl implements Initializable {
         return server.registerForMessages("/topic/boards/rename/" + board.boardId, Packet.class,
                 boardIdAndNewTitle -> Platform.runLater(() -> {
                     boardName.setText(boardIdAndNewTitle.stringValue);
+                    board.title = boardIdAndNewTitle.stringValue;
                 }));
     }
 
@@ -280,11 +282,14 @@ public class BoardCtrl implements Initializable {
                     long taskId = task.taskId;
 
                     Card card = listMap.get(listId).getCardMap().get(taskId);
+                    card.getTask().subtasks = task.subtasks;
+                    card.getTask().title = task.title;
+                    card.getTask().description = task.description;
 
                     card.getTaskTitle().setText(task.title);
-                    card.getDetailedTask().getDtvDescription()
-                            .setText(task.description);
+                    card.getDetailedTask().getDtvDescription().setText(task.description);
                     card.getDetailedTask().updateDetails();
+
                     if (!task.description.trim().equals(""))
                         card.showDescriptionImage();
                     else card.hideDescriptionImage();
@@ -327,9 +332,8 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdAndSubtask.longValue;
                     long listId = taskIdlistIdAndSubtask.longValue2;
-
-
                     commons.Subtask subtask = taskIdlistIdAndSubtask.subtask;
+
                     List list = listMap.get(listId);
                     Card card = list.getCardMap().get(taskId);
                     Task task = card.getTask();
@@ -339,6 +343,7 @@ public class BoardCtrl implements Initializable {
                             board, list.getTaskList(), task, subtask);
                     UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
                     card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
+                    card.updateProgress();
                     card.getDetailedTask().getSubtaskMap().put(subtask.subTaskId, UISubtask);
                 }));
     }
@@ -350,10 +355,11 @@ public class BoardCtrl implements Initializable {
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue2;
                     commons.Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
 
-                    listMap.get(listId)
+                    Subtask subtaskUI = listMap.get(listId)
                             .getCardMap().get(taskId)
-                            .getDetailedTask().getSubtaskMap().get(subtask.subTaskId)
-                            .getCheckbox().setText(subtask.subtaskText);
+                            .getDetailedTask().getSubtaskMap().get(subtask.subTaskId);
+                    subtaskUI.getCheckbox().setText(subtask.subtaskText);
+                    subtaskUI.getSubtask().subtaskText = subtask.subtaskText;
                 }));
     }
 
@@ -391,7 +397,9 @@ public class BoardCtrl implements Initializable {
                     Subtask subtaskUI = card.getDetailedTask().getSubtaskMap().get(subtaskId);
 
                     card.getDetailedTask().getTasks_vbox().getChildren().remove(subtaskUI);
+                    card.getDetailedTask().getSubtaskMap().remove(subtaskId);
                     card.getTask().subtasks.remove(subtaskUI.getSubtask());
+                    card.updateProgress();
                 }));
     }
 
@@ -402,12 +410,12 @@ public class BoardCtrl implements Initializable {
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue;
                     long taskId = taskIdlistIdNewTitleAndSubtask.longValue2;
 
-                    listMap.get(listId)
-                            .getCardMap().get(taskId)
-                            .getDetailedTask().getSubtaskMap().get(subtask.subTaskId)
-                            .getCheckbox().setSelected(subtask.subtaskBoolean);
-                    listMap.get(listId)
-                            .getCardMap().get(taskId).updateProgress();
+                    Card card = listMap.get(listId).getCardMap().get(taskId);
+                    Subtask subtaskUI = card.getDetailedTask()
+                            .getSubtaskMap().get(subtask.subTaskId);
+                    subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+                    subtaskUI.getSubtask().subtaskBoolean = subtask.subtaskBoolean;
+                    card.updateProgress();
                 }));
     }
 
