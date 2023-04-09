@@ -3,6 +3,7 @@ package server.api;
 import commons.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.service.UserService;
 
@@ -29,4 +30,16 @@ public class UserController {
     public ResponseEntity<Boolean> verifyAdminPassword(@RequestBody String password) {
         return ResponseEntity.ok(userService.verifyAdminPassword(password));
     }
+
+    @DeleteMapping(path = "/leave")
+    @Transactional
+    public ResponseEntity<String> leaveBoard(@RequestParam long userId, @RequestParam long boardId) {
+        try {
+            return ResponseEntity.ok(userService.leaveBoard(userId, boardId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

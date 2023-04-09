@@ -142,8 +142,16 @@ public class ServerUtils {
     }
 
     public void deleteBoardById(long boardId) {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/delete")
+        client.target(SERVER).path("api/boards/delete")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public void leaveBoard(long userId, long boardId) {
+        client.target(SERVER).path("api/users/leave")
+                .queryParam("userId", userId)
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
@@ -174,8 +182,7 @@ public class ServerUtils {
 
 
     public Boolean verifyAdminPassword(String password) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/users/verifyAdmin")
+        return client.target(SERVER).path("api/users/verifyAdmin")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(password, APPLICATION_JSON), Boolean.class);

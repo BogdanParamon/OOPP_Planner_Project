@@ -16,10 +16,12 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
@@ -40,6 +42,7 @@ public class BoardOverviewCtrl implements Initializable {
     private User user;
     @FXML
     private MFXListView<Pane> boards;
+    private final HashMap<Long, Pane> boardPaneMap = new HashMap<>();
 
     @FXML
     private MFXTextField boardTitle;
@@ -107,22 +110,50 @@ public class BoardOverviewCtrl implements Initializable {
         server.registerForMessages("/topic/boards/add/" + user.userId,
                 Packet.class, boardIdAndTitleAndUserId -> {
                     Platform.runLater(() -> {
-                        MFXButton button = new MFXButton(boardIdAndTitleAndUserId.stringValue);
-                        button.setOnAction(event
-                                -> switchSceneToBoard(server
-                                .getBoardById(boardIdAndTitleAndUserId.longValue)));
+                        long boardId = boardIdAndTitleAndUserId.longValue;
+                        String boardName = boardIdAndTitleAndUserId.stringValue;
+
                         Pane pane = new Pane();
-                        pane.setPrefHeight(20);
-                        pane.getChildren().add(button);
-                        if (server.getBoardById(boardIdAndTitleAndUserId.longValue)
-                                .getPassword() != null) {
+                        pane.setOnMouseClicked(event
+                                -> switchSceneToBoard(server.getBoardById(boardId)));
+                        pane.setPrefWidth(219);
+
+                        Text boardTitleText = new Text(boardName);
+                        boardTitleText.setLayoutX(25);
+                        boardTitleText.setLayoutY(15);
+                        boardTitleText.setFont(new Font("Roboto", 14));
+                        pane.getChildren().add(boardTitleText);
+
+                        MFXButton leaveButton = new MFXButton("");
+                        ImageView leaveIcon = new ImageView("/client/images/leave_icon.png");
+                        leaveIcon.setFitWidth(20);
+                        leaveIcon.setFitHeight(20);
+                        leaveButton.setGraphic(leaveIcon);
+                        leaveButton.setOnAction(event -> leaveBoard(boardId));
+                        leaveButton.setLayoutX(180);
+                        leaveButton.setLayoutY(-3);
+                        leaveButton.setPadding(new Insets(3, 3, 3, 3));
+                        pane.getChildren().add(leaveButton);
+
+                        MFXButton deleteButton = new MFXButton("");
+                        ImageView deleteIcon = new ImageView("/client/images/delete_icon.png");
+                        deleteIcon.setFitWidth(20);
+                        deleteIcon.setFitHeight(20);
+                        deleteButton.setGraphic(deleteIcon);
+                        deleteButton.setOnAction(event -> deleteBoard(boardId));
+                        deleteButton.setLayoutX(150);
+                        deleteButton.setLayoutY(-3);
+                        deleteButton.setPadding(new Insets(3, 3, 3, 3));
+                        pane.getChildren().add(deleteButton);
+
+                        if (!knowsPassword(user, server.getBoardById(boardId))) {
                             ImageView lock = new ImageView("/client/images/lock-icon-11.png");
                             lock.setFitHeight(20);
                             lock.setFitWidth(20);
-                            lock.setX(190);
                             pane.getChildren().add(lock);
                         }
                         boards.getItems().add(pane);
+                        boardPaneMap.put(boardId, pane);
                         boardTitle.clear();
                     });
                 });
@@ -131,21 +162,47 @@ public class BoardOverviewCtrl implements Initializable {
     public void load() {
         var boardTitlesAndIds = server.getBoardTitlesAndIdsByUserId(user.userId);
         boards.getItems().clear();
-        boardTitlesAndIds.forEach((aLong, s) -> {
-            MFXButton button = new MFXButton(s);
-            button.setOnAction(event
-                    -> switchSceneToBoard(server.getBoardById(aLong)));
+        boardTitlesAndIds.forEach((boardId, boardName) -> {
             Pane pane = new Pane();
-            pane.setPrefHeight(20);
-            pane.getChildren().add(button);
-            if (!knowsPassword(user, server.getBoardById(aLong))) {
+            pane.setOnMouseClicked(event -> switchSceneToBoard(server.getBoardById(boardId)));
+            pane.setPrefWidth(219);
+
+            Text boardTitleText = new Text(boardName);
+            boardTitleText.setLayoutX(25);
+            boardTitleText.setLayoutY(15);
+            boardTitleText.setFont(new Font("Roboto", 14));
+            pane.getChildren().add(boardTitleText);
+
+            MFXButton leaveButton = new MFXButton("");
+            ImageView leaveIcon = new ImageView("/client/images/leave_icon.png");
+            leaveIcon.setFitWidth(20);
+            leaveIcon.setFitHeight(20);
+            leaveButton.setGraphic(leaveIcon);
+            leaveButton.setOnAction(event -> leaveBoard(boardId));
+            leaveButton.setLayoutX(180);
+            leaveButton.setLayoutY(-3);
+            leaveButton.setPadding(new Insets(3, 3, 3, 3));
+            pane.getChildren().add(leaveButton);
+
+            MFXButton deleteButton = new MFXButton("");
+            ImageView deleteIcon = new ImageView("/client/images/delete_icon.png");
+            deleteIcon.setFitWidth(20);
+            deleteIcon.setFitHeight(20);
+            deleteButton.setGraphic(deleteIcon);
+            deleteButton.setOnAction(event -> deleteBoard(boardId));
+            deleteButton.setLayoutX(150);
+            deleteButton.setLayoutY(-3);
+            deleteButton.setPadding(new Insets(3, 3, 3, 3));
+            pane.getChildren().add(deleteButton);
+
+            if (!knowsPassword(user, server.getBoardById(boardId))) {
                 ImageView lock = new ImageView("/client/images/lock-icon-11.png");
                 lock.setFitHeight(20);
                 lock.setFitWidth(20);
-                lock.setX(190);
                 pane.getChildren().add(lock);
             }
             boards.getItems().add(pane);
+            boardPaneMap.put(boardId, pane);
             boardTitle.clear();
         });
         subheadingAnimation();
@@ -205,6 +262,14 @@ public class BoardOverviewCtrl implements Initializable {
         } catch (NumberFormatException e) {
             showErrorMessage(idErrorMsg);
         }
+    }
+
+    public void leaveBoard(Long boardId) {
+        server.leaveBoard(user.userId, boardId);
+    }
+
+    public void deleteBoard(Long boardId) {
+        server.deleteBoardById(boardId);
     }
 
     public void switchSceneToHome() {

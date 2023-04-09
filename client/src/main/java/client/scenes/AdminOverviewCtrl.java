@@ -85,7 +85,7 @@ public class AdminOverviewCtrl implements Initializable {
 
             Text boardNameText = new Text(boardName);
             boardNameText.setLayoutY(15);
-            boardNameText.setFont(new Font("Roboto", 16));
+            boardNameText.setFont(new Font("Roboto", 14));
             Text IdLabel = new Text("#id: " + boardId);
             IdLabel.setLayoutX(160);
             IdLabel.setLayoutY(15);
