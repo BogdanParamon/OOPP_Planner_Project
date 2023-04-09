@@ -122,6 +122,9 @@ public class BoardCtrl implements Initializable {
 
     @FXML private Pane blurPane;
 
+    @FXML
+    private MFXButton passwordButton;
+
     /**
      * Setup server and main controller
      *
@@ -148,19 +151,19 @@ public class BoardCtrl implements Initializable {
     }
 
     public void setUpProtection() {
-        lock = new ImageView("/client/images/lock-icon-11.png");
-        lock.setFitHeight(60);
-        lock.setFitWidth(60);
-        lock.setX(550);
-        lock.setY(20);
-        root.getChildren().add(lock);
         if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
             disable();
+            passwordButton.setOnMouseClicked(event -> {
+                askForPassword(board, user);
+            });
             lock.setOnMouseClicked(event -> {
                 askForPassword(board, user);
             });
         } else {
             enable();
+            passwordButton.setOnMouseClicked(event -> {
+                setPassword(board, user);
+            });
             lock.setOnMouseClicked(event -> {
                 setPassword(board, user);
             });
