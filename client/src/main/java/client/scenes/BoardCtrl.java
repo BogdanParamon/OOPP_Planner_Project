@@ -123,6 +123,9 @@ public class BoardCtrl implements Initializable {
 
     @FXML private Pane blurPane;
 
+    @FXML
+    private MFXButton passwordButton;
+
     @FXML private Pane shortcutsPane;
 
     /**
