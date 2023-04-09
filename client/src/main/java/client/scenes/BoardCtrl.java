@@ -289,7 +289,7 @@ public class BoardCtrl implements Initializable {
                         card.showDescriptionImage();
                     else card.hideDescriptionImage();
                     card.getDetailedTask().getDtvTitle().setText(task.title);
-           }));
+                }));
     }
 
     public StompSession.Subscription registerForListDeletes() {
@@ -340,7 +340,7 @@ public class BoardCtrl implements Initializable {
                     UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
                     card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
                     card.getDetailedTask().getSubtaskMap().put(subtask.subTaskId, UISubtask);
-           }));
+                }));
     }
 
     public StompSession.Subscription registerForSubtaskRename() {
@@ -408,7 +408,7 @@ public class BoardCtrl implements Initializable {
                             .getCheckbox().setSelected(subtask.subtaskBoolean);
                     listMap.get(listId)
                             .getCardMap().get(taskId).updateProgress();
-           }));
+                }));
     }
 
     public StompSession.Subscription registerForNewTags() {
