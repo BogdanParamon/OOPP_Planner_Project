@@ -44,5 +44,11 @@
               <Image url="@/client/images/description.png" />
           </image>
       </ImageView>
+      <MFXProgressBar fx:id="progressBar" animationSpeed="0.0" layoutX="49.0" layoutY="37.0" prefWidth="40.0" />
+      <Label fx:id="progressLabel" layoutX="27.0" layoutY="31.0" >
+          <font>
+              <Font name="Roboto Semibold" size="12.0" />
+          </font>
+      </Label>
     </children>
 </fx:root>

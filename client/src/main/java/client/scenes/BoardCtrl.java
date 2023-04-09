@@ -11,11 +11,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -410,11 +410,13 @@ public class BoardCtrl implements Initializable {
                     long listId = packet.longValue;
                     Task task = packet.task;
                     long taskId = task.taskId;
+
                     Card card = listMap.get(listId).getCardMap().get(taskId);
 
                     card.getTaskTitle().setText(task.title);
                     card.getDetailedTask().getDtvDescription()
                             .setText(task.description);
+                    card.getDetailedTask().updateDetails();
                     if (!task.description.trim().equals(""))
                         card.showDescriptionImage();
                     else card.hideDescriptionImage();
@@ -457,6 +459,8 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdAndSubtask.longValue;
                     long listId = taskIdlistIdAndSubtask.longValue2;
+
+
                     commons.Subtask subtask = taskIdlistIdAndSubtask.subtask;
                     List list = listMap.get(listId);
                     Card card = list.getCardMap().get(taskId);
@@ -465,6 +469,7 @@ public class BoardCtrl implements Initializable {
                     task.subtasks.add(0, subtask);
                     client.scenes.Subtask UISubtask = new client.scenes.Subtask(mainCtrl, server,
                             board, list.getTaskList(), task, subtask);
+                    UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
                     card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
                     card.getDetailedTask().getSubtaskMap().put(subtask.subTaskId, UISubtask);
                 }));
@@ -533,6 +538,8 @@ public class BoardCtrl implements Initializable {
                             .getCardMap().get(taskId)
                             .getDetailedTask().getSubtaskMap().get(subtask.subTaskId)
                             .getCheckbox().setSelected(subtask.subtaskBoolean);
+                    listMap.get(listId)
+                            .getCardMap().get(taskId).updateProgress();
                 }));
     }
 
@@ -638,6 +645,10 @@ public class BoardCtrl implements Initializable {
         setBoardColors(board);
         setBoardFontColors(board);
         setCardsColorsLaunch(board);
+
+        newtTitle.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && newtTitle.isVisible()) saveNewTitle();
+        });
 
         subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
