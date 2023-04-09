@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -77,6 +78,14 @@ public class Tag extends Pane {
             db.setDragView(tagPane.snapshot(null, null));
             event.consume();
         });
+
+        tagName.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && !tagName.isDisable()) saveTag();
+        });
+
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            tagName.requestFocus();
+        });
     }
 
     private void editTag() {
@@ -84,7 +93,7 @@ public class Tag extends Pane {
         deleteTag.setVisible(false);
         saveTag.setVisible(true);
         tagName.setDisable(false);
-
+        tagName.requestFocus();
         colorPicker.setVisible(true);
     }
 
@@ -107,5 +116,9 @@ public class Tag extends Pane {
 
     public Long getTagId() {
         return tag.tagId;
+    }
+
+    public MFXButton getDeleteTag() {
+        return deleteTag;
     }
 }

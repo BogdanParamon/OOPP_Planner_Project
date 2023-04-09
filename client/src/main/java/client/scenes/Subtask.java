@@ -9,12 +9,17 @@ import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class Subtask extends AnchorPane {
 
@@ -34,6 +39,10 @@ public class Subtask extends AnchorPane {
     private MFXButton deleteButton;
     @FXML
     private MFXCheckbox checkbox;
+    @FXML
+    private MFXButton arrowUp;
+    @FXML
+    private MFXButton arrowDown;
 
     public Subtask(MainCtrl mainCtrl, ServerUtils server, Board board, TaskList taskList,
                    Task task, commons.Subtask subtask) {
@@ -80,13 +89,25 @@ public class Subtask extends AnchorPane {
                         + taskList.listId + "/" + task.taskId, subtask);
             }
         });
+
+        arrowDown.setOnAction(event -> arrowDownFct());
+
+        arrowUp.setOnAction(event -> arrowUpFct());
+
+        inputTitle.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && inputTitle.isVisible()) saveSubtaskTitle();
+        });
+
     }
 
     public void updateSubtaskTitle() {
         inputTitle.setVisible(true);
         checkbox.setText("");
         editButton.setVisible(false);
+        arrowUp.setVisible(false);
+        arrowDown.setVisible(false);
         saveButton.setVisible(true);
+        inputTitle.requestFocus();
     }
 
     public void saveSubtaskTitle() {
@@ -96,6 +117,8 @@ public class Subtask extends AnchorPane {
             renameSubtask(updatedSubtaskText);
             inputTitle.setText("");
             editButton.setVisible(true);
+            arrowUp.setVisible(true);
+            arrowDown.setVisible(true);
             saveButton.setVisible(false);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -141,5 +164,35 @@ public class Subtask extends AnchorPane {
 
     public MFXCheckbox getCheckbox() {
         return checkbox;
+    }
+
+    public void arrowDownFct() {
+        VBox parent = (VBox) this.getParent();
+        int index = parent.getChildren().indexOf(this);
+        if (index < parent.getChildren().size() - 2) {
+            Node first = parent.getChildren().get(index + 1);
+            Node second = parent.getChildren().get(index);
+            parent.getChildren().set(index + 1, new Text());
+            parent.getChildren().set(index, new Text());
+            parent.getChildren().set(index + 1, second);
+            parent.getChildren().set(index, first);
+            Collections.swap(task.subtasks, index + 1, index);
+            server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+        }
+    }
+
+    public void arrowUpFct() {
+        VBox parent = (VBox) this.getParent();
+        int index = parent.getChildren().indexOf(this);
+        if (index > 0) {
+            Node first = parent.getChildren().get(index - 1);
+            Node second = parent.getChildren().get(index);
+            parent.getChildren().set(index - 1, new Text());
+            parent.getChildren().set(index, new Text());
+            parent.getChildren().set(index - 1, second);
+            parent.getChildren().set(index, first);
+            Collections.swap(task.subtasks, index - 1, index);
+            server.send("/app/tasks/update/" + board.boardId + "/" + taskList.listId, task);
+        }
     }
 }

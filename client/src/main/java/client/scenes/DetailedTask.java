@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Subtask;
+import commons.Tag;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -33,8 +34,8 @@ public class DetailedTask extends AnchorPane {
     @FXML
     private VBox tasks_vbox;
 
-//    @FXML
-//    private VBox tags_vbox;
+    @FXML
+    private VBox tags_vbox;
 
     @FXML
     private TextField dtvTitle;
@@ -110,7 +111,6 @@ public class DetailedTask extends AnchorPane {
 
         initEditTaskTitle();
         initEditTaskDescription();
-
     }
 
     public void addSubtask() {
@@ -134,7 +134,21 @@ public class DetailedTask extends AnchorPane {
     }
 
     public void updateDetails() {
-
+        tasks_vbox.getChildren().remove(0, tasks_vbox.getChildren().size() - 1);
+        for (Subtask subtask : this.task.subtasks) {
+            client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+            tasks_vbox.getChildren().add(tasks_vbox.getChildren().size() - 1, subtaskUI);
+        }
+        tags_vbox.getChildren().clear();
+        for (Tag tag : this.task.tags) {
+            client.scenes.Tag tagUI = new client.scenes.Tag(mainCtrl, server, tag, board);
+            tagUI.getDeleteTag().setOnAction(event -> {
+                server.send("/app/tasks/deleteTag/" + task.taskId, tag.tagId);
+            });
+            tags_vbox.getChildren().add(0, tagUI);
+        }
     }
 
     void initEditTaskTitle() {
@@ -175,7 +189,7 @@ public class DetailedTask extends AnchorPane {
             node.setDisable(true);
         }
         readOnly.setVisible(true);
-        ///tags_vbox.setDisable(true);
+        tags_vbox.setDisable(true);
     }
 
     protected void enable() {
@@ -186,7 +200,7 @@ public class DetailedTask extends AnchorPane {
             node.setDisable(false);
         }
         readOnly.setVisible(false);
-        ///tags_vbox.setDisable(false);
+        tags_vbox.setDisable(false);
     }
 
     private void saveTaskTitleFromDetailedTaskView() {
@@ -205,6 +219,10 @@ public class DetailedTask extends AnchorPane {
 
     public TextField getDtvTitle() {
         return dtvTitle;
+    }
+
+    public VBox getTags_vbox() {
+        return tags_vbox;
     }
 
     public HashMap<Long, client.scenes.Subtask> getSubtaskMap() {

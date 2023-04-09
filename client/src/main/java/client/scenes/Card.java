@@ -1,11 +1,10 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import commons.Board;
-import commons.Packet;
-import commons.Task;
-import commons.TaskList;
+import commons.Subtask;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -54,6 +53,11 @@ public class Card extends Pane {
     private Pane root;
     @FXML
     private ImageView descriptionImage;
+    @FXML
+    private MFXProgressBar progressBar;
+    @FXML
+    private Label progressLabel;
+
     private boolean hasDetailedTaskOpen = false;
 
     /**
@@ -97,11 +101,20 @@ public class Card extends Pane {
 
         registerForAddTagMessages();
 
+        registerForDeleteTagMessages();
+
 
         openTask.setOnAction(event -> {
             hasDetailedTaskOpen = true;
             displayDialog();
         });
+
+        this.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2)
+                displayDialog();
+        });
+
+        updateProgress();
 
         this.setOnMouseClicked(event -> {
             if (focused != null && focused != this) {
@@ -188,7 +201,31 @@ public class Card extends Pane {
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
-                    Platform.runLater(() -> addTag(tag, true)
+                    Platform.runLater(() -> {
+                                addTag(tag, true);
+                                getDetailedTask().getTags_vbox()
+                                        .getChildren().add(new Tag(mainCtrl, server, tag, board));
+                            }
+                    );
+                });
+    }
+
+    public StompSession.Subscription registerForDeleteTagMessages() {
+        return server.registerForMessages("/topic/tasks/deleteTag/"
+                        + task.taskId, commons.Packet.class,
+                packet -> {
+                    Platform.runLater(() -> {
+                                long tagId = packet.longValue;
+                                for (Node node : getDetailedTask().getTags_vbox().getChildren()) {
+                                    if (!(node instanceof Tag)) continue;
+                                    Tag tag = (Tag) node;
+                                    if (tag.getTagId() == tagId) {
+                                        getDetailedTask().getTags_vbox().getChildren().remove(tag);
+                                        break;
+                                    }
+                                }
+                                removeTag(tagId);
+                            }
                     );
                 });
     }
@@ -258,7 +295,7 @@ public class Card extends Pane {
     }
 
     void initEditTaskTitle() {
-        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.setOnKeyReleased(this::handleKeyRelease);
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
 
@@ -313,6 +350,8 @@ public class Card extends Pane {
 
     public void removeTag(long tagId) {
         task.tags.removeIf(tag -> tag.tagId == tagId);
+        getDetailedTask().getTags_vbox().getChildren()
+                .removeIf(node -> node instanceof Tag && ((Tag) node).tag.tagId == tagId);
         tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
     }
 
@@ -320,6 +359,16 @@ public class Card extends Pane {
         for (Node node : tags.getChildren()) {
             if (node.getId().equals(String.valueOf(tag.tagId))) {
                 node.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
+            }
+        }
+        for (int i = 0; i < getDetailedTask().getTags_vbox().getChildren().size(); i++) {
+            if (getDetailedTask().getTags_vbox().getChildren().get(i) instanceof Tag) {
+                Tag tagUI = (Tag) getDetailedTask().getTags_vbox().getChildren().get(i);
+                if (tagUI.tag.tagId == tag.tagId) {
+                    getDetailedTask().getTags_vbox()
+                            .getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                    break;
+                }
             }
         }
     }
@@ -376,7 +425,6 @@ public class Card extends Pane {
     }
 
     public void setTaskList(TaskList taskList) {
-        System.out.println(this.toString() + this.taskList.listId + " " + taskList.listId);
         this.taskList = taskList;
     }
 
@@ -406,6 +454,28 @@ public class Card extends Pane {
 
     public void hideDescriptionImage() {
         descriptionImage.setVisible(false);
+    }
+
+    public void updateProgress() {
+        progressLabel.setText(currentProgress());
+        progressBar.setProgress(currentProgressDouble());
+    }
+
+    public String currentProgress() {
+        int total = task.subtasks.size();
+        int done = 0;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
+        return done + "/" + total;
+    }
+
+    public double currentProgressDouble() {
+        double total = task.subtasks.size();
+        double done = 0.0;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
+        return done / total;
+
     }
 
     enum Direction {

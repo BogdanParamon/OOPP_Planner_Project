@@ -83,11 +83,19 @@ public class Task {
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        subtasks.add(0, subtask);
     }
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+    public void switchSubtasksWithNext(Subtask subtask) {
+        int index = subtasks.indexOf(subtask);
+        if (index != 0) {
+            subtasks.remove(subtask);
+            subtasks.add(index - 1, subtask);
+        }
     }
 
 }
