@@ -18,13 +18,12 @@ import java.io.IOException;
 
 public class Subtask extends AnchorPane {
 
-    private ServerUtils server;
-    private MainCtrl mainCtrl;
     private final Board board;
     private final TaskList taskList;
     private final Task task;
     private final commons.Subtask subtask;
-
+    private ServerUtils server;
+    private MainCtrl mainCtrl;
     @FXML
     private TextField inputTitle;
     @FXML
@@ -110,7 +109,7 @@ public class Subtask extends AnchorPane {
     public void renameSubtask(String text) {
         try {
             subtask.setSubtaskText(text);
-            server.send("/app/subtasks/rename/" +  board.boardId + "/"
+            server.send("/app/subtasks/rename/" + board.boardId + "/"
                     + taskList.listId + "/" + task.taskId, subtask);
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -118,6 +117,22 @@ public class Subtask extends AnchorPane {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+    }
+
+    protected void disable() {
+        editButton.setDisable(true);
+        saveButton.setDisable(true);
+        inputTitle.setDisable(true);
+        checkbox.setDisable(true);
+        deleteButton.setDisable(true);
+    }
+
+    protected void enable() {
+        editButton.setDisable(false);
+        saveButton.setDisable(false);
+        inputTitle.setDisable(false);
+        checkbox.setDisable(false);
+        deleteButton.setDisable(false);
     }
 
     public commons.Subtask getSubtask() {

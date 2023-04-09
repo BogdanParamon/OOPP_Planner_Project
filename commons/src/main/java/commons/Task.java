@@ -26,7 +26,7 @@ public class Task {
     @OrderColumn
     public List<Subtask> subtasks = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinColumn(name = "taskId")
     public Set<Tag> tags = new HashSet<>();
 

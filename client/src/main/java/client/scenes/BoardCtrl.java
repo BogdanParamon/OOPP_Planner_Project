@@ -12,9 +12,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -25,6 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
@@ -120,10 +119,13 @@ public class BoardCtrl implements Initializable {
     private HashMap<Long, List> listMap;
     private HashMap<Long, Tag> tagMap;
 
-    @FXML private Pane blurPane;
+    @FXML
+    private Pane blurPane;
 
     @FXML
     private MFXButton passwordButton;
+
+    private boolean isEnabled;
 
     /**
      * Setup server and main controller
@@ -175,7 +177,10 @@ public class BoardCtrl implements Initializable {
         mainCtrl.passwordCtrl.setUser(user);
         mainCtrl.passwordCtrl.setMode(true);
         mainCtrl.passwordCtrl.setUp();
-        mainCtrl.showPassword();
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(mainCtrl.password);
+        mainCtrl.passwordCtrl.setStage(stage);
+        stage.show();
     }
 
     protected void setPassword(Board board, User user) {
@@ -183,7 +188,10 @@ public class BoardCtrl implements Initializable {
         mainCtrl.passwordCtrl.setUser(user);
         mainCtrl.passwordCtrl.setMode(false);
         mainCtrl.passwordCtrl.setUp();
-        mainCtrl.showPassword();
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(mainCtrl.password);
+        mainCtrl.passwordCtrl.setStage(stage);
+        stage.show();
     }
 
     public void handleShortcuts(KeyEvent event) {
@@ -213,7 +221,6 @@ public class BoardCtrl implements Initializable {
             Card.focused.showAddTagPopup();
         }
     }
-
 
 
     public StompSession.Subscription registerForNewLists() {
@@ -873,17 +880,27 @@ public class BoardCtrl implements Initializable {
 
 
     public void disable() {
+        isEnabled = false;
         addList.setDisable(true);
         addTag.setDisable(true);
         btnCustomize.setDisable(true);
         editTitle.setDisable(true);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.disable();
+        }
     }
 
     public void enable() {
+        isEnabled = true;
         addList.setDisable(false);
         addTag.setDisable(false);
         btnCustomize.setDisable(false);
         editTitle.setDisable(false);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.enable();
+        }
     }
 
     public void apply1() {
@@ -994,12 +1011,17 @@ public class BoardCtrl implements Initializable {
     public void setUser(User user) {
         this.user = user;
     }
+
     public void displayDetailedTask(DetailedTask detailedTask) {
         detailedTask.setStyle("-fx-background-radius: 20");
         detailedTask.setLayoutX(150);
         detailedTask.setLayoutY(100);
         blurPane.setVisible(true);
-        blurPane.setOnMouseClicked(event -> { } );
+        blurPane.setOnMouseClicked(event -> {
+        });
+        if (!isEnabled)
+            detailedTask.disable();
+        else detailedTask.enable();
         root.getChildren().add(detailedTask);
     }
 

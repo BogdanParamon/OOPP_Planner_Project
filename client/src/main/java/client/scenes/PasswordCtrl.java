@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
@@ -25,6 +26,7 @@ public class PasswordCtrl implements Initializable {
 
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
+    private Stage stage;
     private Board board;
     private User user;
 
@@ -53,9 +55,15 @@ public class PasswordCtrl implements Initializable {
     }
 
     public void setUp() {
-        if (!mode)
+        if (!mode) {
+            text.setLayoutX(85);
             setText("Set password for board " + board.title);
-        else setText("Please enter password for board " + board.title);
+        }
+
+        else {
+            text.setLayoutX(70);
+            setText("Please enter password for board " + board.title);
+        }
     }
 
 
@@ -92,9 +100,11 @@ public class PasswordCtrl implements Initializable {
             }
             mainCtrl.boardCtrl.setUpProtection();
             switchSceneToBoard(board);
+            stage.hide();
             setUp();
             passwordField.clear();
             errorMsg.setVisible(false);
+            mainCtrl.password.getStylesheets().clear();
         } else {
             mainCtrl.password.getStylesheets().add("/client/styles/inputerror.css");
             errorMsg.setVisible(true);
@@ -136,10 +146,11 @@ public class PasswordCtrl implements Initializable {
         mainCtrl.boardCtrl.setUpProtection();
         switchSceneToBoard(board);
         passwordField.clear();
+        stage.hide();
     }
 
     public void goBack() {
-        mainCtrl.showBoard();
+        stage.hide();
         passwordField.clear();
     }
 
@@ -158,5 +169,9 @@ public class PasswordCtrl implements Initializable {
 
     public void setMode(boolean mode) {
         this.mode = mode;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 }
