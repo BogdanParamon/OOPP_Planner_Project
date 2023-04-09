@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.control.Label?>
 <fx:root fx:id="root" prefHeight="70.0" style="-fx-background-radius: 10px; -fx-background-color: white; -fx-border-color: ddd; -fx-border-radius: 10px" type="Pane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MFXButton fx:id="deleteTaskButton" layoutX="103.0" layoutY="6.0" text="X">
