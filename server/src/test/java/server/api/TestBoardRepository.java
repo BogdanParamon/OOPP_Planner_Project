@@ -170,4 +170,9 @@ public class TestBoardRepository implements BoardRepository {
                              Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
+
+    @Override
+    public void deleteBoardUserConnection(long boardId) {
+
+    }
 }
