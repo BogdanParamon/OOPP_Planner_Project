@@ -165,8 +165,8 @@ public class AdminOverviewCtrl implements Initializable {
             String newTitle = boardTitleField.getText();
             server.send("/app/boards/rename/" + selectedBoardId, newTitle);
             boardTitleText.setText(newTitle);
-            MFXButton button = (MFXButton) boardPaneMap.get(selectedBoardId).getChildren().get(0);
-            button.setText(newTitle);
+            Text title = (Text) boardPaneMap.get(selectedBoardId).getChildren().get(0);
+            title.setText(newTitle);
         }
         boardTitleText.setVisible(true);
         boardTitleField.setVisible(false);
