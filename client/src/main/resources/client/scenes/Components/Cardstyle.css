@@ -1,9 +1,0 @@
-.card {
-    -fx-background-radius: 10px;
-    -fx-background-color: white;
-    -fx-border-color: ddd;
-    -fx-border-radius: 10px
-}
-.card:hover {
-    -fx-border-color: blue;
-}
