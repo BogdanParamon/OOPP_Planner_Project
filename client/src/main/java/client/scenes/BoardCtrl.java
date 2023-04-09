@@ -1028,6 +1028,7 @@ public class BoardCtrl implements Initializable {
         addTag.setDisable(true);
         btnCustomize.setDisable(true);
         editTitle.setDisable(true);
+        tagsPane.setDisable(true);
         for (Node node : board_hbox.getChildren()) {
             List list = (List) node;
             list.disable();
@@ -1040,6 +1041,7 @@ public class BoardCtrl implements Initializable {
         addTag.setDisable(false);
         btnCustomize.setDisable(false);
         editTitle.setDisable(false);
+        tagsPane.setDisable(false);
         for (Node node : board_hbox.getChildren()) {
             List list = (List) node;
             list.enable();
