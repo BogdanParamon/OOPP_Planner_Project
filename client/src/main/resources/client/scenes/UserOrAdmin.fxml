@@ -35,6 +35,11 @@
             </Text>
             <MFXPasswordField fx:id="passwordField" floatingText="Password" layoutX="35.0" layoutY="154.0" prefHeight="48.0" prefWidth="247.0" />
             <MFXButton fx:id="button" layoutX="310.0" layoutY="154.0" prefHeight="48.0" prefWidth="51.0" text="OK" />
+            <Text fx:id="incorrectPasswordMsg" fill="red" layoutX="95.0" layoutY="220.0" text="Incorrect Password" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
    </children>

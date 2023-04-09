@@ -119,6 +119,7 @@ public class BoardCtrl implements Initializable {
 
     @FXML
     private MFXButton addTag;
+    private boolean adminMode;
 
     @FXML private Pane blurPane;
 
@@ -605,7 +606,11 @@ public class BoardCtrl implements Initializable {
     public void switchToBoardOverviewScene() {
         customize.setVisible(false);
         subscriptions.forEach(StompSession.Subscription::unsubscribe);
-        mainCtrl.showBoardOverview();
+        if (adminMode) {
+            mainCtrl.showAdminOverview();
+        } else {
+            mainCtrl.showBoardOverview();
+        }
     }
 
     public void setBoard(Board board) {
@@ -1118,6 +1123,10 @@ public class BoardCtrl implements Initializable {
 
     public AnchorPane getRoot() {
         return root;
+    }
+
+    public void setAdminMode(boolean adminMode) {
+        this.adminMode = adminMode;
     }
 
     public void setUser(User user) {
