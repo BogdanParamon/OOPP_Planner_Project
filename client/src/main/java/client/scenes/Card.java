@@ -12,22 +12,25 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class Card extends Pane {
 
@@ -39,6 +42,10 @@ public class Card extends Pane {
     private DetailedTask detailedTask;
     private int row = 0;
     private int col = 0;
+
+    public static Card focused = null;
+
+    public boolean isDetailedTaskOpen = false;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
@@ -47,6 +54,8 @@ public class Card extends Pane {
     private MFXButton openTask;
     @FXML
     private GridPane tags;
+    @FXML
+    private Pane root;
     @FXML
     private ImageView descriptionImage;
     @FXML
@@ -115,14 +124,85 @@ public class Card extends Pane {
 
         updateProgress();
 
-        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
-        if (cssURL != null) {
-            String cssPath = cssURL.toExternalForm();
-            getStylesheets().add(cssPath);
-        } else {
-            System.out.println("Can not load Cardstyle.css");
+        this.setOnMouseClicked(event -> {
+            if (focused != null && focused != this) {
+                focused.setStyle(focused.getStyle().replace("blue", "ddd"));
+            }
+            setStyle(getStyle().replace("ddd", "blue"));
+            focused = this;
+        });
+    }
+
+    enum Direction {
+        UP, DOWN;
+    }
+
+    public void simulateDragAndDrop(Direction direction) {
+
+        System.out.println(direction);
+        VBox parent = (VBox) getParent();
+        int currentIndex = parent.getChildren().indexOf(this);
+        int newIndex = direction == Direction.UP ? currentIndex - 1 : currentIndex + 1;
+
+        System.out.println(currentIndex);
+        System.out.println(newIndex);
+
+        if (newIndex >= 0 && newIndex < parent.getChildren().size() - 1) {
+            parent.getChildren().remove(this);
+            parent.getChildren().add(newIndex, this);
+
+            Packet packet = new Packet();
+            packet.longValue = task.taskId;
+            packet.longValue2 = taskList.listId;
+            packet.longValue3 = taskList.listId;
+            packet.intValue = newIndex;
+            server.send("/app/tasks/drag/" + board.boardId, packet);
         }
     }
+
+    public void showAddTagPopup() {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.UNDECORATED);
+        popupStage.initOwner(this.getScene().getWindow());
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+        Label label = new Label("Enter tag name:");
+        TextField tagNameInput = new TextField();
+
+        Label colorLabel = new Label("Choose tag color:");
+        ColorPicker colorPicker = new ColorPicker();
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> {
+            String tagName = tagNameInput.getText().trim();
+            Color tagColor = colorPicker.getValue();
+            if (!tagName.isEmpty() && tagColor != null) {
+                addTagToTask(tagName, tagColor);
+
+                popupStage.close();
+            }
+        });
+
+        vbox.getChildren().addAll(label, tagNameInput, colorLabel, colorPicker, addButton);
+        Scene scene = new Scene(vbox);
+        popupStage.setScene(scene);
+
+        popupStage.show();
+    }
+
+    public void addTagToTask(String tagName, Color tagColor) {
+        commons.Tag newTag = new commons.Tag();
+        newTag.setText(tagName);
+        newTag.setColor("#" + tagColor.toString().substring(2, 8));
+
+        addTag(newTag, true);
+    }
+
+
 
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
@@ -234,9 +314,21 @@ public class Card extends Pane {
         }
     }
 
+    void editTaskTitle() {
+        taskTitle.requestFocus();
+        taskTitle.selectAll();
+    }
+
+
     void displayDialog() {
         detailedTask.updateDetails();
         mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
+        isDetailedTaskOpen = true;
+    }
+
+    void closeDialog() {
+        mainCtrl.boardCtrl.stopDisplayingDialog(detailedTask);
+        isDetailedTaskOpen = false;
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>
@@ -316,6 +408,18 @@ public class Card extends Pane {
 
     public static void setDragToIndex(int dragToIndex) {
         Card.dragToIndex = dragToIndex;
+    }
+
+    public Pane getRoot() {
+        return root;
+    }
+
+    public MFXButton getDeleteTaskButton() {
+        return deleteTaskButton;
+    }
+
+    public MFXButton getOpenTask() {
+        return openTask;
     }
 
     public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {

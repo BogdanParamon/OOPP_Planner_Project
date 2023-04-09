@@ -2,11 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Board;
-import commons.Packet;
-import commons.Subtask;
-import commons.Task;
-import commons.TaskList;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import jakarta.ws.rs.WebApplicationException;
@@ -16,6 +12,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,10 +28,7 @@ import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class BoardCtrl implements Initializable {
 
@@ -44,6 +42,7 @@ public class BoardCtrl implements Initializable {
     @FXML
     private HBox board_hbox;
     private Board board;
+    private User user;
     @FXML
     private TextField newtTitle;
     @FXML
@@ -67,8 +66,6 @@ public class BoardCtrl implements Initializable {
     @FXML
     private MFXButton addList;
     @FXML
-    private MFXButton addTask;
-    @FXML
     private Pane custimozePane;
     @FXML
     private Pane overviewBoardsPane;
@@ -86,7 +83,32 @@ public class BoardCtrl implements Initializable {
     private MFXScrollPane tagsPane;
     @FXML
     private Text txtTags;
-
+    @FXML
+    private ImageView lock;
+    @FXML
+    private ColorPicker colorPickerListsColor;
+    @FXML
+    private ColorPicker colorPickerListsFont;
+    @FXML
+    private HBox tags_hbox;
+    @FXML
+    private ColorPicker presetB1;
+    @FXML
+    private ColorPicker presetB2;
+    @FXML
+    private ColorPicker presetB3;
+    @FXML
+    private ColorPicker presetF1;
+    @FXML
+    private ColorPicker presetF2;
+    @FXML
+    private ColorPicker presetF3;
+    @FXML
+    private Text pointer1;
+    @FXML
+    private Text pointer2;
+    @FXML
+    private Text pointer3;
     private Set<StompSession.Subscription> subscriptions;
 
     @FXML
@@ -94,8 +116,14 @@ public class BoardCtrl implements Initializable {
 
     @FXML
     private MFXButton addTag;
+    private boolean adminMode;
+    private HashMap<Long, List> listMap;
+    private HashMap<Long, Tag> tagMap;
 
-    private Pane blurPane;
+    @FXML private Pane blurPane;
+
+    @FXML
+    private MFXButton passwordButton;
 
     /**
      * Setup server and main controller
@@ -107,6 +135,8 @@ public class BoardCtrl implements Initializable {
     public BoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
+
     }
 
     /**
@@ -117,26 +147,101 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
+
     }
+
+    public void setUpProtection() {
+        if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
+            disable();
+            passwordButton.setText("Unlock");
+            passwordButton.setOnMouseClicked(event -> {
+                askForPassword(board, user);
+            });
+            lock.setOnMouseClicked(event -> {
+                askForPassword(board, user);
+            });
+        } else {
+            enable();
+            passwordButton.setText("Lock");
+            passwordButton.setOnMouseClicked(event -> {
+                setPassword(board, user);
+            });
+            lock.setOnMouseClicked(event -> {
+                setPassword(board, user);
+            });
+        }
+    }
+
+    protected void askForPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(true);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
+    }
+
+    protected void setPassword(Board board, User user) {
+        mainCtrl.passwordCtrl.setBoard(board);
+        mainCtrl.passwordCtrl.setUser(user);
+        mainCtrl.passwordCtrl.setMode(false);
+        mainCtrl.passwordCtrl.setUp();
+        mainCtrl.showPassword();
+    }
+
+    public void handleShortcuts(KeyEvent event) {
+        if (Card.focused == null) return;
+
+        if (event.isShiftDown()) {
+            if (event.getCode() == KeyCode.UP) {
+                Card.focused.simulateDragAndDrop(Card.Direction.UP);
+            } else if (event.getCode() == KeyCode.DOWN) {
+                Card.focused.simulateDragAndDrop(Card.Direction.DOWN);
+            }
+        } else if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+            Card.focused.deleteTask();
+        } else if (event.getCode() == KeyCode.ENTER) {
+            if (!Card.focused.isDetailedTaskOpen) {
+                Card.focused.displayDialog();
+            }
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            if (Card.focused.isDetailedTaskOpen) {
+                Card.focused.closeDialog();
+            }
+        } else if (event.getCode() == KeyCode.E) {
+            Card.focused.editTaskTitle();
+        } else if (event.getCode() == KeyCode.C) {
+            showCustomize();
+        } else if (event.getCode() == KeyCode.T) {
+            Card.focused.showAddTagPopup();
+        }
+    }
+
+
 
     public StompSession.Subscription registerForNewLists() {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
+                    listUI.getScrollPane().setStyle(fxBackgroundColor
+                            + board.listsColor + "; -fx-background-radius: 10px;");
+                    listUI.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+                    listUI.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                            + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                            " -fx-border-color: transparent;");
+                    listUI.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+                    listUI.getDeleteTaskListButton().
+                            setStyle(fxBackgroundColor + board.listsColor + ";");
                     board_hbox.getChildren().add(listUI);
+                    board.lists.add(taskList);
+                    listMap.put(taskList.listId, listUI);
                 }));
     }
 
     public StompSession.Subscription registerForListRenames() {
         return server.registerForMessages("/topic/taskLists/rename/" + board.boardId,
                 Packet.class, listIdAndNewTitle -> Platform.runLater(() -> {
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        if (list.getTaskList().listId == listIdAndNewTitle.longValue) {
-                            list.setTitle(listIdAndNewTitle.stringValue);
-                            break;
-                        }
-                    }
+                    listMap.get(listIdAndNewTitle.longValue)
+                            .setTitle(listIdAndNewTitle.stringValue);
                 }));
     }
 
@@ -152,16 +257,18 @@ public class BoardCtrl implements Initializable {
                 listIdAndTask -> Platform.runLater(() -> {
                     long listId = listIdAndTask.longValue;
                     Task task = listIdAndTask.task;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            taskList.tasks.add(0, task);
-                            Card card = new Card(mainCtrl, server, task, taskList, board);
-                            list.getList().getChildren().add(0, card);
-                            break;
-                        }
+                    List list = listMap.get(listId);
+                    list.getTaskList().tasks.add(0, task);
+                    Card card = new Card(mainCtrl, server, task, list.getTaskList(), board);
+                    if (board.currentPreset == 0) {
+                        loadCardColors(card, board.cardsBackground1, board.cardsFont1);
+                    } else if (board.currentPreset == 1) {
+                        loadCardColors(card, board.cardsBackground2, board.cardsFont2);
+                    } else {
+                        loadCardColors(card, board.cardsBackground3, board.cardsFont3);
                     }
+                    list.getList().getChildren().add(0, card);
+                    list.getCardMap().put(task.taskId, card);
                 }));
     }
 
@@ -171,47 +278,31 @@ public class BoardCtrl implements Initializable {
                     long listId = packet.longValue;
                     Task task = packet.task;
                     long taskId = task.taskId;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node cardNode : list.getList().getChildren()) {
-                                Card card = (Card) cardNode;
-                                if (card.getTask().taskId == taskId) {
-                                    card.getTaskTitle().setText(task.title);
-                                    card.getDetailedTask().getDtvDescription()
-                                            .setText(task.description);
-                                    card.getDetailedTask().updateDetails();
-                                    if (!task.description.trim().equals(""))
-                                        card.showDescriptionImage();
-                                    else card.hideDescriptionImage();
-                                    card.getDetailedTask().getDtvTitle().setText(task.title);
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }));
+
+                    Card card = listMap.get(listId).getCardMap().get(taskId);
+
+                    card.getTaskTitle().setText(task.title);
+                    card.getDetailedTask().getDtvDescription()
+                            .setText(task.description);
+                    card.getDetailedTask().updateDetails();
+                    if (!task.description.trim().equals(""))
+                        card.showDescriptionImage();
+                    else card.hideDescriptionImage();
+                    card.getDetailedTask().getDtvTitle().setText(task.title);
+           }));
     }
 
     public StompSession.Subscription registerForListDeletes() {
         return server.registerForMessages("/topic/taskLists/delete/" + board.boardId, Long.class,
                 listId -> Platform.runLater(() -> {
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        if (list.getTaskList().listId == listId) {
-                            for (Node node1 : list.getList().getChildren()) {
-                                if (!(node1 instanceof Card)) continue;
-                                Card card = (Card) node1;
-                                if (card.isHasDetailedTaskOpen())
-                                    card.getDetailedTask().stopDisplayingDialog();
-                            }
-                            board_hbox.getChildren().remove(list);
-                            board.lists.remove(list.getTaskList());
-                            break;
-                        }
-                    }
+                    List list = listMap.get(listId);
+                    list.getCardMap().forEach((id, card) -> {
+                        if (card.isHasDetailedTaskOpen())
+                            card.getDetailedTask().stopDisplayingDialog();
+                    });
+                    board_hbox.getChildren().remove(list);
+                    board.lists.remove(list.getTaskList());
+                    listMap.remove(listId);
                 }));
     }
 
@@ -220,24 +311,14 @@ public class BoardCtrl implements Initializable {
                 packet -> Platform.runLater(() -> {
                     long listId = packet.longValue;
                     long taskId = packet.longValue2;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node cardNode : list.getList().getChildren()) {
-                                if (!(cardNode instanceof Card)) continue;
-                                Card card = (Card) cardNode;
-                                if (card.getTask().taskId == taskId) {
-                                    if (card.isHasDetailedTaskOpen())
-                                        card.getDetailedTask().stopDisplayingDialog();
-                                    list.getList().getChildren().remove(card);
-                                    list.getTaskList().tasks.remove(card.getTask());
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
+                    List list = listMap.get(listId);
+                    Card card = list.getCardMap().get(taskId);
+
+                    if (card.isHasDetailedTaskOpen())
+                        card.getDetailedTask().stopDisplayingDialog();
+                    list.getList().getChildren().remove(card);
+                    list.getTaskList().tasks.remove(card.getTask());
+                    list.getCardMap().remove(taskId);
                 }));
     }
 
@@ -246,29 +327,20 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdAndSubtask.longValue;
                     long listId = taskIdlistIdAndSubtask.longValue2;
-                    Subtask subtask = taskIdlistIdAndSubtask.subtask;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()) {
-                                Card card = (Card) node1;
-                                Task task = card.getTask();
-                                if (task.taskId == taskId) {
-                                    task.subtasks.add(0, subtask);
-                                    client.scenes.Subtask UISubtask =
-                                            new client.scenes.Subtask(mainCtrl,
-                                                    server, board, taskList, task, subtask);
-                                    UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
-                                    card.getDetailedTask()
-                                            .getTasks_vbox().getChildren().add(0, UISubtask);
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }));
+
+
+                    commons.Subtask subtask = taskIdlistIdAndSubtask.subtask;
+                    List list = listMap.get(listId);
+                    Card card = list.getCardMap().get(taskId);
+                    Task task = card.getTask();
+
+                    task.subtasks.add(0, subtask);
+                    client.scenes.Subtask UISubtask = new client.scenes.Subtask(mainCtrl, server,
+                            board, list.getTaskList(), task, subtask);
+                    UISubtask.getCheckbox().setSelected(subtask.subtaskBoolean);
+                    card.getDetailedTask().getTasks_vbox().getChildren().add(0, UISubtask);
+                    card.getDetailedTask().getSubtaskMap().put(subtask.subTaskId, UISubtask);
+           }));
     }
 
     public StompSession.Subscription registerForSubtaskRename() {
@@ -276,30 +348,12 @@ public class BoardCtrl implements Initializable {
                 taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
                     long taskId = taskIdlistIdNewTitleAndSubtask.longValue;
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue2;
-                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()) {
-                                Card card = (Card) node1;
-                                Task task = card.getTask();
-                                if (task.taskId == taskId) {
-                                    for (Node node2 : card.getDetailedTask()
-                                            .getTasks_vbox().getChildren()) {
-                                        client.scenes.Subtask subtaskUI =
-                                                (client.scenes.Subtask) node2;
-                                        Subtask subtaskDB = subtaskUI.getSubtask();
-                                        if (subtaskDB.subTaskId == subtask.subTaskId) {
-                                            subtaskUI.getCheckbox().setText(subtask.subtaskText);
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    commons.Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+
+                    listMap.get(listId)
+                            .getCardMap().get(taskId)
+                            .getDetailedTask().getSubtaskMap().get(subtask.subTaskId)
+                            .getCheckbox().setText(subtask.subtaskText);
                 }));
     }
 
@@ -310,31 +364,18 @@ public class BoardCtrl implements Initializable {
                     long dragFromListId = packet.longValue2;
                     long dragToListId = packet.longValue3;
                     int dragToIndex = packet.intValue;
-                    List fromList = null;
-                    List toList = null;
-                    Card draggedCard = null;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == dragFromListId) {
-                            fromList = list;
-                            for (Node cardNode : list.getList().getChildren()) {
-                                Card card = (Card) cardNode;
-                                if (card.getTask().taskId == taskId) {
-                                    draggedCard = card;
-                                    break;
-                                }
-                            }
-                        }
-                        if (taskList.listId == dragToListId) {
-                            toList = list;
-                        }
-                    }
+                    List fromList = listMap.get(dragFromListId);
+                    List toList = listMap.get(dragToListId);
+                    Card draggedCard = fromList.getCardMap().get(taskId);
+
                     if (fromList != null && toList != null && draggedCard != null) {
                         fromList.getList().getChildren().remove(draggedCard);
                         fromList.getTaskList().tasks.remove(draggedCard.getTask());
+                        fromList.getCardMap().remove(taskId);
+
                         toList.getList().getChildren().add(dragToIndex, draggedCard);
                         toList.getTaskList().tasks.add(draggedCard.getTask());
+                        toList.getCardMap().put(taskId, draggedCard);
                         draggedCard.setTaskList(toList.getTaskList());
                     }
                 }));
@@ -346,66 +387,28 @@ public class BoardCtrl implements Initializable {
                     long listId = taskIdlistIdAndSubtaskId.longValue;
                     long taskId = taskIdlistIdAndSubtaskId.longValue2;
                     long subtaskId = taskIdlistIdAndSubtaskId.longValue3;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()) {
-                                Card card = (Card) node1;
-                                Task task = card.getTask();
-                                if (task.taskId == taskId) {
-                                    for (Node node2 : card.getDetailedTask()
-                                            .getTasks_vbox().getChildren()) {
-                                        client.scenes.Subtask subtaskUI =
-                                                (client.scenes.Subtask) node2;
-                                        Subtask subtaskDB = subtaskUI.getSubtask();
-                                        if (subtaskDB.subTaskId == subtaskId) {
-                                            card.getDetailedTask().getTasks_vbox()
-                                                    .getChildren().remove(subtaskUI);
-                                            task.subtasks.remove(subtaskDB);
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    Card card = listMap.get(listId).getCardMap().get(taskId);
+                    Subtask subtaskUI = card.getDetailedTask().getSubtaskMap().get(subtaskId);
+
+                    card.getDetailedTask().getTasks_vbox().getChildren().remove(subtaskUI);
+                    card.getTask().subtasks.remove(subtaskUI.getSubtask());
                 }));
     }
 
     public StompSession.Subscription registerForSubtaskStatus() {
         return server.registerForMessages("/topic/subtasks/status/" + board.boardId, Packet.class,
                 taskIdlistIdNewTitleAndSubtask -> Platform.runLater(() -> {
-                    Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
+                    commons.Subtask subtask = taskIdlistIdNewTitleAndSubtask.subtask;
                     long listId = taskIdlistIdNewTitleAndSubtask.longValue;
                     long taskId = taskIdlistIdNewTitleAndSubtask.longValue2;
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        TaskList taskList = list.getTaskList();
-                        if (taskList.listId == listId) {
-                            for (Node node1 : list.getList().getChildren()) {
-                                Card card = (Card) node1;
-                                Task task = card.getTask();
-                                if (task.taskId == taskId) {
-                                    for (Node node2 : card.getDetailedTask()
-                                            .getTasks_vbox().getChildren()) {
-                                        client.scenes.Subtask subtaskUI =
-                                                (client.scenes.Subtask) node2;
-                                        if (subtask.subTaskId == subtaskUI
-                                                .getSubtask().subTaskId) {
-                                            subtaskUI.getCheckbox()
-                                                    .setSelected(subtask.subtaskBoolean);
-                                            card.updateProgress();
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }));
+
+                    listMap.get(listId)
+                            .getCardMap().get(taskId)
+                            .getDetailedTask().getSubtaskMap().get(subtask.subTaskId)
+                            .getCheckbox().setSelected(subtask.subtaskBoolean);
+                    listMap.get(listId)
+                            .getCardMap().get(taskId).updateProgress();
+           }));
     }
 
     public StompSession.Subscription registerForNewTags() {
@@ -414,7 +417,11 @@ public class BoardCtrl implements Initializable {
                 tag -> Platform.runLater(() -> {
                     board.tags.add(tag);
                     Tag tagUI = new Tag(mainCtrl, server, tag, board);
+                    tagUI.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                    tagUI.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                    tagUI.edit.setStyle(fxBackgroundColor + board.backgroundColor);
                     tagList.getChildren().add(1, tagUI);
+                    tagMap.put(tag.tagId, tagUI);
                 }));
     }
 
@@ -425,59 +432,36 @@ public class BoardCtrl implements Initializable {
                     System.out.println("tag updated: " + tag);
                     board.tags.removeIf(t -> t.tagId == tag.tagId);
                     board.tags.add(tag);
-                    int index = 0;
-                    for (int i = 0; i < tagList.getChildren().size(); i++) {
-                        if (tagList.getChildren().get(i) instanceof Tag) {
-                            Tag tagUI = (Tag) tagList.getChildren().get(i);
-                            if (tagUI.tag.tagId == tag.tagId) {
-                                System.out.println(i);
-                                tagList.getChildren().set(i, new Tag(mainCtrl, server, tag, board));
-                                break;
-                            }
-                        }
-                    }
+                    Tag tagUI = tagMap.get(tag.tagId);
 
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        for (Node cardNode : list.getList().getChildren()) {
-                            if (!(cardNode instanceof Card)) continue;
-                            Card card = (Card) cardNode;
+                    Tag newTag = new Tag(mainCtrl, server, tag, board);
+                    newTag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                    newTag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+                    newTag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+                    tagList.getChildren().set(tagList.getChildren().indexOf(tagUI), newTag);
+                    tagMap.put(tag.tagId, newTag);
+
+                    listMap.forEach((listId, list) -> {
+                        list.getCardMap().forEach((taskId, card) -> {
                             card.updateTag(tag);
-                        }
-                    }
-
-
+                        });
+                    });
                 }));
     }
 
     public StompSession.Subscription registerForTagDeletes() {
         return server.registerForMessages("/topic/boards/deleteTag/" + board.boardId, Long.class,
                 tagId -> Platform.runLater(() -> {
+                    Tag tagUI = tagMap.get(tagId);
                     board.tags.removeIf(t -> t.tagId == tagId);
-                    for (int i = 0; i < tagList.getChildren().size(); i++) {
-                        if (tagList.getChildren().get(i) instanceof Tag) {
-                            Tag tagUI = (Tag) tagList.getChildren().get(i);
-                            if (tagUI.tag.tagId == tagId) {
-                                tagList.getChildren().remove(i);
-                                break;
-                            }
-                        }
-                    }
+                    tagList.getChildren().remove(tagUI);
 
-                    for (var list : board.lists) {
-                        for (var task : list.tasks) {
-                            task.tags.removeIf(t -> t.tagId == tagId);
-                        }
-                    }
-
-                    for (Node node : board_hbox.getChildren()) {
-                        List list = (List) node;
-                        for (Node cardNode : list.getList().getChildren()) {
-                            if (!(cardNode instanceof Card)) continue;
-                            Card card = (Card) cardNode;
+                    listMap.forEach((listId, list) -> {
+                        list.getCardMap().forEach((taskId, card) -> {
                             card.removeTag(tagId);
-                        }
-                    }
+                            card.getTask().tags.removeIf(t -> t.tagId == tagId);
+                        });
+                    });
                 }));
     }
 
@@ -489,26 +473,46 @@ public class BoardCtrl implements Initializable {
     public void switchToBoardOverviewScene() {
         customize.setVisible(false);
         subscriptions.forEach(StompSession.Subscription::unsubscribe);
-        mainCtrl.showBoardOverview();
+        if (adminMode) {
+            mainCtrl.showAdminOverview();
+        } else {
+            mainCtrl.showBoardOverview();
+        }
     }
 
     public void setBoard(Board board) {
         this.board = board;
         boardName.setText(board.title);
         board_hbox.getChildren().clear();
+        listMap = new HashMap<>();
         for (var taskList : board.lists) {
             List list = new List(mainCtrl, server, taskList, this.board);
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+            list.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
             board_hbox.getChildren().add(list);
+            listMap.put(taskList.listId, list);
         }
 
         tagList.getChildren().remove(1, tagList.getChildren().size());
+        tagMap = new HashMap<>();
         for (var tag : board.tags) {
             Tag tagUI = new Tag(mainCtrl, server, tag, board);
+            tagUI.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+            tagUI.edit.setStyle(fxBackgroundColor + board.backgroundColor + ";");
+            tagUI.saveTag.setStyle(fxBackgroundColor + board.backgroundColor + ";");
             tagList.getChildren().add(tagUI);
+            tagMap.put(tag.tagId, tagUI);
         }
 
         setBoardColors(board);
         setBoardFontColors(board);
+        setCardsColorsLaunch(board);
 
         newtTitle.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.ENTER && newtTitle.isVisible()) saveNewTitle();
@@ -530,6 +534,52 @@ public class BoardCtrl implements Initializable {
         subscriptions.add(registerForNewTags());
         subscriptions.add(registerForTagUpdates());
         subscriptions.add(registerForTagDeletes());
+
+        getRoot().getScene().setOnKeyPressed(event -> {
+            handleShortcuts(event);
+            System.out.println(event.getCode());
+        });
+    }
+
+    public void setCardsColorsLaunch(Board board) {
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            for (int i = 0; i < list.getList().getChildren().size() - 1; ++i) {
+                Card card = (Card) list.getList().getChildren().get(i);
+                if (board.currentPreset == 0) {
+                    loadCardColors(card, board.cardsBackground1, board.cardsFont1);
+                } else if (board.currentPreset == 1) {
+                    loadCardColors(card, board.cardsBackground2, board.cardsFont2);
+                } else {
+                    loadCardColors(card, board.cardsBackground3, board.cardsFont3);
+                }
+            }
+        }
+    }
+
+    private void loadCardColors(Card card, String background, String font) {
+        card.getRoot().setStyle(fxBackgroundColor + background +
+                "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                + " -fx-border-radius: 10px ");
+        if (font.equals("000000")) {
+            card.getRoot().setStyle(fxBackgroundColor + background +
+                    "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                    + " -fx-border-radius: 10px ");
+        } else {
+            card.getRoot().setStyle(fxBackgroundColor + background +
+                    "; -fx-background-radius: 10px;" + " -fx-border-color: #"
+                    + font + "; -fx-border-radius: 10px ");
+        }
+        card.getOpenTask().setStyle(fxBackgroundColor + background);
+        card.getDeleteTaskButton().setStyle(fxBackgroundColor + background);
+        if (font.equals("000000")) {
+            card.getTaskTitle().setStyle(fxBackgroundColor + background
+                    + "; -fx-border-radius: 3px; -fx-border-color: ddd;");
+        } else {
+            card.getTaskTitle().setStyle(fxBackgroundColor + background
+                    + "; -fx-border-radius: 3px; -fx-border-color: #"
+                    + font + ";" + "; -fx-text-fill: #" + font);
+        }
     }
 
     private void setBoardColors(Board board) {
@@ -540,7 +590,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
-        addTask.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -562,7 +611,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(board.buttonsColorFont));
         btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
         addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
-        addTask.setTextFill(Paint.valueOf(board.buttonsColorFont));
         txtTags.setFill(Paint.valueOf(board.backgroundColorFont));
     }
 
@@ -620,14 +668,41 @@ public class BoardCtrl implements Initializable {
     }
 
     public void showCustomize() {
-        if (customize.isVisible()) customize.setVisible(false);
-        else customize.setVisible(true);
+        customize.setVisible(true);
+        blurPane.setVisible(true);
+        blurPane.setOnMouseClicked(event -> {
+            blurPane.setVisible(false);
+            customize.setVisible(false);
+        });
+
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         colorPickerButtons.setValue(Color.valueOf(board.buttonsBackground));
         colorPickerBackgroundFont.setValue(Color.valueOf(board.backgroundColorFont));
         colorPickerButtonsFont.setValue(Color.valueOf(board.buttonsColorFont));
         colorPickerBoard.setValue(Color.valueOf(board.boardColor));
+        colorPickerListsColor.setValue(Color.valueOf(board.listsColor));
+        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
+        presetB1.setValue(Color.valueOf(board.cardsBackground1));
+        presetF1.setValue(Color.valueOf(board.cardsFont1));
+        presetB2.setValue(Color.valueOf(board.cardsBackground2));
+        presetF2.setValue(Color.valueOf(board.cardsFont2));
+        presetB3.setValue(Color.valueOf(board.cardsBackground3));
+        presetF3.setValue(Color.valueOf(board.cardsFont3));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
+
+        if (board.currentPreset == 0) {
+            pointer1.setVisible(true);
+            pointer2.setVisible(false);
+            pointer3.setVisible(false);
+        } else if (board.currentPreset == 1) {
+            pointer1.setVisible(false);
+            pointer2.setVisible(true);
+            pointer3.setVisible(false);
+        } else {
+            pointer1.setVisible(false);
+            pointer2.setVisible(false);
+            pointer3.setVisible(true);
+        }
     }
 
     public void closeCustomize() {
@@ -659,7 +734,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + buttonColor + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + buttonColor + ";");
-        addTask.setStyle(fxBackgroundColor + buttonColor + ";");
         btnCustomize.setStyle(fxBackgroundColor + buttonColor + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + buttonColor + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -667,6 +741,27 @@ public class BoardCtrl implements Initializable {
         custimozePane.setStyle(fxBackgroundColor
                 + buttonColor + ";-fx-background-radius: 10px;");
         this.board.buttonsBackground = buttonColor;
+        //lists color
+        board.listsColor = colorPickerListsColor.getValue().toString().substring(2, 8);
+        board.listsFontColor = colorPickerListsFont.getValue().toString().substring(2, 8);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
+            list.getTitle().setStyle(fxBackgroundColor + board.listsColor
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + board.listsColor + ";");
+        }
+
+        for (int i = 1; i < tagList.getChildren().size(); ++i) {
+            Tag tag = (Tag) tagList.getChildren().get(i);
+            tag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        }
 
         applyChangesFont();
 
@@ -686,7 +781,6 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
         btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
         addList.setTextFill(Paint.valueOf(buttonsFontColor));
-        addTask.setTextFill(Paint.valueOf(buttonsFontColor));
         this.board.buttonsColorFont = buttonsFontColor;
     }
 
@@ -701,6 +795,12 @@ public class BoardCtrl implements Initializable {
         updateBoard(board);
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
+        for (int i = 1; i < tagList.getChildren().size(); ++i) {
+            Tag tag = (Tag) tagList.getChildren().get(i);
+            tag.edit.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.deleteTag.setStyle(fxBackgroundColor + board.backgroundColor);
+            tag.saveTag.setStyle(fxBackgroundColor + board.backgroundColor);
+        }
     }
 
     public void resetBoardColor() {
@@ -717,7 +817,6 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
         String fxBckgroundColorDDD = "-fx-background-color: ddd;";
         addList.setStyle(fxBckgroundColorDDD);
-        addTask.setStyle(fxBckgroundColorDDD);
         btnOverviewBoards.setStyle(fxBckgroundColorDDD);
         btnCustomize.setStyle(fxBckgroundColorDDD);
         overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
@@ -741,11 +840,38 @@ public class BoardCtrl implements Initializable {
         btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
         btnCustomize.setTextFill(Paint.valueOf("Black"));
         addList.setTextFill(Paint.valueOf("Black"));
-        addTask.setTextFill(Paint.valueOf("Black"));
         board.buttonsColorFont = "Black";
 
         updateBoard(board);
         colorPickerButtonsFont.setValue(Color.valueOf("Black"));
+    }
+
+    public void resetListsColor() {
+        board.listsColor = "ffffff";
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getScrollPane().setStyle(fxBackgroundColor
+                    + board.listsColor + "; -fx-background-radius: 10px;");
+            list.getAddButton().setStyle(fxBackgroundColor + board.listsColor);
+            list.getTitle().setStyle(fxBackgroundColor + "ffffff"
+                    + "; -fx-border-radius: 10px; -fx-background-radius: 10px;" +
+                    " -fx-border-color: transparent;");
+            list.getDeleteTaskListButton().setStyle(fxBackgroundColor + "ffffff;");
+        }
+
+        updateBoard(board);
+        colorPickerListsColor.setValue(Color.valueOf("ffffff"));
+    }
+
+    public void resetListsFont() {
+        board.listsFontColor = "000000";
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.getTitle().setTextFill(Color.valueOf(board.listsFontColor));
+        }
+
+        updateBoard(board);
+        colorPickerListsFont.setValue(Color.valueOf(board.listsFontColor));
     }
 
     public void resetAllColors() {
@@ -754,29 +880,144 @@ public class BoardCtrl implements Initializable {
         resetButtonColor();
         resetBackgroundFont();
         resetButtonFont();
+        resetListsColor();
+        resetListsFont();
+    }
+
+
+    public void disable() {
+        addList.setDisable(true);
+        addTag.setDisable(true);
+        btnCustomize.setDisable(true);
+        editTitle.setDisable(true);
+    }
+
+    public void enable() {
+        addList.setDisable(false);
+        addTag.setDisable(false);
+        btnCustomize.setDisable(false);
+        editTitle.setDisable(false);
+    }
+
+    public void apply1() {
+        String background = presetB1.getValue().toString().substring(2, 8);
+        String font = presetF1.getValue().toString().substring(2, 8);
+        board.cardsBackground1 = background;
+        board.cardsFont1 = font;
+        board.currentPreset = 0;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(true);
+        pointer2.setVisible(false);
+        pointer3.setVisible(false);
+    }
+
+    public void apply2() {
+        String background = presetB2.getValue().toString().substring(2, 8);
+        String font = presetF2.getValue().toString().substring(2, 8);
+        board.cardsBackground2 = background;
+        board.cardsFont2 = font;
+        board.currentPreset = 1;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(false);
+        pointer2.setVisible(true);
+        pointer3.setVisible(false);
+    }
+
+    public void apply3() {
+        String background = presetB3.getValue().toString().substring(2, 8);
+        String font = presetF3.getValue().toString().substring(2, 8);
+        board.cardsBackground3 = background;
+        board.cardsFont3 = font;
+        board.currentPreset = 2;
+        setCardsColors(background, font);
+        updateBoard(board);
+
+        pointer1.setVisible(false);
+        pointer2.setVisible(false);
+        pointer3.setVisible(true);
+    }
+
+    public void reset1() {
+        board.cardsBackground1 = "ffffff";
+        board.cardsFont1 = "000000";
+        if (board.currentPreset == 0) setCardsColors(board.cardsBackground1, board.cardsFont1);
+        presetB1.setValue(Color.valueOf(board.cardsBackground1));
+        presetF1.setValue(Color.valueOf(board.cardsFont1));
+        updateBoard(board);
+    }
+
+    public void reset2() {
+        board.cardsBackground2 = "ffffff";
+        board.cardsFont2 = "000000";
+        if (board.currentPreset == 1) setCardsColors(board.cardsBackground2, board.cardsFont2);
+        presetB2.setValue(Color.valueOf(board.cardsBackground2));
+        presetF2.setValue(Color.valueOf(board.cardsFont2));
+        updateBoard(board);
+    }
+
+    public void reset3() {
+        board.cardsBackground3 = "ffffff";
+        board.cardsFont3 = "000000";
+        if (board.currentPreset == 2) setCardsColors(board.cardsBackground3, board.cardsFont3);
+        presetB3.setValue(Color.valueOf(board.cardsBackground3));
+        presetF3.setValue(Color.valueOf(board.cardsFont3));
+        updateBoard(board);
+    }
+
+    public void setCardsColors(String background, String font) {
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            for (int i = 0; i < list.getList().getChildren().size() - 1; ++i) {
+                Card card = (Card) list.getList().getChildren().get(i);
+                if (font.equals("000000")) {
+                    card.getRoot().setStyle(fxBackgroundColor + background +
+                            "; -fx-background-radius: 10px;" + " -fx-border-color: ddd;"
+                            + " -fx-border-radius: 10px ");
+                } else {
+                    card.getRoot().setStyle(fxBackgroundColor + background +
+                            "; -fx-background-radius: 10px;" + " -fx-border-color: #"
+                            + font + "; -fx-border-radius: 10px ");
+                }
+                card.getOpenTask().setStyle(fxBackgroundColor + background);
+                card.getDeleteTaskButton().setStyle(fxBackgroundColor + background);
+                if (font.equals("000000")) {
+                    card.getTaskTitle().setStyle(fxBackgroundColor + background
+                            + "; -fx-border-radius: 3px; -fx-border-color: ddd;");
+                } else {
+                    card.getTaskTitle().setStyle(fxBackgroundColor + background
+                            + "; -fx-border-radius: 3px; -fx-border-color: #" + font
+                            + "; -fx-text-fill: #" + font);
+                }
+            }
+        }
     }
 
     public AnchorPane getRoot() {
         return root;
     }
 
+    public void setAdminMode(boolean adminMode) {
+        this.adminMode = adminMode;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     public void displayDetailedTask(DetailedTask detailedTask) {
-        blurPane = new Pane();
-        blurPane.setPrefSize(900, 600);
-        blurPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        root.getChildren().add(blurPane);
         detailedTask.setStyle("-fx-background-radius: 20");
         detailedTask.setLayoutX(150);
         detailedTask.setLayoutY(100);
-        blurPane.setOnMouseClicked(event -> {
-            root.getChildren().remove(blurPane);
-            root.getChildren().remove(detailedTask);
-        });
+        blurPane.setVisible(true);
+        blurPane.setOnMouseClicked(event -> { } );
         root.getChildren().add(detailedTask);
     }
 
     public void stopDisplayingDialog(DetailedTask detailedTask) {
-        root.getChildren().remove(blurPane);
+        blurPane.setVisible(false);
         root.getChildren().remove(detailedTask);
     }
 }

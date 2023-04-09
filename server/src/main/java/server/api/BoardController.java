@@ -81,6 +81,15 @@ public class BoardController {
         }
     }
 
+    @PostMapping(path = "/join")
+    public ResponseEntity<Board> join(@RequestBody Board board, @RequestParam long userId) {
+        try {
+            return ResponseEntity.ok(boardService.join(board, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     /**
      * Deletes a board from the database
      *
@@ -88,10 +97,12 @@ public class BoardController {
      * @return successful if board exists
      */
     @DeleteMapping(path = "/delete")
+    @Transactional
     public ResponseEntity<String> delete(@RequestParam long boardId) {
         try {
             return ResponseEntity.ok(boardService.delete(boardId));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -178,6 +189,7 @@ public class BoardController {
 
     @MessageMapping("/boards/update")
     @SendTo("/topic/boards/update")
+    @Transactional
     public Packet updateMessage(Board board) {
         return boardService.updateMessage(board);
     }
@@ -190,6 +202,20 @@ public class BoardController {
         return boardService.renameMessage(newTitle, boardId);
     }
 
+    @MessageMapping("/boards/changePassword/{boardId}")
+    @SendTo("/topic/boards/changePassword/{boardId}")
+    @Transactional
+    public Packet changePasswordMessage(String newPassword,
+                                        @DestinationVariable("boardId") long boardId) {
+        return boardService.changePasswordMessage(newPassword, boardId);
+    }
+
+    @MessageMapping("/boards/join/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
+    @Transactional
+    public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
+        return boardService.joinMessage(board, userId);
+    }
     @MessageMapping("/boards/addTag/{boardId}")
     @SendTo("/topic/boards/addTag/{boardId}")
     @Transactional

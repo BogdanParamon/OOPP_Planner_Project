@@ -17,8 +17,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 
-import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class DetailedTask extends AnchorPane {
 
@@ -45,6 +45,8 @@ public class DetailedTask extends AnchorPane {
 
     @FXML
     private MFXButton doneButton;
+
+    private HashMap<Long, client.scenes.Subtask> subtaskMap;
 
     /**
      * Setup server and main controller
@@ -76,6 +78,14 @@ public class DetailedTask extends AnchorPane {
             throw new RuntimeException(e);
         }
 
+        subtaskMap = new HashMap<>();
+        for (Subtask subtask : this.task.subtasks) {
+            client.scenes.Subtask subtaskUI =
+                    new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
+            subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
+            tasks_vbox.getChildren().add(0, subtaskUI);
+            subtaskMap.put(subtask.subTaskId, subtaskUI);
+        }
 
         dtvTitle.setText(task.title);
         dtvDescription.setText(task.description);
@@ -176,5 +186,9 @@ public class DetailedTask extends AnchorPane {
 
     public VBox getTags_vbox() {
         return tags_vbox;
+    }
+
+    public HashMap<Long, client.scenes.Subtask> getSubtaskMap() {
+        return subtaskMap;
     }
 }

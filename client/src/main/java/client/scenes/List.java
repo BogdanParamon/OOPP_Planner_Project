@@ -6,6 +6,7 @@ import commons.Packet;
 import commons.Task;
 import commons.TaskList;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -15,8 +16,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -25,6 +26,8 @@ public class List extends Pane {
     private final ServerUtils server;
     private final TaskList taskList;
     private Integer dragIndex;
+
+    public Task FocusedTask = null;
 
     @FXML
     private VBox list;
@@ -37,7 +40,11 @@ public class List extends Pane {
     @FXML
     private MFXButton deleteTaskListButton;
 
+    @FXML
+    private MFXScrollPane scrollPane;
+
     private Board board;
+    private HashMap<Long, Card> cardMap;
 
     public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList, Board board) {
         this.mainCtrl = mainCtrl;
@@ -57,6 +64,7 @@ public class List extends Pane {
             throw new RuntimeException(e);
         }
 
+        cardMap = new HashMap<>();
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList, board);
             if (card.getDetailedTask().hasTaskDescription())
@@ -64,6 +72,7 @@ public class List extends Pane {
             else
                 card.hideDescriptionImage();
             list.getChildren().add(list.getChildren().size() - 1, card);
+            cardMap.put(task.taskId, card);
         }
 
         title.setText(taskList.title);
@@ -176,5 +185,23 @@ public class List extends Pane {
         server.send("/app/taskLists/rename/" + board.boardId, listIdAndNewTitle);
     }
 
+    public MFXScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
+    public MFXButton getAddButton() {
+        return addButton;
+    }
+
+    public MFXTextField getTitle() {
+        return title;
+    }
+
+    public MFXButton getDeleteTaskListButton() {
+        return deleteTaskListButton;
+    }
+
+    public HashMap<Long, Card> getCardMap() {
+        return cardMap;
+    }
 }

@@ -41,6 +41,12 @@ public class MainCtrl {
 
     protected Scene userOrAdmin;
     protected UserOrAdminCtrl userOrAdminCtrl;
+    protected AdminOverviewCtrl adminOverviewCtrl;
+    protected Scene adminOverview;
+
+    protected PasswordCtrl passwordCtrl;
+    protected Scene password;
+
     private double xOffset, yOffset;
 
     /**
@@ -52,13 +58,17 @@ public class MainCtrl {
      * @param board         board scene with the lists and tasks
      * @param addTask       add task scene - allows user to create a new task with a title
      * @param userOrAdmin   allow user to pick between user view and admin view
+     * @param adminOverview board overview with admin privileges
+     * @param password      requests password for joining a board
      */
     public void initialize(Stage primaryStage,
                            Pair<HomeCtrl, Parent> home,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<BoardCtrl, Parent> board,
                            Pair<AddTaskCtrl, Parent> addTask,
-                           Pair<UserOrAdminCtrl, Parent> userOrAdmin) {
+                           Pair<UserOrAdminCtrl, Parent> userOrAdmin,
+                           Pair<AdminOverviewCtrl, Parent> adminOverview,
+                           Pair<PasswordCtrl, Parent> password) {
         this.primaryStage = primaryStage;
 
         this.homeCtrl = home.getKey();
@@ -75,6 +85,12 @@ public class MainCtrl {
 
         this.userOrAdminCtrl = userOrAdmin.getKey();
         this.userOrAdmin = new Scene(userOrAdmin.getValue());
+
+        this.adminOverviewCtrl = adminOverview.getKey();
+        this.adminOverview = new Scene(adminOverview.getValue());
+
+        this.passwordCtrl = password.getKey();
+        this.password = new Scene(password.getValue());
 
         primaryStage.setScene(this.home);
         primaryStage.show();
@@ -116,6 +132,17 @@ public class MainCtrl {
         primaryStage.setScene(userOrAdmin);
     }
 
+    public void showAdminOverview() {
+        primaryStage.setTitle("Admin Board Overview");
+        primaryStage.setScene(adminOverview);
+        adminOverviewCtrl.load();
+    }
+
+    public void showPassword() {
+        primaryStage.setTitle("Password");
+        primaryStage.setScene(password);
+    }
+
     /**
      * Getter for the board
      *
@@ -153,7 +180,7 @@ public class MainCtrl {
         header.getChildren().add(closeIcon);
 
 
-        root.getChildren().add(0, header);
+        root.getChildren().add(root.getChildren().size() - 1, header);
 
         closeIcon.setOnMouseClicked(event -> Platform.exit());
         minimizeIcon.setOnMouseClicked(event -> primaryStage.setIconified(true));
