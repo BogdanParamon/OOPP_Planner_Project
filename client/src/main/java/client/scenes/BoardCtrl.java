@@ -154,12 +154,7 @@ public class BoardCtrl implements Initializable {
     }
 
     public void setUpProtection() {
-        lock = new ImageView("/client/images/lock-icon-11.png");
-        lock.setFitHeight(60);
-        lock.setFitWidth(60);
-        lock.setX(400);
-        lock.setY(20);
-        root.getChildren().add(lock);
+
         if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board)) {
             disable();
             passwordButton.setText("Unlock");
