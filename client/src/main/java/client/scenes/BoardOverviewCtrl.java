@@ -159,6 +159,15 @@ public class BoardOverviewCtrl implements Initializable {
                 });
     }
 
+    public void registerForBoardDeletes() {
+        server.registerForBoardDeletes(boardId -> {
+            Platform.runLater(() -> {
+                boards.getItems().remove(boardPaneMap.get(boardId));
+                boardPaneMap.remove(boardId);
+            });
+        });
+    }
+
     public void load() {
         var boardTitlesAndIds = server.getBoardTitlesAndIdsByUserId(user.userId);
         boards.getItems().clear();
@@ -273,7 +282,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void switchSceneToHome() {
-        server.disconnectWebsocket();
+        server.stop();
         mainCtrl.showHome();
     }
 
@@ -299,5 +308,9 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void stop() {
+        server.stop();
     }
 }

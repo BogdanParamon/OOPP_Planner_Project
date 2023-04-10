@@ -182,7 +182,10 @@ public class MainCtrl {
 
         root.getChildren().add(root.getChildren().size() - 1, header);
 
-        closeIcon.setOnMouseClicked(event -> Platform.exit());
+        closeIcon.setOnMouseClicked(event -> {
+            boardOverviewCtrl.stop();
+            Platform.exit();
+        });
         minimizeIcon.setOnMouseClicked(event -> primaryStage.setIconified(true));
 
         header.setOnMousePressed(event -> {

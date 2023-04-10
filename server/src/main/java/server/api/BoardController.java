@@ -5,17 +5,21 @@ import commons.Packet;
 import commons.Tag;
 import commons.TaskList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.service.BoardService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -100,7 +104,9 @@ public class BoardController {
     @Transactional
     public ResponseEntity<String> delete(@RequestParam long boardId) {
         try {
-            return ResponseEntity.ok(boardService.delete(boardId));
+            var res = ResponseEntity.ok(boardService.delete(boardId));
+            deleteBoardListeners.forEach((key, listener) -> listener.accept(boardId));
+            return res;
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -177,6 +183,21 @@ public class BoardController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    private Map<Object, Consumer<Long>> deleteBoardListeners = new HashMap<>();
+    @GetMapping(path = "/deleteUpdates")
+    public DeferredResult<ResponseEntity<Long>> getDeleteBoardUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var result = new DeferredResult<ResponseEntity<Long>>(5000L, noContent);
+
+        var key = new Object();
+        deleteBoardListeners.put(key, boardId -> {
+            result.setResult(ResponseEntity.ok(boardId));
+        });
+        result.onCompletion(() -> deleteBoardListeners.remove(key));
+
+        return result;
     }
 
     @MessageMapping("/boards/add/{userId}")
