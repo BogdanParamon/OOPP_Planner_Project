@@ -9,6 +9,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,10 +34,12 @@ public class RestAPIsTest {
         webT = mock(WebTarget.class);
         builder = mock(Invocation.Builder.class);
 
+
         when(client.property(anyString(), any())).thenReturn(client);
         when(client.target(anyString())).thenReturn(webT);
         when(webT.request(APPLICATION_JSON)).thenReturn(builder);
         when(builder.accept(APPLICATION_JSON)).thenReturn(builder);
+
 
         ServerUtils.setClient(client);
         ServerUtils.setSERVER("localhost:8080");
@@ -160,4 +163,52 @@ public class RestAPIsTest {
 
         assertEquals(user, serverUtils.connectToUser("user42"));
     }
+
+    @Test
+    public void deleteBoardByIdTest() {
+        Board board = new Board("Board 42");
+        board.boardId = 42;
+
+        when(webT.path("api/boards/delete")).thenReturn(webT);
+        when(webT.queryParam("boardId", 42L)).thenReturn(webT);
+        when(builder.delete()).thenReturn(Response.ok().build());
+        assertDoesNotThrow(() -> serverUtils.deleteBoardById(42L));
+    }
+
+    @Test
+    public void verifyAdminPasswordTest() {
+        when(webT.path("api/users/verifyAdmin")).thenReturn(webT);
+        when(builder.post(Entity.entity("admin", APPLICATION_JSON), Boolean.class)).
+                thenReturn(true);
+        assertTrue(serverUtils.verifyAdminPassword("admin"));
+    }
+
+    @Test
+    public void verifyAdminPasswordTestInvalid() {
+        when(webT.path("api/users/verifyAdmin")).thenReturn(webT);
+        when(builder.post(Entity.entity("admin42", APPLICATION_JSON), Boolean.class)).
+                thenReturn(false);
+        assertFalse(serverUtils.verifyAdminPassword("admin42"));
+    }
+
+    @Test
+    public void getBoardTitlesAndIdsTest() {
+        Board board = new Board("Board 42");
+        board.boardId = 42;
+
+        Board board2 = new Board("Board 43");
+        board2.boardId = 43;
+
+        Map<Long, String> map = new HashMap<>();
+        map.put(42L, "Board 42");
+        map.put(43L, "Board 43");
+
+        when(webT.path("api/boards/titles&ids")).thenReturn(webT);
+        when(builder.get(new GenericType<Map<Long, String>>() {
+        })).thenReturn(map);
+
+        assertEquals(map, serverUtils.getBoardTitlesAndIds());
+    }
+
+    ;
 }
