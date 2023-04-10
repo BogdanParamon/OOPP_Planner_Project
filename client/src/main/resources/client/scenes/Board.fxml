@@ -523,5 +523,12 @@
             </Pane>
 
         </Pane>
+        <MFXButton fx:id="copyBtn" layoutX="550" layoutY="33" prefWidth="50" prefHeight="50" onAction="#copyBoardId" style="-fx-background-color: white;" text="">
+            <graphic>
+                <ImageView fitHeight="40.0" fitWidth="40.0">
+                    <Image url="@/client/images/copy.png" />
+                </ImageView>
+            </graphic>
+        </MFXButton>
     </children>
 </AnchorPane>
