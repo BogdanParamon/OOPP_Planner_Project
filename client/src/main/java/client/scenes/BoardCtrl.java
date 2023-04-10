@@ -774,6 +774,7 @@ public class BoardCtrl implements Initializable {
         addListTaskVBox.setStyle(fxBackgroundColor
                 + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
+        passwordButton.setStyle(fxBackgroundColor + board.buttonsBackground);
         btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -796,6 +797,7 @@ public class BoardCtrl implements Initializable {
         btnOverviewBoards.setTextFill(Paint.valueOf(board.buttonsColorFont));
         addList.setTextFill(Paint.valueOf(board.buttonsColorFont));
         txtTags.setFill(Paint.valueOf(board.backgroundColorFont));
+        passwordButton.setTextFill(Paint.valueOf(board.buttonsColorFont));
     }
 
     public void addList() {
@@ -928,6 +930,7 @@ public class BoardCtrl implements Initializable {
                 + buttonColor + ";-fx-background-radius: 10px;");
         custimozePane.setStyle(fxBackgroundColor
                 + buttonColor + ";-fx-background-radius: 10px;");
+        passwordButton.setStyle(fxBackgroundColor + buttonColor);
         this.board.buttonsBackground = buttonColor;
         //lists and tags color
         applyChangesListsAndTags(this.board);
@@ -973,6 +976,7 @@ public class BoardCtrl implements Initializable {
         btnCustomize.setTextFill(Paint.valueOf(buttonsFontColor));
         btnOverviewBoards.setTextFill(Paint.valueOf(buttonsFontColor));
         addList.setTextFill(Paint.valueOf(buttonsFontColor));
+        passwordButton.setTextFill(Paint.valueOf(buttonsFontColor));
         board.buttonsColorFont = buttonsFontColor;
     }
 
@@ -1011,6 +1015,7 @@ public class BoardCtrl implements Initializable {
         addList.setStyle(fxBckgroundColorDDD);
         btnOverviewBoards.setStyle(fxBckgroundColorDDD);
         btnCustomize.setStyle(fxBckgroundColorDDD);
+        passwordButton.setStyle(fxBckgroundColorDDD);
         overviewBoardsPane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
         custimozePane.setStyle("-fx-background-color: ddd; -fx-background-radius: 10px;");
 
@@ -1032,6 +1037,7 @@ public class BoardCtrl implements Initializable {
         btnOverviewBoards.setTextFill(Paint.valueOf("Black"));
         btnCustomize.setTextFill(Paint.valueOf("Black"));
         addList.setTextFill(Paint.valueOf("Black"));
+        passwordButton.setTextFill(Paint.valueOf("Black"));
         board.buttonsColorFont = "Black";
 
         updateBoard(board);
