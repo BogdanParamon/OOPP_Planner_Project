@@ -23,6 +23,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -36,6 +37,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -141,9 +144,35 @@ public class ServerUtils {
         session.send(dest, o);
     }
 
+    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForBoardDeletes(Consumer<Long> consumer) {
+        EXEC.submit(() -> {
+            while (session.isConnected()) {
+                var res = client.target(SERVER).path("api/boards/deleteUpdates")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+
+                if (res.getStatus() == 204) {
+                    continue;
+                }
+                var boardId = res.readEntity(Long.class);
+                consumer.accept(boardId);
+            }
+        });
+    }
+
     public void deleteBoardById(long boardId) {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/delete")
+        client.target(SERVER).path("api/boards/delete")
+                .queryParam("boardId", boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete();
+    }
+
+    public void leaveBoard(long userId, long boardId) {
+        client.target(SERVER).path("api/users/leave")
+                .queryParam("userId", userId)
                 .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
@@ -174,8 +203,7 @@ public class ServerUtils {
 
 
     public Boolean verifyAdminPassword(String password) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/users/verifyAdmin")
+        return client.target(SERVER).path("api/users/verifyAdmin")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(password, APPLICATION_JSON), Boolean.class);
@@ -183,5 +211,10 @@ public class ServerUtils {
 
     public void disconnectWebsocket() {
         session.disconnect();
+    }
+
+    public void stop() {
+        disconnectWebsocket();
+        EXEC.shutdownNow();
     }
 }
