@@ -140,6 +140,7 @@ public class DetailedTask extends AnchorPane {
                     new client.scenes.Subtask(mainCtrl, server, board, taskList, task, subtask);
             subtaskUI.getCheckbox().setSelected(subtask.subtaskBoolean);
             tasks_vbox.getChildren().add(tasks_vbox.getChildren().size() - 1, subtaskUI);
+            subtaskMap.put(subtask.subTaskId, subtaskUI);
         }
         tags_vbox.getChildren().clear();
         for (Tag tag : this.task.tags) {
