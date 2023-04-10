@@ -678,11 +678,9 @@ public class BoardCtrl implements Initializable {
         setBoardColors(board);
         setBoardFontColors(board);
         setCardsColorsLaunch(board);
-
         newtTitle.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.ENTER && newtTitle.isVisible()) saveNewTitle();
         });
-
         subscriptions = new HashSet<>();
         subscriptions.add(registerForNewLists());
         subscriptions.add(registerForNewTasks());
