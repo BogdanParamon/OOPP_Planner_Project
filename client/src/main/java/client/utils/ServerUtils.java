@@ -147,7 +147,7 @@ public class ServerUtils {
     private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
     public void registerForBoardDeletes(Consumer<Long> consumer) {
         EXEC.submit(() -> {
-            while (!Thread.interrupted()) {
+            while (session.isConnected()) {
                 var res = client.target(SERVER).path("api/boards/deleteUpdates")
                         .request(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)

@@ -3,6 +3,9 @@ package server.api;
 import commons.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.service.UserService;
@@ -32,8 +35,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/leave")
-    @Transactional
-    public ResponseEntity<String> leaveBoard(@RequestParam long userId, @RequestParam long boardId) {
+    public ResponseEntity<String> leaveBoard(@RequestParam long userId,
+                                             @RequestParam long boardId) {
         try {
             return ResponseEntity.ok(userService.leaveBoard(userId, boardId));
         } catch (Exception e) {
@@ -42,4 +45,10 @@ public class UserController {
         }
     }
 
+    @MessageMapping("/users/leave/{userId}")
+    @SendTo("/topic/users/leave/{userId}")
+    @Transactional
+    public Long leaveMessage(long boardId, @DestinationVariable("userId") long userId) {
+        return userService.leaveMessage(userId, boardId);
+    }
 }

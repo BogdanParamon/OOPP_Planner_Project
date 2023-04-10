@@ -84,8 +84,6 @@ public class UserOrAdminCtrl implements Initializable {
 
     public void switchSceneToBoardOverview(User user) {
         mainCtrl.boardOverviewCtrl.setUser(user);
-        mainCtrl.boardOverviewCtrl.registerForNewBoards();
-        mainCtrl.boardOverviewCtrl.registerForBoardDeletes();
         mainCtrl.showBoardOverview();
     }
 

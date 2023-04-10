@@ -159,6 +159,14 @@ public class BoardOverviewCtrl implements Initializable {
                 });
     }
 
+    public void registerForBoardLeaves() {
+        server.registerForMessages("/topic/users/leave/" + user.userId, Long.class,
+                boardId -> Platform.runLater(() -> {
+                    boards.getItems().remove(boardPaneMap.get(boardId));
+                    boardPaneMap.remove(boardId);
+                }));
+    }
+
     public void registerForBoardDeletes() {
         server.registerForBoardDeletes(boardId -> {
             Platform.runLater(() -> {
@@ -209,11 +217,17 @@ public class BoardOverviewCtrl implements Initializable {
                 lock.setFitHeight(20);
                 lock.setFitWidth(20);
                 pane.getChildren().add(lock);
+                deleteButton.setDisable(true);
             }
             boards.getItems().add(pane);
             boardPaneMap.put(boardId, pane);
             boardTitle.clear();
         });
+
+        registerForNewBoards();
+        registerForBoardLeaves();
+        registerForBoardDeletes();
+
         subheadingAnimation();
     }
 
@@ -273,16 +287,16 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
-    public void leaveBoard(Long boardId) {
-        server.leaveBoard(user.userId, boardId);
+    public void leaveBoard(long boardId) {
+        server.send("/app/users/leave/" + user.userId, boardId);
     }
 
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(long boardId) {
         server.deleteBoardById(boardId);
     }
 
     public void switchSceneToHome() {
-        server.stop();
+        server.disconnectWebsocket();
         mainCtrl.showHome();
     }
 

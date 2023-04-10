@@ -115,7 +115,7 @@ public class PasswordCtrl implements Initializable {
     public void okSet() {
         board.setPassword(passwordField.getText());
         System.out.println(board);
-        server.send("/app/boards/update", board);
+        server.send("/app/boards/changePassword/" + board.boardId, passwordField.getText());
         mainCtrl.boardCtrl.enable();
         try {
             FileWriter fw = new FileWriter(new File("accesses.txt"), true);

@@ -52,4 +52,9 @@ public class UserService {
         userRepository.save(user);
         return "Successful";
     }
+
+    public Long leaveMessage(long userId, long boardId) {
+        leaveBoard(userId, boardId);
+        return boardId;
+    }
 }
