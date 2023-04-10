@@ -26,6 +26,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.net.URL;
@@ -121,10 +123,13 @@ public class BoardCtrl implements Initializable {
     private HashMap<Long, List> listMap;
     private HashMap<Long, Tag> tagMap;
 
-    @FXML private Pane blurPane;
+    @FXML
+    private Pane blurPane;
 
     @FXML
     private MFXButton passwordButton;
+
+    private boolean isEnabled;
 
     @FXML private Pane shortcutsPane;
 
@@ -181,7 +186,10 @@ public class BoardCtrl implements Initializable {
         mainCtrl.passwordCtrl.setUser(user);
         mainCtrl.passwordCtrl.setMode(true);
         mainCtrl.passwordCtrl.setUp();
-        mainCtrl.showPassword();
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(mainCtrl.password);
+        mainCtrl.passwordCtrl.setStage(stage);
+        stage.show();
     }
 
     protected void setPassword(Board board, User user) {
@@ -189,7 +197,10 @@ public class BoardCtrl implements Initializable {
         mainCtrl.passwordCtrl.setUser(user);
         mainCtrl.passwordCtrl.setMode(false);
         mainCtrl.passwordCtrl.setUp();
-        mainCtrl.showPassword();
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(mainCtrl.password);
+        mainCtrl.passwordCtrl.setStage(stage);
+        stage.show();
     }
 
     public void handleShortcutKeys(KeyEvent event) {
@@ -343,7 +354,6 @@ public class BoardCtrl implements Initializable {
         Card.focused = newFocusedCard;
         Card.focused.setStyle(Card.focused.getStyle().replace("ddd", "blue"));
     }
-
 
     public StompSession.Subscription registerForNewLists() {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
@@ -1060,17 +1070,29 @@ public class BoardCtrl implements Initializable {
 
 
     public void disable() {
+        isEnabled = false;
         addList.setDisable(true);
         addTag.setDisable(true);
         btnCustomize.setDisable(true);
         editTitle.setDisable(true);
+        tagsPane.setDisable(true);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.disable();
+        }
     }
 
     public void enable() {
+        isEnabled = true;
         addList.setDisable(false);
         addTag.setDisable(false);
         btnCustomize.setDisable(false);
         editTitle.setDisable(false);
+        tagsPane.setDisable(false);
+        for (Node node : board_hbox.getChildren()) {
+            List list = (List) node;
+            list.enable();
+        }
     }
 
     public void apply1() {
@@ -1181,12 +1203,17 @@ public class BoardCtrl implements Initializable {
     public void setUser(User user) {
         this.user = user;
     }
+
     public void displayDetailedTask(DetailedTask detailedTask) {
         detailedTask.setStyle("-fx-background-radius: 20");
         detailedTask.setLayoutX(150);
         detailedTask.setLayoutY(100);
         blurPane.setVisible(true);
-        blurPane.setOnMouseClicked(event -> { } );
+        blurPane.setOnMouseClicked(event -> {
+        });
+        if (!isEnabled)
+            detailedTask.disable();
+        else detailedTask.enable();
         root.getChildren().add(detailedTask);
     }
 

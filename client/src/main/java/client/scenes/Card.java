@@ -1,11 +1,8 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import commons.Board;
-import commons.Packet;
 import commons.Subtask;
-import commons.Task;
-import commons.TaskList;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.application.Platform;
@@ -13,17 +10,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.TextField;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,18 +28,19 @@ import java.io.IOException;
 
 public class Card extends Pane {
 
+    public static Card focused = null;
+    private static long dragFromListId;
+    private static long dragToListId;
+    private static int dragToIndex;
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final Board board;
+    public boolean isDetailedTaskOpen = false;
     private TaskList taskList;
     private Task task;
     private DetailedTask detailedTask;
     private int row = 0;
     private int col = 0;
-
-    public static Card focused = null;
-
-    public boolean isDetailedTaskOpen = false;
     @FXML
     private MFXButton deleteTaskButton;
     @FXML
@@ -62,10 +57,6 @@ public class Card extends Pane {
     private MFXProgressBar progressBar;
     @FXML
     private Label progressLabel;
-
-    private static long dragFromListId;
-    private static long dragToListId;
-    private static int dragToIndex;
 
     private boolean hasDetailedTaskOpen = false;
 
@@ -109,8 +100,9 @@ public class Card extends Pane {
         initEditTaskTitle();
 
         registerForAddTagMessages();
+
         registerForDeleteTagMessages();
-        
+
 
         openTask.setOnAction(event -> {
             hasDetailedTaskOpen = true;
@@ -133,8 +125,12 @@ public class Card extends Pane {
         });
     }
 
-    enum Direction {
-        UP, DOWN;
+    public static void setDragToListId(long dragToListId) {
+        Card.dragToListId = dragToListId;
+    }
+
+    public static void setDragToIndex(int dragToIndex) {
+        Card.dragToIndex = dragToIndex;
     }
 
     public void simulateDragAndDrop(Direction direction) {
@@ -202,16 +198,14 @@ public class Card extends Pane {
         addTag(newTag, true);
     }
 
-
-
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
                     Platform.runLater(() -> {
-                        addTag( tag, true);
+                        addTag(tag, true);
                         getDetailedTask().getTags_vbox()
                                 .getChildren().add(new Tag(mainCtrl, server, tag, board));
-                        }
+                    }
                     );
                 });
     }
@@ -231,11 +225,9 @@ public class Card extends Pane {
                             }
                         }
                         removeTag(tagId);
-                    }
-                    );
+                    });
                 });
     }
-
 
     void initDrag() {
         int[] index = {0};
@@ -306,7 +298,6 @@ public class Card extends Pane {
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
 
-
     private void handleKeyRelease(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             taskTitle.getParent().requestFocus();
@@ -318,7 +309,6 @@ public class Card extends Pane {
         taskTitle.requestFocus();
         taskTitle.selectAll();
     }
-
 
     void displayDialog() {
         detailedTask.updateDetails();
@@ -382,6 +372,41 @@ public class Card extends Pane {
         }
     }
 
+    public void disable() {
+        deleteTaskButton.setDisable(true);
+        taskTitle.setOnMouseClicked(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+        taskTitle.setOnKeyPressed(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+        this.setOnDragDetected(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+    }
+
+    public void enable() {
+        deleteTaskButton.setDisable(false);
+        taskTitle.setDisable(false);
+        taskTitle.setOnMouseClicked(event -> {
+        });
+        taskTitle.setOnKeyPressed(event -> {
+        });
+        initDrag();
+    }
+
     public Task getTask() {
         return task;
     }
@@ -402,14 +427,6 @@ public class Card extends Pane {
         this.taskList = taskList;
     }
 
-    public static void setDragToListId(long dragToListId) {
-        Card.dragToListId = dragToListId;
-    }
-
-    public static void setDragToIndex(int dragToIndex) {
-        Card.dragToIndex = dragToIndex;
-    }
-
     public Pane getRoot() {
         return root;
     }
@@ -422,12 +439,12 @@ public class Card extends Pane {
         return openTask;
     }
 
-    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
-        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
-    }
-
     public boolean isHasDetailedTaskOpen() {
         return hasDetailedTaskOpen;
+    }
+
+    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
+        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
     }
 
     public void showDescriptionImage() {
@@ -457,5 +474,10 @@ public class Card extends Pane {
         for (Subtask subtask : task.subtasks)
             if (subtask.subtaskBoolean) done++;
         return done / total;
+
+    }
+
+    enum Direction {
+        UP, DOWN;
     }
 }
