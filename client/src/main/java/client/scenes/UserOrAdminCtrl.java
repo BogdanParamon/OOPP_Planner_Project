@@ -8,6 +8,7 @@ import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
@@ -48,6 +49,12 @@ public class UserOrAdminCtrl implements Initializable {
         passwordField.setVisible(false);
         adminMode = false;
         button.setOnAction(event -> confirm());
+        nameField.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && nameField.isVisible()) confirm();
+        });
+        passwordField.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER && passwordField.isVisible()) confirm();
+        });
     }
 
 
