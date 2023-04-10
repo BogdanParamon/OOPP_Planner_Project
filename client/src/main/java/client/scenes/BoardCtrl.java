@@ -363,7 +363,7 @@ public class BoardCtrl implements Initializable {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
-                    if(!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
+                    if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
                         listUI.disable();
                     listUI.getScrollPane().setStyle(fxBackgroundColor
                             + board.listsColor + "; -fx-background-radius: 10px;");
@@ -445,7 +445,7 @@ public class BoardCtrl implements Initializable {
                     List list = listMap.get(listId);
                     list.getTaskList().tasks.add(0, task);
                     Card card = new Card(mainCtrl, server, task, list.getTaskList(), board);
-                    if(!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
+                    if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
                         card.disable();
                     if (board.currentPreset == 0) {
                         loadCardColors(card, board.cardsBackground1, board.cardsFont1);
