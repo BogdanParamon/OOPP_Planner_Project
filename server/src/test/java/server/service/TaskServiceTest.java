@@ -5,7 +5,6 @@ import commons.Task;
 import commons.TaskList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Example;
 import server.database.TagRepository;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
