@@ -59,7 +59,7 @@ public class BoardService {
     }
 
     public String delete(long boardId) throws IllegalArgumentException {
-        if (!boardRepository.existsById(boardId))
+        if (boardId < 0 || !boardRepository.existsById(boardId))
             throw new IllegalArgumentException();
 
         boardRepository.deleteBoardUserConnection(boardId);

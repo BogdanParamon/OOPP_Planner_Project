@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
@@ -30,6 +31,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.*;
 
@@ -50,6 +54,7 @@ public class BoardCtrl implements Initializable {
     private TextField newtTitle;
     @FXML
     private Button editTitle;
+    @FXML MFXButton copyBtn;
     @FXML
     private Button save;
     @FXML
@@ -155,7 +160,6 @@ public class BoardCtrl implements Initializable {
      */
     public void initialize(URL url, ResourceBundle bundle) {
         mainCtrl.initHeader(root);
-
     }
 
     public void setUpProtection() {
@@ -359,6 +363,8 @@ public class BoardCtrl implements Initializable {
         return server.registerForMessages("/topic/taskLists/add/" + board.boardId, TaskList.class,
                 taskList -> Platform.runLater(() -> {
                     List listUI = new List(mainCtrl, server, taskList, this.board);
+                    if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
+                        listUI.disable();
                     listUI.getScrollPane().setStyle(fxBackgroundColor
                             + board.listsColor + "; -fx-background-radius: 10px;");
                     listUI.getAddButton().setStyle(fxBackgroundColor + board.listsColor + ";");
@@ -439,6 +445,8 @@ public class BoardCtrl implements Initializable {
                     List list = listMap.get(listId);
                     list.getTaskList().tasks.add(0, task);
                     Card card = new Card(mainCtrl, server, task, list.getTaskList(), board);
+                    if (!mainCtrl.boardOverviewCtrl.knowsPassword(user, board))
+                        card.disable();
                     if (board.currentPreset == 0) {
                         loadCardColors(card, board.cardsBackground1, board.cardsFont1);
                     } else if (board.currentPreset == 1) {
@@ -572,7 +580,6 @@ public class BoardCtrl implements Initializable {
                     long subtaskId = taskIdlistIdAndSubtaskId.longValue3;
                     Card card = listMap.get(listId).getCardMap().get(taskId);
                     Subtask subtaskUI = card.getDetailedTask().getSubtaskMap().get(subtaskId);
-
                     card.getDetailedTask().getTasks_vbox().getChildren().remove(subtaskUI);
                     card.getDetailedTask().getSubtaskMap().remove(subtaskId);
                     card.getTask().subtasks.remove(subtaskUI.getSubtask());
@@ -1234,5 +1241,12 @@ public class BoardCtrl implements Initializable {
     public void stopDisplayingDialog(DetailedTask detailedTask) {
         blurPane.setVisible(false);
         root.getChildren().remove(detailedTask);
+    }
+
+    public void copyBoardId() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Long longId = Long.valueOf(board.boardId);
+        StringSelection stringId = new StringSelection(longId.toString());
+        clipboard.setContents(stringId, null);
     }
 }
