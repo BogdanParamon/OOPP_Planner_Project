@@ -227,7 +227,7 @@ public class BoardCtrl implements Initializable {
             }
         } else if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
             Card.focused.deleteTask();
-        } else if (event.getCode() == KeyCode.ENTER) {
+        } else if (event.isControlDown() && event.getCode() == KeyCode.ENTER) {
             for (Node node : root.getChildren()) {
                 if (node instanceof DetailedTask) {
                     return;
