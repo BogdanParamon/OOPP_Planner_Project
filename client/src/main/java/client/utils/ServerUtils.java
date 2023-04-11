@@ -73,18 +73,23 @@ public class ServerUtils {
         ServerUtils.stompClient = stompClient;
     }
 
-    public boolean validServer() {
+    public String validServer() {
         String regex = "^(http)://[a-zA-Z0-9-_.]+(:[0-9]+)?/?$";
-        if (!SERVER.matches(regex)) return false;
+        if (!SERVER.matches(regex)) return "Not a valid URL";
         try {
             String resp = client.property(ClientProperties.CONNECT_TIMEOUT, 500)
                     .target(SERVER)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
                     .get(String.class);
-            return resp.equals("Hello Talio!");
+            if (resp.equals("Hello Talio!")) {
+                return null;
+            }
+            else {
+                return "Server is not a Talio server";
+            }
         } catch (Exception e) {
-            return false;
+            return "Server is not running or is invalid";
         }
     }
 

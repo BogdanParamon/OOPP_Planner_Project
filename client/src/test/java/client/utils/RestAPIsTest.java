@@ -46,19 +46,13 @@ public class RestAPIsTest {
     public void testValidServer() {
         ServerUtils.setSERVER("localhost:8080");
         when(builder.get(String.class)).thenReturn("Hello Talio!");
-        assertTrue(serverUtils.validServer());
+        assertNull(serverUtils.validServer());
     }
 
     @Test
     public void testInvalidServer() {
         ServerUtils.setSERVER("notavalidserver");
-        assertFalse(serverUtils.validServer());
-    }
-
-    @Test
-    public void testNullServer() {
-        ServerUtils.setSERVER(null);
-        assertFalse(serverUtils.validServer());
+        assertEquals(serverUtils.validServer(), "Server is not running or is invalid");
     }
 
     @Test

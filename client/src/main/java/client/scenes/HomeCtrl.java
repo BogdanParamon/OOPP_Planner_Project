@@ -54,7 +54,8 @@ public class HomeCtrl implements Initializable {
     public void connect() {
 
         ServerUtils.setSERVER(serverPath.getText());
-        if (server.validServer()) {
+        String validServer = server.validServer();
+        if (validServer == null) {
             ServerUtils.setSession(server.connectWebsocket());
             switchSceneToUserOrAdmin();
             mainCtrl.home.getStylesheets().remove("/client/styles/inputerror.css");
@@ -62,6 +63,7 @@ public class HomeCtrl implements Initializable {
         } else {
             mainCtrl.home.getStylesheets().add("/client/styles/inputerror.css");
             errorMsg.setVisible(true);
+            errorMsg.setText(validServer);
 
             Timeline timeline = new Timeline(
                     new KeyFrame(millis(0), new KeyValue(serverPath.translateXProperty(), 0)),
