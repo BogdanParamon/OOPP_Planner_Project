@@ -156,48 +156,6 @@ public class Card extends Pane {
         }
     }
 
-    public void showAddTagPopup() {
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.initStyle(StageStyle.UNDECORATED);
-        popupStage.initOwner(this.getScene().getWindow());
-
-        VBox vbox = new VBox();
-        vbox.setSpacing(10);
-        vbox.setPadding(new Insets(10, 10, 10, 10));
-
-        Label label = new Label("Enter tag name:");
-        TextField tagNameInput = new TextField();
-
-        Label colorLabel = new Label("Choose tag color:");
-        ColorPicker colorPicker = new ColorPicker();
-
-        Button addButton = new Button("Add");
-        addButton.setOnAction(e -> {
-            String tagName = tagNameInput.getText().trim();
-            Color tagColor = colorPicker.getValue();
-            if (!tagName.isEmpty() && tagColor != null) {
-                addTagToTask(tagName, tagColor);
-
-                popupStage.close();
-            }
-        });
-
-        vbox.getChildren().addAll(label, tagNameInput, colorLabel, colorPicker, addButton);
-        Scene scene = new Scene(vbox);
-        popupStage.setScene(scene);
-
-        popupStage.show();
-    }
-
-    public void addTagToTask(String tagName, Color tagColor) {
-        commons.Tag newTag = new commons.Tag();
-        newTag.setText(tagName);
-        newTag.setColor("#" + tagColor.toString().substring(2, 8));
-
-        addTag(newTag, true);
-    }
-
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
