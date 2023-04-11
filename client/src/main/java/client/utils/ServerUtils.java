@@ -175,15 +175,6 @@ public class ServerUtils {
                 .delete();
     }
 
-    public void leaveBoard(long userId, long boardId) {
-        client.target(SERVER).path("api/users/leave")
-                .queryParam("userId", userId)
-                .queryParam("boardId", boardId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .delete();
-    }
-
     public User connectToUser(String userName) {
         return client.target(SERVER).path("api/users/" + userName)
                 .request(APPLICATION_JSON)
