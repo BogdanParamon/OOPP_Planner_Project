@@ -3,12 +3,7 @@ package commons;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Objects;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -17,26 +12,29 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long boardId;
-
     public String title;
-
     public String backgroundColor;
-
     public String buttonsBackground;
-
     public String backgroundColorFont;
-
     public String buttonsColorFont;
-
     public String boardColor;
+
+    public String listsColor;
+
+    public String listsFontColor;
+
+    public String cardsBackground1, cardsBackground2,
+            cardsBackground3, cardsFont1, cardsFont2, cardsFont3;
+
+    public int currentPreset;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardID")
     public List<TaskList> lists = new ArrayList<>();
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "BoardId")
     public Set<Tag> tags = new HashSet<>();
+    private String password;
 
     /**
      * Creates a new Board object with the given title and an empty set of TaskLists.
@@ -51,10 +49,20 @@ public class Board {
         this.backgroundColorFont = "Black";
         this.buttonsColorFont = "Black";
         this.boardColor = "ddd";
+        this.listsColor = "ffffff";
+        this.listsFontColor = "000000";
+        this.cardsBackground1 = "ffffff";
+        this.cardsBackground2 = "ffffff";
+        this.cardsBackground3 = "ffffff";
+        this.cardsFont1 = "000000";
+        this.cardsFont2 = "000000";
+        this.cardsFont3 = "000000";
+
+        this.currentPreset = 0;
     }
 
     @SuppressWarnings("unused")
-    private Board() {
+    public Board() {
         // For object mapper
     }
 
@@ -70,13 +78,20 @@ public class Board {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Board board = (Board) o;
-        return boardId == board.boardId && Objects.equals(title, board.title)
+        return boardId == board.boardId
+                && title.equals(board.title)
+                && backgroundColor.equals(board.backgroundColor)
+                && buttonsBackground.equals(board.buttonsBackground)
+                && backgroundColorFont.equals(board.backgroundColorFont)
+                && buttonsColorFont.equals(board.buttonsColorFont)
+                && boardColor.equals(board.boardColor) && listsColor.equals(board.listsColor)
+                && listsFontColor.equals(board.listsFontColor)
+                && cardsBackground1.equals(board.cardsBackground1)
+                && cardsBackground2.equals(board.cardsBackground2)
+                && cardsBackground3.equals(board.cardsBackground3)
+                && cardsFont1.equals(board.cardsFont1)
+                && cardsFont2.equals(board.cardsFont2) && cardsFont3.equals(board.cardsFont3)
                 && Objects.equals(lists, board.lists)
-                && Objects.equals(backgroundColor, board.backgroundColor)
-                && Objects.equals(buttonsBackground, board.buttonsBackground)
-                && Objects.equals(backgroundColorFont, board.backgroundColorFont)
-                && Objects.equals(buttonsColorFont, board.buttonsColorFont)
-                && Objects.equals(boardColor, board.boardColor)
                 && Objects.equals(tags, board.tags);
     }
 
@@ -90,7 +105,9 @@ public class Board {
     public int hashCode() {
         return Objects.hash(boardId, title, backgroundColor
                 , buttonsBackground, lists, backgroundColorFont
-                , buttonsColorFont, boardColor, tags);
+                , buttonsColorFont, boardColor, tags, listsColor, listsFontColor
+                , cardsBackground1, cardsBackground2, cardsBackground3,
+                cardsFont1, cardsFont2, cardsFont3);
     }
 
     /**
@@ -114,5 +131,18 @@ public class Board {
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setId(long id) {
+        this.boardId = id;
     }
 }

@@ -54,16 +54,16 @@ public class HomeCtrl implements Initializable {
     public void connect() {
 
         ServerUtils.setSERVER(serverPath.getText());
-        if (server.validServer()) {
+        String validServer = server.validServer();
+        if (validServer == null) {
             ServerUtils.setSession(server.connectWebsocket());
-            mainCtrl.boardOverviewCtrl.registerForNewBoards();
-
-            switchSceneToBoardOverview();
+            switchSceneToUserOrAdmin();
             mainCtrl.home.getStylesheets().remove("/client/styles/inputerror.css");
             errorMsg.setVisible(false);
         } else {
             mainCtrl.home.getStylesheets().add("/client/styles/inputerror.css");
             errorMsg.setVisible(true);
+            errorMsg.setText(validServer);
 
             Timeline timeline = new Timeline(
                     new KeyFrame(millis(0), new KeyValue(serverPath.translateXProperty(), 0)),
@@ -75,13 +75,6 @@ public class HomeCtrl implements Initializable {
             timeline.setCycleCount(1);
             timeline.play();
         }
-    }
-
-    /**
-     * Uses showHome method to switch scenes to Home scene
-     */
-    public void switchSceneToBoardOverview() {
-        mainCtrl.showBoardOverview();
     }
 
     public void switchSceneToUserOrAdmin() {

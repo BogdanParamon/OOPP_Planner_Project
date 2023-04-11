@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: fff;" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminOverviewCtrl">
+    <children>
+        <Text layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="900">
+            <font>
+                <Font size="50"> </Font>
+            </font>
+        </Text>
+        <Text id="subheading" fx:id="subheading" fill="#929394" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Personal Task List Organiser" textAlignment="CENTER" wrappingWidth="900.0">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Text>
+        <MFXListView fx:id="boards" layoutX="129.0" layoutY="230.0" prefHeight="258.0" prefWidth="219.0"/>
+        <Text layoutX="120.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you already have a board?">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fill="#727272" layoutX="180.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose One!">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text layoutX="575.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board Details">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fill="#727272" layoutX="515.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click on a board to view its details">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardIdLabel" layoutX="470.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID:" visible="false">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardTitleLabel" layoutX="470.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title:" visible="false">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardPasswordLabel" layoutX="470.0" layoutY="380.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" visible="false">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardIdText" layoutX="560.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardTitleText" layoutX="560.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Text fx:id="boardPasswordText" layoutX="560.0" layoutY="380.0" strokeType="OUTSIDE" strokeWidth="0.0">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <MFXButton fx:id="editTitleButton" onAction="#startEditingTitle" layoutX="740.0" layoutY="305.0" text="" visible="false">
+            <graphic>
+                <ImageView fitHeight="30.0" fitWidth="29.0">
+                    <Image url="@/client/images/editing.png"/>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+        <MFXButton fx:id="saveTitleButton" onAction="#finishEditingTitle" layoutX="740.0" layoutY="305.0" text="" visible="false">
+            <graphic>
+                <ImageView fitHeight="30.0" fitWidth="29.0">
+                    <Image url="@/client/images/confirm.png"/>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+        <MFXButton fx:id="editPasswordButton" onAction="#startEditingPassword" layoutX="740.0" layoutY="355.0" text="" visible="false">
+            <graphic>
+                <ImageView fitHeight="30.0" fitWidth="29.0">
+                    <Image url="@/client/images/editing.png"/>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+        <MFXButton fx:id="savePasswordButton" onAction="#finishEditingPassword" layoutX="740.0" layoutY="355.0" text="" visible="false">
+            <graphic>
+                <ImageView fitHeight="30.0" fitWidth="29.0">
+                    <Image url="@/client/images/confirm.png"/>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+        <MFXTextField fx:id="boardTitleField" borderGap="1.0" floatMode="BORDER" floatingText="Board Name" layoutX="560.0" layoutY="300.0" prefHeight="30.0" prefWidth="180.0" visible="false">
+            <font>
+                <Font name="Roboto" size="15.0" />
+            </font>
+        </MFXTextField>
+        <MFXTextField fx:id="boardPasswordField" borderGap="1.0" floatMode="BORDER" floatingText="Board Password" layoutX="560.0" layoutY="350.0" prefHeight="30.0" prefWidth="180.0" visible="false">
+            <font>
+                <Font name="Roboto" size="15.0" />
+            </font>
+        </MFXTextField>
+        <MFXButton fx:id="viewBoardButton" buttonType="RAISED" layoutX="650.0" layoutY="446.0" text="View Board" visible="false">
+            <font>
+                <Font name="Roboto" size="20.0" />
+            </font>
+        </MFXButton>
+        <MFXButton fx:id="deleteBoardButton" buttonType="RAISED" layoutX="468.0" layoutY="446.0" text="Delete Board" visible="false">
+            <font>
+                <Font name="Roboto" size="20.0" />
+            </font>
+        </MFXButton>
+        <MFXButton buttonType="RAISED" layoutX="369.0" layoutY="535.0" onAction="#switchSceneToHome" text="Change server">
+            <font>
+                <Font name="Roboto" size="20.0" />
+            </font>
+        </MFXButton>
+
+    </children>
+</AnchorPane>

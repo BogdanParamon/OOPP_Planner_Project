@@ -3,49 +3,63 @@
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.scenes.UserOrAdminCtrl">
-    <children>
-        <Text layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER"
-              wrappingWidth="900.0">
-            <font>
-                <Font size="32.0"/>
-            </font>
-        </Text>
-        <Text fill="#929394" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="900.0">
-            <font>
-                <Font size="15.0"/>
-            </font>
-        </Text>
-        <Pane layoutX="247.0" layoutY="184.0" prefHeight="308.0" prefWidth="406.0"
-              style="-fx-background-radius: 20px; -fx-border-radius: 20px; -fx-background-color: ddd; -fx-border-color: black; -fx-border-style: solid; -fx-border-width: 3px;">
-            <children>
-                <MFXButton fx:id="button" layoutX="125.0" layoutY="246.0" onAction="#view" prefHeight="31.0"
-                           prefWidth="157.0" style="-fx-background-radius: 10px;" text="Admin view">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </MFXButton>
-                <MFXTextField fx:id="nameField" accessibleText="Username" floatingText="Username" layoutX="35.0"
-                              layoutY="154.0" prefHeight="48.0" prefWidth="247.0"/>
-                <Text layoutX="136.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log in:"
-                      textAlignment="CENTER" wrappingWidth="136.33203125">
-                    <font>
-                        <Font size="35.0"/>
-                    </font>
-                </Text>
-                <MFXPasswordField fx:id="passwordField" floatingText="Password" layoutX="35.0" layoutY="154.0"
-                                  prefHeight="48.0" prefWidth="247.0"/>
-                <MFXButton layoutX="310.0" layoutY="154.0" onAction="#ok" prefHeight="48.0" prefWidth="51.0" text="OK"/>
-            </children>
-        </Pane>
-    </children>
+<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="900.0" stylesheets="@/client/styles/global.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.UserOrAdminCtrl">
+   <children>
+      <Text layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Talio" textAlignment="CENTER" wrappingWidth="900.0">
+         <font>
+            <Font size="32.0" />
+         </font>
+      </Text>
+      <Text fill="#929394" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to your personal task list organiser, Talio!" textAlignment="CENTER" wrappingWidth="900.0">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Pane layoutX="140.0" layoutY="140.0" prefHeight="350.0" prefWidth="626.0" style="-fx-background-radius: 20px; -fx-background-color: ddd;">
+         <children>
+            <MFXButton fx:id="viewButton" layoutX="228.0" layoutY="283.0" onAction="#view" prefHeight="31.0" prefWidth="157.0" style="-fx-background-radius: 10px;" text="Admin view">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </MFXButton>
+            <MFXTextField fx:id="nameField" accessibleText="Username" floatingText="Username" layoutX="144.0" layoutY="171.0" prefHeight="48.0" prefWidth="247.0" />
+            <MFXPasswordField fx:id="passwordField" floatingText="Password" layoutX="144.0" layoutY="171.0" prefHeight="48.0" prefWidth="247.0" />
+            <Text fill="#555555" layoutX="240.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log in:" textAlignment="CENTER" wrappingWidth="136.33203125">
+               <font>
+                  <Font size="35.0" />
+               </font>
+            </Text>
+            <MFXButton fx:id="button" layoutX="419.0" layoutY="171.0" prefHeight="48.0" prefWidth="51.0" text="OK" />
+             <Text fill="#777777" layoutX="156.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a Username or an Admin Password:">
+                 <font>
+                     <Font name="Roboto" size="14.0" />
+                 </font>
+             </Text>
+             <Text fx:id="incorrectPasswordMsg" fill="red" layoutX="243.0" layoutY="241.0" text="Incorrect Password" visible="false">
+                 <font>
+                     <Font size="15.0" />
+                 </font>
+             </Text>
+         </children>
+         <effect>
+            <DropShadow spread="0.29">
+               <color>
+                  <Color opacity="0.26003822684288025" />
+               </color>
+            </DropShadow>
+         </effect>
+      </Pane>
+      <MFXButton layoutX="374.0" layoutY="527.0" onAction="#switchSceneToHome" style="-fx-background-color: ddd;" text="Go Back to Server">
+         <font>
+            <Font name="Roboto" size="16.0" />
+         </font>
+      </MFXButton>
+   </children>
 </AnchorPane>

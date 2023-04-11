@@ -175,4 +175,14 @@ public class TestTaskRepository implements TaskRepository {
                                                 R> queryFunction) {
         return null;
     }
+
+    @Override
+    public void deleteTaskTags(long taskId) {
+
+    }
+
+    @Override
+    public void deleteTagFromTask(long taskId, long tagId) {
+        
+    }
 }

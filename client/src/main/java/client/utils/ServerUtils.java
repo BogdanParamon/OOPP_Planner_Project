@@ -18,13 +18,14 @@ package client.utils;
 import commons.Board;
 import commons.Subtask;
 import commons.Tag;
-import commons.Task;
-import commons.TaskList;
+import commons.User;
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -34,9 +35,10 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -46,6 +48,9 @@ public class ServerUtils {
     private static String SERVER;
     private static String websocketSERVER;
     private static StompSession session;
+    private static Client client = ClientBuilder.newClient(new ClientConfig());
+    private static StandardWebSocketClient webSocketClient = new StandardWebSocketClient();
+    private static WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
 
     public static void setSERVER(String SERVER) {
         ServerUtils.SERVER = "http://" + SERVER;
@@ -56,111 +61,55 @@ public class ServerUtils {
         ServerUtils.session = session;
     }
 
-    public boolean validServer() {
+    public static void setClient(Client client) {
+        ServerUtils.client = client;
+    }
+
+    public static void setWebSocketClient(StandardWebSocketClient webSocketClient) {
+        ServerUtils.webSocketClient = webSocketClient;
+    }
+
+    public static void setStompClient(WebSocketStompClient stompClient) {
+        ServerUtils.stompClient = stompClient;
+    }
+
+    public String validServer() {
+        String regex = "^(http)://[a-zA-Z0-9-_.]+(:[0-9]+)?/?$";
+        if (!SERVER.matches(regex)) return "Not a valid URL";
         try {
-            var x = ClientBuilder.newClient(new ClientConfig())
+            String resp = client.property(ClientProperties.CONNECT_TIMEOUT, 500)
                     .target(SERVER)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
-                    .get();
-            return true;
+                    .get(String.class);
+            if (resp.equals("Hello Talio!")) {
+                return null;
+            }
+            else {
+                return "Server is not a Talio server";
+            }
         } catch (Exception e) {
-            return false;
+            return "Server is not running or is invalid";
         }
     }
 
-
-    public Task addTask(Task task, long taskListId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/add")
-                .queryParam("taskListId", taskListId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(task, APPLICATION_JSON), Task.class);
-    }
-
-    public List<Task> getAll() {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<List<Task>>() {
-                });
-    }
-
-    public List<Task> getAllTasks(String sortBy) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/sorted")
-                .queryParam("sortBy", sortBy)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<List<Task>>() {
-                });
-    }
-
-    public Task updateTask(Task task) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/update")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .put(Entity.json(task), Task.class);
-    }
-
-    public List<Board> getBoards() {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<List<Board>>() {
-                });
-    }
-
-    public Board addBoard(Board board) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/add")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
-    }
-
-    public TaskList addList(TaskList list, long boardId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskLists/add")
-                .queryParam("boardId", boardId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(list, APPLICATION_JSON), TaskList.class);
-    }
-
-    public TaskList updateList(TaskList taskList) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskLists/update")
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .put(Entity.entity(taskList, APPLICATION_JSON), TaskList.class);
-    }
-
-    public List<TaskList> getListsByBoardId(long boardId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/{boardId}/taskLists")
-                .resolveTemplate("boardId", boardId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<List<TaskList>>() {
-                });
-    }
-
     public Board getBoardById(long boardId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/" + boardId)
+        return client.target(SERVER).path("api/boards/" + boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Board.class);
     }
 
     public Map<Long, String> getBoardTitlesAndIds() {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/titles&ids")
+        return client.target(SERVER).path("api/boards/titles&ids")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<Map<Long, String>>() {
+                });
+    }
+
+    public Map<Long, String> getBoardTitlesAndIdsByUserId(long userId) {
+        return client.target(SERVER).path("api/users/" + userId + "/boardTitles&Ids")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<Map<Long, String>>() {
@@ -168,11 +117,9 @@ public class ServerUtils {
     }
 
     public StompSession connectWebsocket() {
-        var client = new StandardWebSocketClient();
-        var stomp = new WebSocketStompClient(client);
-        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         try {
-            return stomp.connect(websocketSERVER, new StompSessionHandlerAdapter() {
+            return stompClient.connect(websocketSERVER, new StompSessionHandlerAdapter() {
             }).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -202,84 +149,68 @@ public class ServerUtils {
         session.send(dest, o);
     }
 
-    public void deleteAllBoards() {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/deleteAll")
+    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForBoardDeletes(Consumer<Long> consumer) {
+        EXEC.submit(() -> {
+            while (session.isConnected()) {
+                var res = client.target(SERVER).path("api/boards/deleteUpdates")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+
+                if (res.getStatus() == 204) {
+                    continue;
+                }
+                var boardId = res.readEntity(Long.class);
+                consumer.accept(boardId);
+            }
+        });
+    }
+
+    public void deleteBoardById(long boardId) {
+        client.target(SERVER).path("api/boards/delete")
+                .queryParam("boardId", boardId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete();
     }
 
-
-    public void deleteTask(Task task) {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/delete/")
-                .queryParam("taskId", task.taskId)
+    public User connectToUser(String userName) {
+        return client.target(SERVER).path("api/users/" + userName)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .delete();
-    }
-
-    public Response deleteTaskList(TaskList taskList) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/taskLists/delete/")
-                .queryParam("id", taskList.listId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .delete();
-    }
-
-    public Task getTaskById(long taskId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/tasks/" + taskId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(Task.class);
+                .get(User.class);
     }
 
     public Subtask addSubtask(long taskId, Subtask subtask) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/subtasks/add")
+        return client.target(SERVER).path("api/subtasks/add")
                 .queryParam("taskId", taskId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
-    public Tag addTagToBoard(long boardId, commons.Tag tag) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/addTag")
-                .queryParam("boardId", boardId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
-    }
-
-    public void removeTag(long tagId) {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/deleteTag")
-                .queryParam("tagId", tagId)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .delete();
-    }
-
     public Tag getTagById(long tagId) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/getTagById/" + tagId)
+        return client.target(SERVER).path("api/boards/getTagById/" + tagId)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(Tag.class);
     }
 
-    public Tag updateTag(Tag tag) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/boards/updateTag")
+
+    public Boolean verifyAdminPassword(String password) {
+        return client.target(SERVER).path("api/users/verifyAdmin")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+                .post(Entity.entity(password, APPLICATION_JSON), Boolean.class);
     }
+
     public void disconnectWebsocket() {
         session.disconnect();
+    }
+
+    public void stop() {
+        disconnectWebsocket();
+        EXEC.shutdownNow();
     }
 }
