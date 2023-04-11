@@ -104,6 +104,8 @@ public class UserOrAdminCtrl implements Initializable {
     public void switchSceneToAdminOverview() {
         incorrectPasswordMsg.setVisible(false);
         mainCtrl.userOrAdmin.getStylesheets().remove("/client/styles/inputerror.css");
+        mainCtrl.adminOverviewCtrl.registerForNewBoards();
+        mainCtrl.adminOverviewCtrl.registerForBoardDeletes();
         mainCtrl.showAdminOverview();
     }
 }

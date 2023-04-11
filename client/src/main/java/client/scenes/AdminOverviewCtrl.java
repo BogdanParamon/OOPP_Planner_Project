@@ -3,12 +3,14 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import commons.Packet;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -98,6 +100,41 @@ public class AdminOverviewCtrl implements Initializable {
         });
 
         subheadingAnimation();
+    }
+
+    public void registerForNewBoards() {
+        server.registerForMessages("/topic/boards/add/admin",
+                Packet.class, boardIdAndTitleAndUserId -> {
+                    Platform.runLater(() -> {
+                        long boardId = boardIdAndTitleAndUserId.longValue;
+                        String boardName = boardIdAndTitleAndUserId.stringValue;
+
+                        Pane boardPane = new Pane();
+                        boardPane.setOnMouseClicked(event -> showBoardDetails(boardId));
+
+                        Text boardNameText = new Text(boardName);
+                        boardNameText.setLayoutY(15);
+                        boardNameText.setFont(new Font("Roboto", 14));
+                        Text IdLabel = new Text("#id: " + boardId);
+                        IdLabel.setLayoutX(160);
+                        IdLabel.setLayoutY(15);
+
+                        boardPane.getChildren().add(boardNameText);
+                        boardPane.getChildren().add(IdLabel);
+
+                        boards.getItems().add(boardPane);
+                        boardPaneMap.put(boardId, boardPane);
+                    });
+                });
+    }
+
+    public void registerForBoardDeletes() {
+        server.registerForBoardDeletes(boardId -> {
+            Platform.runLater(() -> {
+                boards.getItems().remove(boardPaneMap.get(boardId));
+                boardPaneMap.remove(boardId);
+            });
+        });
     }
 
     private void subheadingAnimation() {

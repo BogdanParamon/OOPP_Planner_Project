@@ -201,7 +201,7 @@ public class BoardController {
     }
 
     @MessageMapping("/boards/add/{userId}")
-    @SendTo("/topic/boards/add/{userId}")
+    @SendTo({"/topic/boards/add/{userId}", "/topic/boards/add/admin"})
     @Transactional
     public Packet addMessage(Board board, @DestinationVariable("userId") long userId) {
         return boardService.addMessage(board, userId);
