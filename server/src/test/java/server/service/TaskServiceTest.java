@@ -5,13 +5,12 @@ import commons.Task;
 import commons.TaskList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Example;
 import server.database.TagRepository;
 import server.database.TaskListRepository;
 import server.database.TaskRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -34,6 +33,11 @@ public class TaskServiceTest {
         this.tagRepository = mock(TagRepository.class);
         this.taskService =
                 new TaskService(taskRepository, taskListRepository, tagRepository);
+    }
+
+    @Test
+    public void testConstructor() {
+        assertNotNull(taskService);
     }
 
     @Test
@@ -73,8 +77,13 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testGetByIdThrowsException() {
+    public void testGetByIdNegativeId() {
         assertThrows(IllegalArgumentException.class, () -> taskService.getTaskById(-1L));
+    }
+
+    @Test
+    public void testGetByIdNotExist() {
+        assertThrows(IllegalArgumentException.class, () -> taskService.getTaskById(1L));
     }
 
     @Test
@@ -92,6 +101,52 @@ public class TaskServiceTest {
         taskRepository.save(task1);
         taskRepository.save(task2);
         assertEquals(taskService.getAll(), result);
+    }
+
+    @Test
+    public void testGetAllEmptyList() {
+        when(taskRepository.findAll()).thenReturn(new LinkedList<>());
+
+        assertEquals(new LinkedList<>(), taskService.getAll());
+    }
+
+    @Test
+    public void testGetAllNull() {
+        when(taskRepository.findAll()).thenReturn(null);
+
+        assertNull(taskService.getAll());
+    }
+
+    @Test
+    public void testGetAllTasksSortBy() {
+        Task task1 = new Task("a");
+        task1.taskId = 1L;
+        Task task2 = new Task("b");
+        task2.taskId = 2L;
+        List<Task> result = Arrays.asList(task1, task2);
+
+        when(taskRepository.save(task1)).thenReturn(task1);
+        when(taskRepository.save(task2)).thenReturn(task2);
+        when(taskRepository.findAll()).thenReturn(result);
+
+        taskRepository.save(task2);
+        taskRepository.save(task1);
+        assertEquals(taskService.getAllTasks(null), result);
+    }
+
+    @Test
+    public void testGetAllSortByFalse() {
+        Task task1 = new Task();
+        task1.taskId = 1L;
+        List<Task> result = List.of(task1);
+
+        when(taskRepository.save(task1)).thenReturn(task1);
+        when(taskRepository.findAll()).thenReturn(result);
+
+        List<Task> list = Arrays.asList(
+                new Task(), new Task()
+        );
+        assertNotEquals(taskService.getAllTasks(null), list);
     }
 
     @Test
