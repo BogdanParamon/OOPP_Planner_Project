@@ -5,3 +5,11 @@ MFXTextField {
 MFXTextField .floating-text {
     -fx-text-fill: red;
 }
+
+MFXPasswordField {
+    -fx-border-color: red;
+}
+
+MFXPasswordField .floating-text {
+    -fx-text-fill: red;
+}

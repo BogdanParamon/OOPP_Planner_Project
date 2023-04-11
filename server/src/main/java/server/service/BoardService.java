@@ -51,10 +51,18 @@ public class BoardService {
         return saved;
     }
 
+    public Board join(Board board, long userId) {
+        User user = userRepository.findById(userId).get();
+        user.boards.add(board);
+        userRepository.save(user);
+        return board;
+    }
+
     public String delete(long boardId) throws IllegalArgumentException {
         if (!boardRepository.existsById(boardId))
             throw new IllegalArgumentException();
 
+        boardRepository.deleteBoardUserConnection(boardId);
         boardRepository.deleteById(boardId);
         return "Successful";
     }
@@ -85,6 +93,16 @@ public class BoardService {
         }
         Board board = boardRepository.findById(boardId).get();
         board.title = newTitle;
+        Board updatedBoard = boardRepository.save(board);
+        return updatedBoard;
+    }
+
+    public Board changePassword(long boardId, String newPassword) throws IllegalArgumentException {
+        if (newPassword == null || !boardRepository.existsById(boardId)) {
+            throw new IllegalArgumentException();
+        }
+        Board board = boardRepository.findById(boardId).get();
+        board.setPassword(newPassword);
         Board updatedBoard = boardRepository.save(board);
         return updatedBoard;
     }
@@ -134,12 +152,9 @@ public class BoardService {
         return packet;
     }
 
-    public Packet updateMessage(Board board) {
+    public Board updateMessage(Board board) {
         updateBoard(board);
-        Packet packet = new Packet();
-        packet.longValue = board.boardId;
-        packet.board = board;
-        return packet;
+        return board;
     }
 
     public Packet renameMessage(String newTitle, long boardId) {
@@ -150,7 +165,20 @@ public class BoardService {
         return boardIdAndNewTitle;
     }
 
+    public Packet changePasswordMessage(String newPassword, long boardId) {
+        changePassword(boardId, newPassword);
+        Packet boardIdAndNewPassword = new Packet();
+        boardIdAndNewPassword.longValue = boardId;
+        boardIdAndNewPassword.stringValue = newPassword;
+        return boardIdAndNewPassword;
+    }
 
-
-
+    public Packet joinMessage(Board board, long userId) {
+        join(board, userId);
+        Packet packet = new Packet();
+        packet.stringValue = board.title;
+        packet.longValue = board.boardId;
+        packet.longValue2 = userId;
+        return packet;
+    }
 }

@@ -26,7 +26,7 @@ public class Task {
     @OrderColumn
     public List<Subtask> subtasks = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinColumn(name = "taskId")
     public Set<Tag> tags = new HashSet<>();
 
@@ -39,7 +39,6 @@ public class Task {
         this.title = title;
     }
 
-    @SuppressWarnings("unused")
     public Task() {
         // For object mapper
     }
@@ -84,11 +83,19 @@ public class Task {
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        subtasks.add(0, subtask);
     }
 
     public void addTag(Tag tag) {
         tags.add(tag);
+    }
+
+    public void switchSubtasksWithNext(Subtask subtask) {
+        int index = subtasks.indexOf(subtask);
+        if (index != 0) {
+            subtasks.remove(subtask);
+            subtasks.add(index - 1, subtask);
+        }
     }
 
 }

@@ -1,36 +1,41 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import commons.Board;
-import commons.Packet;
-import commons.Task;
-import commons.TaskList;
+import commons.Subtask;
+import commons.*;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class Card extends Pane {
 
+    public static Card focused = null;
+    private static long dragFromListId;
+    private static long dragToListId;
+    private static int dragToIndex;
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final Board board;
+    public boolean isDetailedTaskOpen = false;
     private TaskList taskList;
     private Task task;
     private DetailedTask detailedTask;
@@ -48,10 +53,10 @@ public class Card extends Pane {
     private Pane root;
     @FXML
     private ImageView descriptionImage;
-
-    private static long dragFromListId;
-    private static long dragToListId;
-    private static int dragToIndex;
+    @FXML
+    private MFXProgressBar progressBar;
+    @FXML
+    private Label progressLabel;
 
     private boolean hasDetailedTaskOpen = false;
 
@@ -95,31 +100,134 @@ public class Card extends Pane {
         initEditTaskTitle();
 
         registerForAddTagMessages();
-        
+
+        registerForDeleteTagMessages();
+
 
         openTask.setOnAction(event -> {
             hasDetailedTaskOpen = true;
             displayDialog();
         });
 
-        URL cssURL = getClass().getResource("/client/scenes/Components/Cardstyle.css");
-        if (cssURL != null) {
-            String cssPath = cssURL.toExternalForm();
-            getStylesheets().add(cssPath);
-        } else {
-            System.out.println("Can not load Cardstyle.css");
+        this.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2)
+                displayDialog();
+        });
+
+        updateProgress();
+
+        this.setOnMouseClicked(event -> {
+            if (focused != null && focused != this) {
+                focused.setStyle(focused.getStyle().replace("blue", "ddd"));
+            }
+            setStyle(getStyle().replace("ddd", "blue"));
+            focused = this;
+        });
+    }
+
+    public static void setDragToListId(long dragToListId) {
+        Card.dragToListId = dragToListId;
+    }
+
+    public static void setDragToIndex(int dragToIndex) {
+        Card.dragToIndex = dragToIndex;
+    }
+
+    public void simulateDragAndDrop(Direction direction) {
+
+        System.out.println(direction);
+        VBox parent = (VBox) getParent();
+        int currentIndex = parent.getChildren().indexOf(this);
+        int newIndex = direction == Direction.UP ? currentIndex - 1 : currentIndex + 1;
+
+        System.out.println(currentIndex);
+        System.out.println(newIndex);
+
+        if (newIndex >= 0 && newIndex < parent.getChildren().size() - 1) {
+            parent.getChildren().remove(this);
+            parent.getChildren().add(newIndex, this);
+
+            Packet packet = new Packet();
+            packet.longValue = task.taskId;
+            packet.longValue2 = taskList.listId;
+            packet.longValue3 = taskList.listId;
+            packet.intValue = newIndex;
+            server.send("/app/tasks/drag/" + board.boardId, packet);
         }
+    }
+
+    public void showAddTagPopup() {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.UNDECORATED);
+        popupStage.initOwner(this.getScene().getWindow());
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+        Label label = new Label("Enter tag name:");
+        TextField tagNameInput = new TextField();
+
+        Label colorLabel = new Label("Choose tag color:");
+        ColorPicker colorPicker = new ColorPicker();
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> {
+            String tagName = tagNameInput.getText().trim();
+            Color tagColor = colorPicker.getValue();
+            if (!tagName.isEmpty() && tagColor != null) {
+                addTagToTask(tagName, tagColor);
+
+                popupStage.close();
+            }
+        });
+
+        vbox.getChildren().addAll(label, tagNameInput, colorLabel, colorPicker, addButton);
+        Scene scene = new Scene(vbox);
+        popupStage.setScene(scene);
+
+        popupStage.show();
+    }
+
+    public void addTagToTask(String tagName, Color tagColor) {
+        commons.Tag newTag = new commons.Tag();
+        newTag.setText(tagName);
+        newTag.setColor("#" + tagColor.toString().substring(2, 8));
+
+        addTag(newTag, true);
     }
 
     public StompSession.Subscription registerForAddTagMessages() {
         return server.registerForMessages("/topic/tasks/addTag/" + task.taskId, commons.Tag.class,
                 tag -> {
-                    Platform.runLater(() -> addTag( tag, true)
+                    Platform.runLater(() -> {
+                        addTag(tag, true);
+                        getDetailedTask().getTags_vbox()
+                                .getChildren().add(new Tag(mainCtrl, server, tag, board));
+                    }
                     );
                 });
     }
 
-
+    public StompSession.Subscription registerForDeleteTagMessages() {
+        return server.registerForMessages("/topic/tasks/deleteTag/"
+                        + task.taskId, commons.Packet.class,
+                packet -> {
+                    Platform.runLater(() -> {
+                        long tagId = packet.longValue;
+                        for (Node node : getDetailedTask().getTags_vbox().getChildren()) {
+                            if (!(node instanceof Tag)) continue;
+                            Tag tag = (Tag) node;
+                            if (tag.getTagId() == tagId) {
+                                getDetailedTask().getTags_vbox().getChildren().remove(tag);
+                                break;
+                            }
+                        }
+                        removeTag(tagId);
+                    });
+                });
+    }
 
     void initDrag() {
         int[] index = {0};
@@ -186,10 +294,9 @@ public class Card extends Pane {
     }
 
     void initEditTaskTitle() {
-        taskTitle.setOnKeyReleased(event -> handleKeyRelease(event));
+        taskTitle.setOnKeyReleased(this::handleKeyRelease);
         taskTitle.focusedProperty().addListener(this::handleFocusChange);
     }
-
 
     private void handleKeyRelease(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
@@ -198,9 +305,20 @@ public class Card extends Pane {
         }
     }
 
+    void editTaskTitle() {
+        taskTitle.requestFocus();
+        taskTitle.selectAll();
+    }
+
     void displayDialog() {
         detailedTask.updateDetails();
         mainCtrl.boardCtrl.displayDetailedTask(detailedTask);
+        isDetailedTaskOpen = true;
+    }
+
+    void closeDialog() {
+        mainCtrl.boardCtrl.stopDisplayingDialog(detailedTask);
+        isDetailedTaskOpen = false;
     }
 
     private void handleFocusChange(ObservableValue<? extends Boolean>
@@ -231,6 +349,8 @@ public class Card extends Pane {
 
     public void removeTag(long tagId) {
         task.tags.removeIf(tag -> tag.tagId == tagId);
+        getDetailedTask().getTags_vbox().getChildren()
+                .removeIf(node -> node instanceof Tag && ((Tag) node).tag.tagId == tagId);
         tags.getChildren().removeIf(node -> node.getId().equals(String.valueOf(tagId)));
     }
 
@@ -240,6 +360,51 @@ public class Card extends Pane {
                 node.setStyle("-fx-background-radius: 5; -fx-background-color: " + tag.getColor());
             }
         }
+        for (int i = 0; i < getDetailedTask().getTags_vbox().getChildren().size(); i++) {
+            if (getDetailedTask().getTags_vbox().getChildren().get(i) instanceof Tag) {
+                Tag tagUI = (Tag) getDetailedTask().getTags_vbox().getChildren().get(i);
+                if (tagUI.tag.tagId == tag.tagId) {
+                    getDetailedTask().getTags_vbox()
+                            .getChildren().set(i, new Tag(mainCtrl, server, tag, board));
+                    break;
+                }
+            }
+        }
+    }
+
+    public void disable() {
+        deleteTaskButton.setDisable(true);
+        taskTitle.setOnMouseClicked(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+        taskTitle.setOnKeyPressed(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+        this.setOnDragDetected(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("You can not edit tasks in read-only mode!");
+            alert.setContentText("Please unlock board by entering password " +
+                    "in order to edit tasks and lists.");
+            alert.showAndWait();
+        });
+    }
+
+    public void enable() {
+        deleteTaskButton.setDisable(false);
+        taskTitle.setDisable(false);
+        taskTitle.setOnMouseClicked(event -> {
+        });
+        taskTitle.setOnKeyPressed(event -> {
+        });
+        initDrag();
     }
 
     public Task getTask() {
@@ -259,16 +424,7 @@ public class Card extends Pane {
     }
 
     public void setTaskList(TaskList taskList) {
-        System.out.println(this.toString() + this.taskList.listId + " " + taskList.listId);
         this.taskList = taskList;
-    }
-
-    public static void setDragToListId(long dragToListId) {
-        Card.dragToListId = dragToListId;
-    }
-
-    public static void setDragToIndex(int dragToIndex) {
-        Card.dragToIndex = dragToIndex;
     }
 
     public Pane getRoot() {
@@ -283,12 +439,12 @@ public class Card extends Pane {
         return openTask;
     }
 
-    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
-        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
-    }
-
     public boolean isHasDetailedTaskOpen() {
         return hasDetailedTaskOpen;
+    }
+
+    public void setHasDetailedTaskOpen(boolean hasDetailedTaskOpen) {
+        this.hasDetailedTaskOpen = hasDetailedTaskOpen;
     }
 
     public void showDescriptionImage() {
@@ -297,5 +453,31 @@ public class Card extends Pane {
 
     public void hideDescriptionImage() {
         descriptionImage.setVisible(false);
+    }
+
+    public void updateProgress() {
+        progressLabel.setText(currentProgress());
+        progressBar.setProgress(currentProgressDouble());
+    }
+
+    public String currentProgress() {
+        int total = task.subtasks.size();
+        int done = 0;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
+        return done + "/" + total;
+    }
+
+    public double currentProgressDouble() {
+        double total = task.subtasks.size();
+        double done = 0.0;
+        for (Subtask subtask : task.subtasks)
+            if (subtask.subtaskBoolean) done++;
+        return done / total;
+
+    }
+
+    enum Direction {
+        UP, DOWN;
     }
 }

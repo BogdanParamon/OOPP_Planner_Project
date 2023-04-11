@@ -11,12 +11,16 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class List extends Pane {
@@ -24,13 +28,12 @@ public class List extends Pane {
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     private final TaskList taskList;
+    public Task FocusedTask = null;
+    @FXML
+    protected VBox list;
+    @FXML
+    protected MFXButton addButton;
     private Integer dragIndex;
-
-    @FXML
-    private VBox list;
-    @FXML
-    private MFXButton addButton;
-
     @FXML
     private MFXTextField title;
 
@@ -41,6 +44,7 @@ public class List extends Pane {
     private MFXScrollPane scrollPane;
 
     private Board board;
+    private HashMap<Long, Card> cardMap;
 
     public List(MainCtrl mainCtrl, ServerUtils server, TaskList taskList, Board board) {
         this.mainCtrl = mainCtrl;
@@ -60,6 +64,7 @@ public class List extends Pane {
             throw new RuntimeException(e);
         }
 
+        cardMap = new HashMap<>();
         for (Task task : taskList.tasks) {
             Card card = new Card(mainCtrl, server, task, taskList, board);
             if (card.getDetailedTask().hasTaskDescription())
@@ -67,6 +72,7 @@ public class List extends Pane {
             else
                 card.hideDescriptionImage();
             list.getChildren().add(list.getChildren().size() - 1, card);
+            cardMap.put(task.taskId, card);
         }
 
         title.setText(taskList.title);
@@ -142,12 +148,6 @@ public class List extends Pane {
         return taskList;
     }
 
-    public void setTitle(String newTitle) {
-        if (!newTitle.equals(title.getText())) {
-            title.setText(newTitle);
-        }
-    }
-
     public VBox getList() {
         return list;
     }
@@ -171,6 +171,31 @@ public class List extends Pane {
         }
     }
 
+    public void disable() {
+        addButton.setDisable(true);
+        title.setDisable(true);
+        deleteTaskListButton.setDisable(true);
+        for (Node node : list.getChildren()) {
+            if (node.getClass().equals(Card.class)) {
+                Card card = (Card) node;
+                card.disable();
+            }
+
+        }
+    }
+
+    public void enable() {
+        addButton.setDisable(false);
+        title.setDisable(false);
+        deleteTaskListButton.setDisable(false);
+        for (Node node : list.getChildren()) {
+            if (node.getClass().equals(Card.class)) {
+                Card card = (Card) node;
+                card.enable();
+            }
+        }
+    }
+
     private void saveTaskListTitle() {
         taskList.setTitle(title.getText());
         Packet listIdAndNewTitle = new Packet();
@@ -191,7 +216,17 @@ public class List extends Pane {
         return title;
     }
 
+    public void setTitle(String newTitle) {
+        if (!newTitle.equals(title.getText())) {
+            title.setText(newTitle);
+        }
+    }
+
     public MFXButton getDeleteTaskListButton() {
         return deleteTaskListButton;
+    }
+
+    public HashMap<Long, Card> getCardMap() {
+        return cardMap;
     }
 }

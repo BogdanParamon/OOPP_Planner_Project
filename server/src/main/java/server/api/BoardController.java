@@ -5,17 +5,21 @@ import commons.Packet;
 import commons.Tag;
 import commons.TaskList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.service.BoardService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -81,6 +85,15 @@ public class BoardController {
         }
     }
 
+    @PostMapping(path = "/join")
+    public ResponseEntity<Board> join(@RequestBody Board board, @RequestParam long userId) {
+        try {
+            return ResponseEntity.ok(boardService.join(board, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     /**
      * Deletes a board from the database
      *
@@ -88,10 +101,14 @@ public class BoardController {
      * @return successful if board exists
      */
     @DeleteMapping(path = "/delete")
+    @Transactional
     public ResponseEntity<String> delete(@RequestParam long boardId) {
         try {
-            return ResponseEntity.ok(boardService.delete(boardId));
+            var res = ResponseEntity.ok(boardService.delete(boardId));
+            deleteBoardListeners.forEach((key, listener) -> listener.accept(boardId));
+            return res;
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -168,6 +185,21 @@ public class BoardController {
         }
     }
 
+    private Map<Object, Consumer<Long>> deleteBoardListeners = new HashMap<>();
+    @GetMapping(path = "/deleteUpdates")
+    public DeferredResult<ResponseEntity<Long>> getDeleteBoardUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var result = new DeferredResult<ResponseEntity<Long>>(5000L, noContent);
+
+        var key = new Object();
+        deleteBoardListeners.put(key, boardId -> {
+            result.setResult(ResponseEntity.ok(boardId));
+        });
+        result.onCompletion(() -> deleteBoardListeners.remove(key));
+
+        return result;
+    }
+
     @MessageMapping("/boards/add/{userId}")
     @SendTo("/topic/boards/add/{userId}")
     @Transactional
@@ -176,9 +208,10 @@ public class BoardController {
     }
 
 
-    @MessageMapping("/boards/update")
-    @SendTo("/topic/boards/update")
-    public Packet updateMessage(Board board) {
+    @MessageMapping("/boards/update/{boardId}")
+    @SendTo("/topic/boards/update/{boardId}")
+    @Transactional
+    public Board updateMessage(Board board) {
         return boardService.updateMessage(board);
     }
 
@@ -190,6 +223,20 @@ public class BoardController {
         return boardService.renameMessage(newTitle, boardId);
     }
 
+    @MessageMapping("/boards/changePassword/{boardId}")
+    @SendTo("/topic/boards/changePassword/{boardId}")
+    @Transactional
+    public Packet changePasswordMessage(String newPassword,
+                                        @DestinationVariable("boardId") long boardId) {
+        return boardService.changePasswordMessage(newPassword, boardId);
+    }
+
+    @MessageMapping("/boards/join/{userId}")
+    @SendTo("/topic/boards/add/{userId}")
+    @Transactional
+    public Packet joinMessage(Board board, @DestinationVariable("userId") long userId) {
+        return boardService.joinMessage(board, userId);
+    }
     @MessageMapping("/boards/addTag/{boardId}")
     @SendTo("/topic/boards/addTag/{boardId}")
     @Transactional

@@ -2,6 +2,7 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
@@ -35,7 +36,7 @@
                             <content>
                                 <VBox fx:id="tasks_vbox" prefHeight="39.0" prefWidth="240.0">
                                     <children>
-                                        <MFXButton fx:id="addSubtaskButton" layoutX="177.0" layoutY="1.0" prefHeight="33.0" prefWidth="28.0" text="">
+                                        <MFXButton fx:id="addSubtaskButton" layoutX="177.0" layoutY="1.0" prefHeight="33.0" prefWidth="28.0" text="" contentDisplay="GRAPHIC_ONLY">
                                             <graphic>
                                                 <ImageView fitHeight="30" fitWidth="30">
                                                     <Image url="@/client/images/addButton.png" />
@@ -52,7 +53,10 @@
                     <children>
                         <MFXScrollPane hbarPolicy="NEVER" layoutX="3.0" layoutY="6.0" prefHeight="100.0" prefWidth="154.0">
                             <content>
-                                <VBox fx:id="tags_vbox" prefWidth="145.0" />
+                                <VBox fx:id="tags_vbox" prefWidth="145.0" spacing="7">
+                           <padding>
+                              <Insets bottom="6.0" top="4.0" />
+                           </padding></VBox>
                             </content>
                         </MFXScrollPane>
                     </children>
