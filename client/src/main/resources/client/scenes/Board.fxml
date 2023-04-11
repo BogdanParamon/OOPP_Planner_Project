@@ -99,6 +99,13 @@
                 </ImageView>
             </graphic>
         </MFXButton>
+        <MFXButton fx:id="copyBtn" layoutX="550" layoutY="33" prefWidth="50" prefHeight="50" onAction="#copyBoardId" style="-fx-background-color: white;" text="">
+            <graphic>
+                <ImageView fitHeight="40.0" fitWidth="40.0">
+                    <Image url="@/client/images/copy.png" />
+                </ImageView>
+            </graphic>
+        </MFXButton>
         <MFXScrollPane fx:id="tagsPane" layoutX="14.0" layoutY="223.0" prefHeight="199.0" prefWidth="150.0" style="-fx-background-radius: 10px; -fx-background-color: r;" vbarPolicy="NEVER">
             <VBox fx:id="tagList" spacing="10">
                 <HBox fx:id="tags_hbox">
@@ -523,12 +530,5 @@
             </Pane>
 
         </Pane>
-        <MFXButton fx:id="copyBtn" layoutX="550" layoutY="33" prefWidth="50" prefHeight="50" onAction="#copyBoardId" style="-fx-background-color: white;" text="">
-            <graphic>
-                <ImageView fitHeight="40.0" fitWidth="40.0">
-                    <Image url="@/client/images/copy.png" />
-                </ImageView>
-            </graphic>
-        </MFXButton>
     </children>
 </AnchorPane>
