@@ -997,7 +997,7 @@ public class BoardCtrl implements Initializable {
         save.setStyle("-fx-background-color: #ffffff;");
         tagsPane.setStyle("-fx-background-color: white;");
         addTag.setStyle("-fx-background-color: white;");
-        copyBtn.setStyle(fxBackgroundColor + "white");
+        copyBtn.setStyle(fxBackgroundColor + "ffffff");
         updateBoard(board);
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
@@ -1090,6 +1090,9 @@ public class BoardCtrl implements Initializable {
         resetButtonFont();
         resetListsColor();
         resetListsFont();
+        reset1();
+        reset2();
+        reset3();
     }
 
 
