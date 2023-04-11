@@ -782,6 +782,7 @@ public class BoardCtrl implements Initializable {
                 + board.buttonsBackground + "; -fx-background-radius: 10px;");
         addList.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         passwordButton.setStyle(fxBackgroundColor + board.buttonsBackground);
+        copyBtn.setStyle(fxBackgroundColor + board.backgroundColor);
         btnCustomize.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         btnOverviewBoards.setStyle(fxBackgroundColor + board.buttonsBackground + ";");
         overviewBoardsPane.setStyle(fxBackgroundColor
@@ -938,6 +939,7 @@ public class BoardCtrl implements Initializable {
         custimozePane.setStyle(fxBackgroundColor
                 + buttonColor + ";-fx-background-radius: 10px;");
         passwordButton.setStyle(fxBackgroundColor + buttonColor);
+        copyBtn.setStyle(fxBackgroundColor + rootColor);
         this.board.buttonsBackground = buttonColor;
         //lists and tags color
         applyChangesListsAndTags(this.board);
@@ -995,6 +997,7 @@ public class BoardCtrl implements Initializable {
         save.setStyle("-fx-background-color: #ffffff;");
         tagsPane.setStyle("-fx-background-color: white;");
         addTag.setStyle("-fx-background-color: white;");
+        copyBtn.setStyle(fxBackgroundColor + "white");
         updateBoard(board);
         colorPickerBackground.setValue(Color.valueOf(board.backgroundColor));
         txtCust.setFill(Paint.valueOf(board.backgroundColor));
