@@ -224,10 +224,6 @@ public class BoardOverviewCtrl implements Initializable {
             boardTitle.clear();
         });
 
-        registerForNewBoards();
-        registerForBoardLeaves();
-        registerForBoardDeletes();
-
         subheadingAnimation();
     }
 
