@@ -268,11 +268,6 @@ public class Card extends Pane {
         isDetailedTaskOpen = true;
     }
 
-    void closeDialog() {
-        mainCtrl.boardCtrl.stopDisplayingDialog(detailedTask);
-        isDetailedTaskOpen = false;
-    }
-
     private void handleFocusChange(ObservableValue<? extends Boolean>
                                            observable, Boolean oldValue, Boolean newValue) {
         if (!newValue) {
